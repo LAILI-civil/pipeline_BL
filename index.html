@@ -790,22 +790,12 @@
                 
                 // 记录结束时间
                 const endTime = performance.now();
-
-                const Preds = predictions.map(x => {
-                    if (x > 0) {
-                        return Math.log10(x);
-                    } else if (x === 0) {
-                        return -Infinity; // 或者返回其他你希望的值
-                    } else {
-                        return NaN; // 负数的对数在实数范围内未定义
-                    }
-                });
                 
                 // 显示结果
-                displayResults(Preds);
+                displayResults(predictions);
                 
                 // 绘制图表
-                drawPredictionChart(Preds);
+                drawPredictionChart(predictions);
                 
                 // 显示输出容器
                 outputContainer.style.display = 'block';
