@@ -330,7 +330,7 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-network-wired"></i> 管道缺陷预测系统</h1>
-            <p class="subtitle">基于TensorFlow.js的神经网络模型部署 - 纯前端实现 | 无需服务器支持 | 30MB模型在浏览器中运行</p>
+            <p class="subtitle">基于TensorFlow.js的神经网络模型部署 - 纯前端实现 | 无需服务器支持 |模型在浏览器中运行</p>
         </header>
         
         <div class="content">
@@ -481,7 +481,11 @@
     <script>
         // 全局变量
         let model = null;
-        const MODEL_PATH = 'tfjs_model/model.json'; // 模型路径
+        const GITHUB_USER = 'LAILI-civil';
+        const GITHUB_REPO = 'pipeline_BL';
+        const MODEL_PATH = 'tfjs_model/model.json';
+        // 构建模型的绝对URL
+        const MODEL_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${MODEL_PATH}`;
         
         // DOM元素
         const modelStatus = document.getElementById('model-status');
@@ -622,10 +626,10 @@
         // 加载模型
         async function loadModel() {
             try {
-                modelStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在加载神经网络模型 (30MB)...';
+                modelStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在加载神经网络模型...';
                 
                 // 加载TensorFlow.js模型
-                model = await tf.loadGraphModel('/tfjs_model/model.json', {
+                model = await tf.loadGraphModel(MODEL_URL, {
                     onProgress: (fractions) => {
                         const percent = Math.floor(fractions * 100);
                         modelProgress.style.width = `${percent}%`;
