@@ -102,6 +102,7 @@
             background: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
             transition: all 0.3s ease;
+            position: relative;
         }
         
         .input-row:hover {
@@ -125,6 +126,10 @@
             font-size: 1rem;
         }
         
+        .input-row input.error {
+            box-shadow: 0 0 0 2px #ff6b6b;
+        }
+        
         .input-row input:focus {
             outline: none;
             box-shadow: 0 0 0 2px #00c9ff;
@@ -134,6 +139,23 @@
             margin-left: 10px;
             color: #92fe9d;
             font-weight: 500;
+            min-width: 60px;
+        }
+        
+        .range-info {
+            font-size: 0.85rem;
+            color: #a8d8ea;
+            margin-top: 5px;
+            padding: 0 15px;
+            opacity: 0.8;
+        }
+        
+        .error-message {
+            position: absolute;
+            right: 15px;
+            bottom: -18px;
+            font-size: 0.8rem;
+            color: #ff6b6b;
         }
         
         .btn-container {
@@ -327,15 +349,19 @@
                 <div class="input-group">
                     <div class="input-row">
                         <label for="smys">SMYS (Mpa)</label>
-                        <input type="number" id="smys" value="450" step="1">
-                        <span class="unit">Mpa</span>
+                        <input type="number" id="smys" value="450" step="1" min="290" max="690">
+                        <span class="unit">290-690 Mpa</span>
+                        <span class="error-message" id="smys-error"></span>
                     </div>
+                    <div class="range-info">范围: 290 - 690 Mpa</div>
                     
                     <div class="input-row">
                         <label for="smts">SMTS (Mpa)</label>
-                        <input type="number" id="smts" value="535" step="1">
-                        <span class="unit">Mpa</span>
+                        <input type="number" id="smts" value="535" step="1" min="414" max="758">
+                        <span class="unit">414-758 Mpa</span>
+                        <span class="error-message" id="smts-error"></span>
                     </div>
+                    <div class="range-info">范围: 414 - 758 Mpa</div>
                     
                     <div class="input-row">
                         <label for="thickness">Thickness (mm)</label>
@@ -345,33 +371,43 @@
                     
                     <div class="input-row">
                         <label for="dia">Diameter (mm)</label>
-                        <input type="number" id="dia" value="762" step="1">
-                        <span class="unit">mm</span>
+                        <input type="number" id="dia" value="762" step="1" min="168.2" max="1219.2">
+                        <span class="unit">168.2-1219.2 mm</span>
+                        <span class="error-message" id="dia-error"></span>
                     </div>
+                    <div class="range-info">范围: 168.2 - 1219.2 mm</div>
                     
                     <div class="input-row">
                         <label for="d_grow">d_grow (mm)</label>
-                        <input type="number" id="d_grow" value="3.2" step="0.1">
-                        <span class="unit">mm</span>
+                        <input type="number" id="d_grow" value="0.4" step="0.01" min="0.0" max="0.8">
+                        <span class="unit">0.0-0.8 mm</span>
+                        <span class="error-message" id="d_grow-error"></span>
                     </div>
+                    <div class="range-info">范围: 0.0 - 0.8 mm</div>
                     
                     <div class="input-row">
                         <label for="depth">Depth (%)</label>
-                        <input type="number" id="depth" value="45" step="1">
-                        <span class="unit">%</span>
+                        <input type="number" id="depth" value="45" step="1" min="0" max="80">
+                        <span class="unit">0-80 %</span>
+                        <span class="error-message" id="depth-error"></span>
                     </div>
+                    <div class="range-info">范围: 0 - 80 %</div>
                     
                     <div class="input-row">
                         <label for="length">Length (mm)</label>
-                        <input type="number" id="length" value="120" step="1">
-                        <span class="unit">mm</span>
+                        <input type="number" id="length" value="120" step="1" min="10" max="400">
+                        <span class="unit">10-400 mm</span>
+                        <span class="error-message" id="length-error"></span>
                     </div>
+                    <div class="range-info">范围: 10 - 400 mm</div>
                     
                     <div class="input-row">
                         <label for="prestress">Prestress (Mpa)</label>
-                        <input type="number" id="prestress" value="350" step="1">
-                        <span class="unit">Mpa</span>
+                        <input type="number" id="prestress" value="6.0" step="0.001" min="4.137" max="9.653">
+                        <span class="unit">4.137-9.653 Mpa</span>
+                        <span class="error-message" id="prestress-error"></span>
                     </div>
+                    <div class="range-info">范围: 4.137 - 9.653 Mpa</div>
                 </div>
                 
                 <div class="btn-container">
@@ -472,6 +508,17 @@
         const modelReadyEl = document.getElementById('model-ready');
         const backendNameEl = document.getElementById('backend-name');
         
+        // 输入验证配置
+        const inputValidations = {
+            smys: { min: 290, max: 690, errorId: 'smys-error' },
+            smts: { min: 414, max: 758, errorId: 'smts-error' },
+            dia: { min: 168.2, max: 1219.2, errorId: 'dia-error' },
+            d_grow: { min: 0.0, max: 0.8, errorId: 'd_grow-error' },
+            depth: { min: 0, max: 80, errorId: 'depth-error' },
+            length: { min: 10, max: 400, errorId: 'length-error' },
+            prestress: { min: 4.137, max: 9.653, errorId: 'prestress-error' }
+        };
+        
         // 初始化页面
         document.addEventListener('DOMContentLoaded', async () => {
             // 初始化输出网格
@@ -486,7 +533,86 @@
             // 绑定按钮事件
             predictBtn.addEventListener('click', runInference);
             resetBtn.addEventListener('click', resetInputs);
+            
+            // 为输入框添加验证事件
+            setupInputValidation();
         });
+        
+        // 设置输入验证
+        function setupInputValidation() {
+            for (const inputId in inputValidations) {
+                const input = document.getElementById(inputId);
+                input.addEventListener('blur', validateInput);
+                input.addEventListener('input', clearError);
+            }
+        }
+        
+        // 清除错误状态
+        function clearError(event) {
+            const input = event.target;
+            const inputId = input.id;
+            
+            if (inputValidations[inputId]) {
+                const errorElement = document.getElementById(inputValidations[inputId].errorId);
+                errorElement.textContent = '';
+                input.classList.remove('error');
+            }
+        }
+        
+        // 验证输入值
+        function validateInput(event) {
+            const input = event.target;
+            const inputId = input.id;
+            const value = parseFloat(input.value);
+            
+            // 检查是否在验证配置中
+            if (!inputValidations[inputId]) return;
+            
+            const { min, max, errorId } = inputValidations[inputId];
+            const errorElement = document.getElementById(errorId);
+            
+            if (isNaN(value)) {
+                errorElement.textContent = '请输入有效数字';
+                input.classList.add('error');
+                return false;
+            }
+            
+            if (value < min || value > max) {
+                errorElement.textContent = `范围: ${min} - ${max}`;
+                input.classList.add('error');
+                return false;
+            }
+            
+            errorElement.textContent = '';
+            input.classList.remove('error');
+            return true;
+        }
+        
+        // 验证所有输入
+        function validateAllInputs() {
+            let allValid = true;
+            
+            for (const inputId in inputValidations) {
+                const input = document.getElementById(inputId);
+                const value = parseFloat(input.value);
+                
+                if (isNaN(value)) {
+                    document.getElementById(inputValidations[inputId].errorId).textContent = '请输入有效数字';
+                    input.classList.add('error');
+                    allValid = false;
+                    continue;
+                }
+                
+                const { min, max } = inputValidations[inputId];
+                if (value < min || value > max) {
+                    document.getElementById(inputValidations[inputId].errorId).textContent = `范围: ${min} - ${max}`;
+                    input.classList.add('error');
+                    allValid = false;
+                }
+            }
+            
+            return allValid;
+        }
         
         // 初始化输出网格
         function initOutputGrid() {
@@ -558,6 +684,12 @@
         async function runInference() {
             if (!model) {
                 alert('模型尚未加载完成，请稍候...');
+                return;
+            }
+            
+            // 验证所有输入
+            if (!validateAllInputs()) {
+                alert('请检查输入参数，部分值超出允许范围');
                 return;
             }
             
@@ -640,10 +772,16 @@
             document.getElementById('smts').value = '535';
             document.getElementById('thickness').value = '12.7';
             document.getElementById('dia').value = '762';
-            document.getElementById('d_grow').value = '3.2';
+            document.getElementById('d_grow').value = '0.4';
             document.getElementById('depth').value = '45';
             document.getElementById('length').value = '120';
-            document.getElementById('prestress').value = '350';
+            document.getElementById('prestress').value = '6.0';
+            
+            // 清除错误信息
+            for (const inputId in inputValidations) {
+                document.getElementById(inputId).classList.remove('error');
+                document.getElementById(inputValidations[inputId].errorId).textContent = '';
+            }
             
             // 隐藏结果容器
             outputContainer.style.display = 'none';
