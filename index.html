@@ -739,8 +739,9 @@
                 }
                 
                 // 转换为张量 [1, 31, 9] - 修复2: 确保创建三维张量
-                let inputTensor = tf.tensor3d([initialData]);
+                let inputTensor = tf.tensor3d([initialData], [1, sequenceLength, featureSize]);
                 console.log('初始输入张量形状:', inputTensor.shape);
+                console.log('初始输入数据:', await inputTensor.array());
                 
                 // 记录开始时间
                 const startTime = performance.now();
@@ -762,6 +763,8 @@
                     
                     // 获取预测结果
                     const outputData = await outputTensor.array();
+                    console.log(`输出张量形状: ${outputTensor.shape}`);
+                    console.log(`输出数据:`, outputData);
                     
                     // 修复4: 正确的索引计算方式
                     // 输出形状应为 [1, 31, 9]，所以取 [0][year][8]
@@ -779,7 +782,7 @@
                     outputTensor.dispose();
                     
                     // 创建新的输入张量 - 修复5: 确保保持三维形状
-                    inputTensor = tf.tensor3d(newInputData);
+                    inputTensor = tf.tensor3d(newInputData, [1, sequenceLength, featureSize]);
                     
                     const inferenceEndTime = performance.now();
                     totalInferenceTime += inferenceEndTime - inferenceStartTime;
