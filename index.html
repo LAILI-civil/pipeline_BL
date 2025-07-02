@@ -625,7 +625,7 @@
                 modelStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在加载神经网络模型 (30MB)...';
                 
                 // 加载TensorFlow.js模型
-                model = await tf.loadGraphModel(MODEL_PATH, {
+                model = await tf.loadGraphModel('./tfjs_model/model.json', {
                     onProgress: (fractions) => {
                         const percent = Math.floor(fractions * 100);
                         modelProgress.style.width = `${percent}%`;
