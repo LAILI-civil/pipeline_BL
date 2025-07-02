@@ -723,13 +723,14 @@
                 
                 // 创建初始张量 - 所有时间步概率值初始为0
                 const initialData = [];
+                const REPLACEMENT_LOG = -6; // log10(1e-6)
                 for (let i = 0; i < sequenceLength; i++) {
                     const timestep = [];
                     for (let j = 0; j < 8; j++) {
                         timestep.push(inputs[j]);
                     }
                     // 所有年份概率值初始为0
-                    timestep.push(i === 0 ? -6 : 0);
+                    timestep.push(i === 0 ? REPLACEMENT_LOG : 0);
                     initialData.push(timestep);
                 }
                 
