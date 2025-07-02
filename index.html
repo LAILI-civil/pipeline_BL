@@ -725,20 +725,20 @@
                 const sequenceLength = 31;
                 const featureSize = 9;
                 
-                // 创建初始张量
-                const initialData = Array(sequenceLength).fill(0).map(() => Array(featureSize).fill(0));
-                
-                // 设置所有时间步的前8个特征
+                // 创建初始张量 - 修复1: 确保创建三维数据结构
+                const initialData = [];
                 for (let i = 0; i < sequenceLength; i++) {
+                    const timestep = [];
+                    // 前8个特征是相同的输入值
                     for (let j = 0; j < 8; j++) {
-                        initialData[i][j] = inputs[j];
+                        timestep.push(inputs[j]);
                     }
+                    // 第9个特征（缺陷概率）初始化为0
+                    timestep.push(i === 0 ? 0 : 0); // 只有第0年设为0，其他年份用0填充
+                    initialData.push(timestep);
                 }
                 
-                // 第0年设为0
-                initialData[0][8] = 0;
-                
-                // 转换为张量 [1, 31, 9]
+                // 转换为张量 [1, 31, 9] - 修复2: 确保创建三维张量
                 let inputTensor = tf.tensor3d([initialData]);
                 console.log('初始输入张量形状:', inputTensor.shape);
                 
@@ -751,20 +751,19 @@
                 for (let year = 1; year <= 10; year++) {
                     recursionSteps++;
                     
-                    // 执行推理
+                    // 执行推理 - 修复3: 确保使用正确的输入形状
                     const inferenceStartTime = performance.now();
-                    
-                    // 修改1: 正确处理模型输出（可能是单个张量或数组）
                     let outputTensor = model.predict(inputTensor);
+                    
+                    // 处理输出可能是数组的情况
                     if (Array.isArray(outputTensor)) {
-                        // 如果返回的是数组，取第一个输出
                         outputTensor = outputTensor[0];
                     }
                     
-                    // 修改2: 使用正确的异步方式获取数据
+                    // 获取预测结果
                     const outputData = await outputTensor.array();
                     
-                    // 修改3: 正确的索引计算方式
+                    // 修复4: 正确的索引计算方式
                     // 输出形状应为 [1, 31, 9]，所以取 [0][year][8]
                     const predictionValue = outputData[0][year][8];
                     predictions[year] = predictionValue;
@@ -772,15 +771,15 @@
                     console.log(`第 ${year} 年预测值:`, predictionValue);
                     
                     // 更新输入张量 (将预测值放入下一个时间步)
-                    const newInputData = inputTensor.arraySync()[0];
-                    newInputData[year][8] = predictionValue;
+                    const newInputData = await inputTensor.array();
+                    newInputData[0][year][8] = predictionValue;
                     
                     // 清理旧张量
                     inputTensor.dispose();
                     outputTensor.dispose();
                     
-                    // 创建新的输入张量
-                    inputTensor = tf.tensor3d([newInputData]);
+                    // 创建新的输入张量 - 修复5: 确保保持三维形状
+                    inputTensor = tf.tensor3d(newInputData);
                     
                     const inferenceEndTime = performance.now();
                     totalInferenceTime += inferenceEndTime - inferenceStartTime;
