@@ -729,7 +729,7 @@
                         timestep.push(inputs[j]);
                     }
                     // 所有年份概率值初始为0
-                    timestep.push(0);
+                    timestep.push(i === 0 ? -6 : 0);
                     initialData.push(timestep);
                 }
                 
