@@ -752,7 +752,7 @@
                 for (let year = 1; year <= 10; year++) {
                     recursionSteps++;
                     
-                    // 执行推理 - 修复3: 确保使用正确的输入形状
+                    // 执行推理 
                     const inferenceStartTime = performance.now();
                     let outputTensor = model.predict(inputTensor);
                     
@@ -768,14 +768,16 @@
                     
                     // 修复4: 正确的索引计算方式
                     // 输出形状应为 [1, 31, 9]，所以取 [0][year][8]
-                    const predictionValue = outputData[0][year][8];
-                    predictions[year] = predictionValue;
+                    const predictionLog = outputData[0][year][8];
+                    const predictionProb = Math.pow(10, predictionLog);  // 转换为实际概率
+                    predictions[year] = predictionProb;
                     
-                    console.log(`第 ${year} 年预测值:`, predictionValue);
+                    console.log(`第 ${year} 年预测值(log10):`, predictionLog);
+                    console.log(`第 ${year} 年实际概率:`, predictionProb);
                     
                     // 更新输入张量 (将预测值放入下一个时间步)
                     const newInputData = await inputTensor.array();
-                    newInputData[0][year][8] = predictionValue;
+                    newInputData[0][year][8] = predictionLog;
                     
                     // 清理旧张量
                     inputTensor.dispose();
