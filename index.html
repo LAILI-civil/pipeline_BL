@@ -221,7 +221,7 @@
         
         .output-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(3, 1fr); /* 改为3列布局 */
             gap: 15px;
             margin-top: 20px;
         }
@@ -324,13 +324,29 @@
             color: #92fe9d;
             font-weight: 500;
         }
+        
+        /* 新增：图表容器样式 */
+        .chart-container {
+            height: 300px;
+            margin-top: 25px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        /* 新增：响应式调整 */
+        @media (max-width: 600px) {
+            .output-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1><i class="fas fa-network-wired"></i> 管道缺陷预测系统</h1>
-            <p class="subtitle">基于TensorFlow.js的神经网络模型部署 - 纯前端实现 | 无需服务器支持 |模型在浏览器中运行</p>
+            <p class="subtitle">基于TensorFlow.js的Transformer模型部署 - 递归预测0-10年缺陷概率</p>
         </header>
         
         <div class="content">
@@ -421,7 +437,7 @@
             <div class="panel">
                 <div class="panel-title">
                     <i class="fas fa-chart-bar"></i>
-                    <h2>缺陷预测结果</h2>
+                    <h2>缺陷预测结果 (0-10年)</h2>
                 </div>
                 
                 <div id="result-placeholder" style="text-align: center; padding: 40px 20px; color: #a8d8ea;">
@@ -432,7 +448,11 @@
                 
                 <div id="output-container" style="display: none;">
                     <div class="output-grid" id="output-grid">
-                        <!-- 30个输出结果将由JS动态生成 -->
+                        <!-- 11个输出结果将由JS动态生成 (0-10年) -->
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="prediction-chart"></canvas>
                     </div>
                     
                     <div class="performance-info">
@@ -441,8 +461,8 @@
                             <div id="inference-time" class="perf-value">0 ms</div>
                         </div>
                         <div class="perf-item">
-                            <div>内存使用</div>
-                            <div id="memory-usage" class="perf-value">0 MB</div>
+                            <div>递归次数</div>
+                            <div id="recursion-count" class="perf-value">0 次</div>
                         </div>
                         <div class="perf-item">
                             <div>模型状态</div>
@@ -452,20 +472,20 @@
                     
                     <div class="model-info">
                         <div class="info-row">
-                            <span>模型大小:</span>
-                            <span class="highlight">30 MB</span>
+                            <span>模型类型:</span>
+                            <span class="highlight">Transformer</span>
                         </div>
                         <div class="info-row">
-                            <span>输入参数:</span>
-                            <span class="highlight">8 个</span>
+                            <span>输入形状:</span>
+                            <span class="highlight">[1, 31, 9]</span>
                         </div>
                         <div class="info-row">
-                            <span>输出类别:</span>
-                            <span class="highlight">30 类</span>
+                            <span>预测年份:</span>
+                            <span class="highlight">0-10年 (11个点)</span>
                         </div>
                         <div class="info-row">
-                            <span>计算位置:</span>
-                            <span class="highlight">用户浏览器</span>
+                            <span>计算方式:</span>
+                            <span class="highlight">递归推理</span>
                         </div>
                     </div>
                 </div>
@@ -474,13 +494,17 @@
         
         <div class="footer">
             <p>TensorFlow.js 纯前端部署 | 所有计算均在您的设备上完成，数据不会发送到任何服务器</p>
-            <p>模型位置: <span class="highlight">model/model.json</span> | 当前后端: <span id="backend-name" class="highlight">检测中...</span></p>
+            <p>模型位置: <span class="highlight">tfjs_model/model.json</span> | 当前后端: <span id="backend-name" class="highlight">检测中...</span></p>
         </div>
     </div>
 
+    <!-- 添加Chart.js库用于绘制图表 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script>
         // 全局变量
         let model = null;
+        let predictionChart = null;
         const GITHUB_USER = 'LAILI-civil';
         const GITHUB_REPO = 'pipeline_BL';
         const MODEL_PATH = 'tfjs_model/model.json';
@@ -496,7 +520,7 @@
         const outputGrid = document.getElementById('output-grid');
         const resultPlaceholder = document.getElementById('result-placeholder');
         const inferenceTimeEl = document.getElementById('inference-time');
-        const memoryUsageEl = document.getElementById('memory-usage');
+        const recursionCountEl = document.getElementById('recursion-count');
         const modelReadyEl = document.getElementById('model-ready');
         const backendNameEl = document.getElementById('backend-name');
         
@@ -513,7 +537,7 @@
         
         // 初始化页面
         document.addEventListener('DOMContentLoaded', async () => {
-            // 初始化输出网格
+            // 初始化输出网格 (改为11个年份)
             initOutputGrid();
             
             // 初始化模型
@@ -523,7 +547,7 @@
             backendNameEl.textContent = tf.getBackend();
             
             // 绑定按钮事件
-            predictBtn.addEventListener('click', runInference);
+            predictBtn.addEventListener('click', runRecursiveInference);
             resetBtn.addEventListener('click', resetInputs);
             
             // 为输入框添加验证事件
@@ -606,17 +630,17 @@
             return allValid;
         }
         
-        // 初始化输出网格
+        // 初始化输出网格 (改为11个年份)
         function initOutputGrid() {
             outputGrid.innerHTML = '';
-            for (let i = 1; i <= 30; i++) {
+            for (let year = 0; year <= 10; year++) {
                 const cell = document.createElement('div');
                 cell.className = 'output-cell';
                 cell.innerHTML = `
-                    <div class="output-label">类别 ${i}</div>
-                    <div class="output-value" id="output-${i}">0.000</div>
+                    <div class="output-label">第 ${year} 年</div>
+                    <div class="output-value" id="output-${year}">0.000</div>
                     <div class="progress-container">
-                        <div class="progress-bar" id="progress-${i}" style="width: 0%"></div>
+                        <div class="progress-bar" id="progress-${year}" style="width: 0%"></div>
                     </div>
                 `;
                 outputGrid.appendChild(cell);
@@ -672,8 +696,8 @@
             ];
         }
         
-        // 运行推理
-        async function runInference() {
+        // 递归推理函数
+        async function runRecursiveInference() {
             if (!model) {
                 alert('模型尚未加载完成，请稍候...');
                 return;
@@ -687,42 +711,107 @@
             
             try {
                 // 显示加载状态
-                predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 计算中...';
+                predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 递归计算中...';
                 predictBtn.disabled = true;
                 
                 // 获取输入值
                 const inputs = getInputValues();
+                console.log('输入参数:', inputs);
                 
-                // 创建Tensor
-                const inputTensor = tf.tensor([inputs]);
+                // 初始化结果数组 (0-10年，共11个值)
+                const predictions = new Array(11).fill(0);
                 
-                // 执行推理
+                // 创建初始输入张量 [1, 31, 9]
+                const sequenceLength = 31;
+                const featureSize = 9;
+                
+                // 创建初始张量
+                const initialData = Array(sequenceLength).fill(0).map(() => Array(featureSize).fill(0));
+                
+                // 设置所有时间步的前8个特征
+                for (let i = 0; i < sequenceLength; i++) {
+                    for (let j = 0; j < 8; j++) {
+                        initialData[i][j] = inputs[j];
+                    }
+                }
+                
+                // 第0年设为0
+                initialData[0][8] = 0;
+                
+                // 转换为张量 [1, 31, 9]
+                let inputTensor = tf.tensor3d([initialData]);
+                console.log('初始输入张量形状:', inputTensor.shape);
+                
+                // 记录开始时间
                 const startTime = performance.now();
-                const outputTensor = model.predict(inputTensor);
-                const results = await outputTensor.data();
+                let totalInferenceTime = 0;
+                let recursionSteps = 0;
+                
+                // 进行11次递归预测 (0-10年)
+                for (let year = 1; year <= 10; year++) {
+                    recursionSteps++;
+                    
+                    // 执行推理
+                    const inferenceStartTime = performance.now();
+                    
+                    // 修改1: 正确处理模型输出（可能是单个张量或数组）
+                    let outputTensor = model.predict(inputTensor);
+                    if (Array.isArray(outputTensor)) {
+                        // 如果返回的是数组，取第一个输出
+                        outputTensor = outputTensor[0];
+                    }
+                    
+                    // 修改2: 使用正确的异步方式获取数据
+                    const outputData = await outputTensor.array();
+                    
+                    // 修改3: 正确的索引计算方式
+                    // 输出形状应为 [1, 31, 9]，所以取 [0][year][8]
+                    const predictionValue = outputData[0][year][8];
+                    predictions[year] = predictionValue;
+                    
+                    console.log(`第 ${year} 年预测值:`, predictionValue);
+                    
+                    // 更新输入张量 (将预测值放入下一个时间步)
+                    const newInputData = inputTensor.arraySync()[0];
+                    newInputData[year][8] = predictionValue;
+                    
+                    // 清理旧张量
+                    inputTensor.dispose();
+                    outputTensor.dispose();
+                    
+                    // 创建新的输入张量
+                    inputTensor = tf.tensor3d([newInputData]);
+                    
+                    const inferenceEndTime = performance.now();
+                    totalInferenceTime += inferenceEndTime - inferenceStartTime;
+                }
+                
+                // 记录结束时间
                 const endTime = performance.now();
                 
                 // 显示结果
-                displayResults(results);
+                displayResults(predictions);
+                
+                // 绘制图表
+                drawPredictionChart(predictions);
                 
                 // 显示输出容器
                 outputContainer.style.display = 'block';
                 resultPlaceholder.style.display = 'none';
                 
                 // 更新性能信息
-                const inferenceTime = (endTime - startTime).toFixed(2);
-                const memoryUsage = (tf.memory().numBytes / 1024 / 1024).toFixed(2);
-                inferenceTimeEl.textContent = `${inferenceTime} ms`;
-                memoryUsageEl.textContent = `${memoryUsage} MB`;
+                const totalTime = (endTime - startTime).toFixed(2);
+                const avgInferenceTime = (totalInferenceTime / recursionSteps).toFixed(2);
+                inferenceTimeEl.textContent = `${totalTime} ms`;
+                recursionCountEl.textContent = `${recursionSteps} 次`;
                 
                 // 清理Tensor
                 inputTensor.dispose();
-                outputTensor.dispose();
                 tf.disposeVariables();
                 
             } catch (error) {
-                alert(`计算错误: ${error.message}`);
-                console.error('推理错误:', error);
+                alert(`递归计算错误: ${error.message}`);
+                console.error('递归推理错误:', error);
             } finally {
                 // 重置按钮状态
                 predictBtn.innerHTML = '<i class="fas fa-calculator"></i> 计算预测结果';
@@ -730,21 +819,21 @@
             }
         }
         
-        // 显示结果
-        function displayResults(results) {
+        // 显示结果 (0-10年)
+        function displayResults(predictions) {
             // 找到最大值用于归一化
-            const maxVal = Math.max(...results);
+            const maxVal = Math.max(...predictions.filter(val => !isNaN(val)));
             
-            for (let i = 0; i < 30; i++) {
-                const value = results[i];
-                const percent = (value / maxVal) * 100;
+            for (let year = 0; year <= 10; year++) {
+                const value = predictions[year];
                 
                 // 更新输出值
-                const outputValueEl = document.getElementById(`output-${i+1}`);
+                const outputValueEl = document.getElementById(`output-${year}`);
                 outputValueEl.textContent = value.toFixed(5);
                 
-                // 更新进度条
-                const progressBar = document.getElementById(`progress-${i+1}`);
+                // 更新进度条 (归一化到0-100%)
+                const progressBar = document.getElementById(`progress-${year}`);
+                const percent = maxVal > 0 ? (value / maxVal) * 100 : 0;
                 progressBar.style.width = `${percent}%`;
                 
                 // 根据值设置颜色
@@ -756,6 +845,104 @@
                     progressBar.style.background = 'linear-gradient(90deg, #00c9ff, #92fe9d)';
                 }
             }
+        }
+        
+        // 绘制预测图表
+        function drawPredictionChart(predictions) {
+            const ctx = document.getElementById('prediction-chart').getContext('2d');
+            
+            // 如果已有图表实例，先销毁
+            if (predictionChart) {
+                predictionChart.destroy();
+            }
+            
+            // 创建新图表
+            predictionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 11}, (_, i) => `第${i}年`),
+                    datasets: [{
+                        label: '缺陷概率预测',
+                        data: predictions,
+                        borderColor: '#00c9ff',
+                        backgroundColor: 'rgba(0, 201, 255, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#92fe9d',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#a8d8ea',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(20, 30, 48, 0.9)',
+                            titleColor: '#00c9ff',
+                            bodyColor: '#92fe9d',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    return `概率: ${context.parsed.y.toFixed(5)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a8d8ea'
+                            },
+                            title: {
+                                display: true,
+                                text: '年份',
+                                color: '#00c9ff',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        y: {
+                            min: 0,
+                            max: 1,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a8d8ea',
+                                callback: function(value) {
+                                    return value.toFixed(2);
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: '缺陷概率',
+                                color: '#00c9ff',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
         
         // 重置输入
@@ -778,6 +965,12 @@
             // 隐藏结果容器
             outputContainer.style.display = 'none';
             resultPlaceholder.style.display = 'block';
+            
+            // 销毁图表
+            if (predictionChart) {
+                predictionChart.destroy();
+                predictionChart = null;
+            }
         }
         
         // 设备兼容性检查
