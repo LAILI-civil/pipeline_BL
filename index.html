@@ -825,21 +825,33 @@
         
         // 显示结果 (0-10年)
         function displayResults(predictions) {
-            // 找到最大值用于归一化
-            const maxVal = Math.max(...predictions.filter(val => !isNaN(val)));
-            
+            // 找到最大值用于归一化（排除NaN和负无穷）
+            const validPredictions = predictions.filter(val => !isNaN(val) && isFinite(val));
+            const maxVal = validPredictions.length > 0 ? Math.max(...validPredictions) : 1;
+        
             for (let year = 0; year <= 10; year++) {
                 const value = predictions[year];
-                
-                // 更新输出值
+            
+                // 更新输出值 - 显示实际概率
                 const outputValueEl = document.getElementById(`output-${year}`);
-                outputValueEl.textContent = value.toFixed(5);
-                
+            
+                // 处理无效值
+                if (isNaN(value) || !isFinite(value)) {
+                    outputValueEl.textContent = "N/A";
+                } else {
+                    outputValueEl.textContent = value.toFixed(5);
+                }
+            
                 // 更新进度条 (归一化到0-100%)
                 const progressBar = document.getElementById(`progress-${year}`);
-                const percent = maxVal > 0 ? (value / maxVal) * 100 : 0;
+                let percent = 0;
+            
+                if (!isNaN(value) && isFinite(value) && maxVal > 0) {
+                    percent = (value / maxVal) * 100;
+                }
+            
                 progressBar.style.width = `${percent}%`;
-                
+            
                 // 根据值设置颜色
                 if (value > 0.7) {
                     progressBar.style.background = 'linear-gradient(90deg, #ff416c, #ff4b2b)';
