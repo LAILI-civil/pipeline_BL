@@ -703,88 +703,83 @@
                 return;
             }
             
-            // 验证所有输入
             if (!validateAllInputs()) {
                 alert('请检查输入参数，部分值超出允许范围');
                 return;
             }
             
             try {
-                // 显示加载状态
                 predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 递归计算中...';
                 predictBtn.disabled = true;
                 
-                // 获取输入值
                 const inputs = getInputValues();
                 console.log('输入参数:', inputs);
                 
                 // 初始化结果数组 (0-10年，共11个值)
                 const predictions = new Array(11).fill(0);
                 
-                // 创建初始输入张量 [1, 31, 9]
                 const sequenceLength = 31;
                 const featureSize = 9;
                 
-                // 创建初始张量 - 修复1: 确保创建三维数据结构
+                // 创建初始张量 - 所有时间步概率值初始为0
                 const initialData = [];
                 for (let i = 0; i < sequenceLength; i++) {
                     const timestep = [];
-                    // 前8个特征是相同的输入值
                     for (let j = 0; j < 8; j++) {
                         timestep.push(inputs[j]);
                     }
-                    // 第9个特征（缺陷概率）初始化为0
-                    timestep.push(i === 0 ? 0 : 0); // 只有第0年设为0，其他年份用0填充
+                    // 所有年份概率值初始为0
+                    timestep.push(0);
                     initialData.push(timestep);
                 }
                 
-                // 转换为张量 [1, 31, 9] - 修复2: 确保创建三维张量
+                // 转换为张量 [1, 31, 9]
                 let inputTensor = tf.tensor3d([initialData], [1, sequenceLength, featureSize]);
                 console.log('初始输入张量形状:', inputTensor.shape);
-                console.log('初始输入数据:', await inputTensor.array());
                 
                 // 记录开始时间
                 const startTime = performance.now();
                 let totalInferenceTime = 0;
                 let recursionSteps = 0;
                 
-                // 进行11次递归预测 (0-10年)
-                for (let year = 1; year <= 10; year++) {
+                // 关键修改：递归预测0-10年（共11次）
+                for (let year = 0; year <= 10; year++) {
                     recursionSteps++;
+                    const inferenceStartTime = performance.now();
                     
                     // 执行推理 
-                    const inferenceStartTime = performance.now();
                     let outputTensor = model.predict(inputTensor);
-                    
-                    // 处理输出可能是数组的情况
                     if (Array.isArray(outputTensor)) {
                         outputTensor = outputTensor[0];
                     }
                     
                     // 获取预测结果
                     const outputData = await outputTensor.array();
-                    console.log(`输出张量形状: ${outputTensor.shape}`);
-                    console.log(`输出数据:`, outputData);
+                    const predictionLog = outputData[0][year][8]; // 获取当前年份的log10概率
                     
-                    // 修复4: 正确的索引计算方式
-                    // 输出形状应为 [1, 31, 9]，所以取 [0][year][8]
-                    const predictionLog = outputData[0][year][8];
-                    const predictionProb = Math.pow(10, predictionLog);  // 转换为实际概率
+                    // 转换为实际概率
+                    const predictionProb = Math.pow(10, predictionLog);
                     predictions[year] = predictionProb;
                     
                     console.log(`第 ${year} 年预测值(log10):`, predictionLog);
                     console.log(`第 ${year} 年实际概率:`, predictionProb);
                     
-                    // 更新输入张量 (将预测值放入下一个时间步)
-                    const newInputData = await inputTensor.array();
-                    newInputData[0][year][8] = predictionLog;
-                    
-                    // 清理旧张量
-                    inputTensor.dispose();
-                    outputTensor.dispose();
-                    
-                    // 创建新的输入张量 - 修复5: 确保保持三维形状
-                    inputTensor = tf.tensor3d(newInputData, [1, sequenceLength, featureSize]);
+                    // 如果不是最后一年，更新输入张量（将预测值放入下一年位置）
+                    if (year < 10) {
+                        const newInputData = await inputTensor.array();
+                        // 将当前年份的预测值放入下一年的输入位置
+                        newInputData[0][year + 1][8] = predictionLog;
+                        
+                        // 清理旧张量
+                        inputTensor.dispose();
+                        outputTensor.dispose();
+                        
+                        // 创建新的输入张量
+                        inputTensor = tf.tensor3d(newInputData, [1, sequenceLength, featureSize]);
+                    } else {
+                        // 最后一年只需清理输出张量
+                        outputTensor.dispose();
+                    }
                     
                     const inferenceEndTime = performance.now();
                     totalInferenceTime += inferenceEndTime - inferenceStartTime;
@@ -795,15 +790,11 @@
                 
                 // 显示结果
                 displayResults(predictions);
-                
-                // 绘制图表
                 drawPredictionChart(predictions);
                 
-                // 显示输出容器
                 outputContainer.style.display = 'block';
                 resultPlaceholder.style.display = 'none';
                 
-                // 更新性能信息
                 const totalTime = (endTime - startTime).toFixed(2);
                 const avgInferenceTime = (totalInferenceTime / recursionSteps).toFixed(2);
                 inferenceTimeEl.textContent = `${totalTime} ms`;
@@ -817,7 +808,6 @@
                 alert(`递归计算错误: ${error.message}`);
                 console.error('递归推理错误:', error);
             } finally {
-                // 重置按钮状态
                 predictBtn.innerHTML = '<i class="fas fa-calculator"></i> 计算预测结果';
                 predictBtn.disabled = false;
             }
