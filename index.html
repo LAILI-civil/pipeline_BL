@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管道缺陷预测系统 | TensorFlow.js 部署</title>
+    <title>Pipeline burst and leakage Prob estimation system| 管道缺陷失效概率预测系统</title>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -345,8 +345,8 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-network-wired"></i> 管道缺陷预测系统</h1>
-            <p class="subtitle">基于TensorFlow.js的Transformer模型部署 - 递归预测0-10年缺陷概率</p>
+            <h1><i class="fas fa-network-wired"></i> Pipeline defect failure estimated system | 管道缺陷失效概率预测系统</h1>
+            <p class="subtitle">Recursive prediction of 0-10 year failure probability | 递归预测0-10年失效概率</p>
         </header>
         
         <div class="content">
@@ -354,7 +354,7 @@
             <div class="panel">
                 <div class="panel-title">
                     <i class="fas fa-sliders-h"></i>
-                    <h2>管道参数输入</h2>
+                    <h2>Pipeline para input | 管道参数输入</h2>
                 </div>
                 
                 <div class="input-group">
@@ -416,16 +416,16 @@
                 
                 <div class="btn-container">
                     <button id="predict-btn">
-                        <i class="fas fa-calculator"></i> 计算预测结果
+                        <i class="fas fa-calculator"></i> Calculations|计算预测结果
                     </button>
                     <button id="reset-btn">
-                        <i class="fas fa-redo"></i> 重置参数
+                        <i class="fas fa-redo"></i> Reset|重置参数
                     </button>
                 </div>
                 
                 <div class="status-card">
                     <div id="model-status" class="loading">
-                        <i class="fas fa-spinner fa-spin"></i> 正在加载神经网络模型...
+                        <i class="fas fa-spinner fa-spin"></i> Load NN|正在加载神经网络模型...
                     </div>
                     <div class="progress-container">
                         <div id="model-progress" class="progress-bar"></div>
