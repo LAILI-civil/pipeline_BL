@@ -219,21 +219,6 @@
             color: #ff6b6b;
         }
         
-        .output-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 改为3列布局 */
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .output-cell {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
         .output-cell:hover {
             transform: translateY(-3px);
             background: rgba(0, 0, 0, 0.4);
@@ -447,10 +432,6 @@
                 </div>
                 
                 <div id="output-container" style="display: none;">
-                    <div class="output-grid" id="output-grid">
-                        <!-- 11个输出结果将由JS动态生成 (0-10年) -->
-                    </div>
-                    
                     <div class="chart-container">
                         <canvas id="prediction-chart"></canvas>
                     </div>
@@ -537,9 +518,6 @@
         
         // 初始化页面
         document.addEventListener('DOMContentLoaded', async () => {
-            // 初始化输出网格 (改为11个年份)
-            initOutputGrid();
-            
             // 初始化模型
             await loadModel();
             
@@ -628,23 +606,6 @@
             }
             
             return allValid;
-        }
-        
-        // 初始化输出网格 (改为11个年份)
-        function initOutputGrid() {
-            outputGrid.innerHTML = '';
-            for (let year = 0; year <= 10; year++) {
-                const cell = document.createElement('div');
-                cell.className = 'output-cell';
-                cell.innerHTML = `
-                    <div class="output-label">第 ${year} 年</div>
-                    <div class="output-value" id="output-${year}">0.000</div>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="progress-${year}" style="width: 0%"></div>
-                    </div>
-                `;
-                outputGrid.appendChild(cell);
-            }
         }
         
         // 加载模型
@@ -790,7 +751,6 @@
                 const endTime = performance.now();
                 
                 // 显示结果
-                displayResults(predictions);
                 drawPredictionChart(predictions);
                 
                 outputContainer.style.display = 'block';
@@ -811,46 +771,6 @@
             } finally {
                 predictBtn.innerHTML = '<i class="fas fa-calculator"></i> 计算预测结果';
                 predictBtn.disabled = false;
-            }
-        }
-        
-        // 显示结果 (0-10年)
-        function displayResults(predictions) {
-            // 找到最大值用于归一化（排除NaN和负无穷）
-            const validPredictions = predictions.filter(val => !isNaN(val) && isFinite(val));
-            const maxVal = validPredictions.length > 0 ? Math.max(...validPredictions) : 1;
-        
-            for (let year = 0; year <= 10; year++) {
-                const value = predictions[year];
-            
-                // 更新输出值 - 显示实际概率
-                const outputValueEl = document.getElementById(`output-${year}`);
-            
-                // 处理无效值
-                if (isNaN(value) || !isFinite(value)) {
-                    outputValueEl.textContent = "N/A";
-                } else {
-                    outputValueEl.textContent = value.toFixed(5);
-                }
-            
-                // 更新进度条 (归一化到0-100%)
-                const progressBar = document.getElementById(`progress-${year}`);
-                let percent = 0;
-            
-                if (!isNaN(value) && isFinite(value) && maxVal > 0) {
-                    percent = (value / maxVal) * 100;
-                }
-            
-                progressBar.style.width = `${percent}%`;
-            
-                // 根据值设置颜色
-                if (value > 0.7) {
-                    progressBar.style.background = 'linear-gradient(90deg, #ff416c, #ff4b2b)';
-                } else if (value > 0.4) {
-                    progressBar.style.background = 'linear-gradient(90deg, #ff9966, #ff5e62)';
-                } else {
-                    progressBar.style.background = 'linear-gradient(90deg, #00c9ff, #92fe9d)';
-                }
             }
         }
         
