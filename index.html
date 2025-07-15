@@ -437,13 +437,13 @@
             <div class="panel">
                 <div class="panel-title">
                     <i class="fas fa-chart-bar"></i>
-                    <h2>缺陷预测结果 (0-10年)</h2>
+                    <h2>Prediction results|概率预测结果 (0-10 year)</h2>
                 </div>
                 
                 <div id="result-placeholder" style="text-align: center; padding: 40px 20px; color: #a8d8ea;">
                     <i class="fas fa-project-diagram" style="font-size: 3rem; margin-bottom: 20px;"></i>
-                    <h3>等待计算结果</h3>
-                    <p>输入参数后点击"计算预测结果"按钮</p>
+                    <h3>Waiting results|等待计算结果</h3>
+                    <p>entering the pipeline parameters, click the "Calculation" button|输入参数后点击"计算预测结果"按钮</p>
                 </div>
                 
                 <div id="output-container" style="display: none;">
@@ -481,7 +481,7 @@
                         </div>
                         <div class="info-row">
                             <span>Prediction|预测年份:</span>
-                            <span class="highlight">0-10年 (11个点)</span>
+                            <span class="highlight">0-10 year)</span>
                         </div>
                         <div class="info-row">
                             <span>Cal mode|计算方式:</span>
@@ -799,7 +799,7 @@
                 const totalTime = (endTime - startTime).toFixed(2);
                 const avgInferenceTime = (totalInferenceTime / recursionSteps).toFixed(2);
                 inferenceTimeEl.textContent = `${totalTime} ms`;
-                recursionCountEl.textContent = `${recursionSteps} 次`;
+                recursionCountEl.textContent = `${recursionSteps} `;
                 
                 // 清理Tensor
                 inputTensor.dispose();
