@@ -670,7 +670,7 @@
             }
             
             try {
-                predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 递归计算中...';
+                predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating|计算中...';
                 predictBtn.disabled = true;
                 
                 const inputs = getInputValues();
@@ -769,7 +769,7 @@
                 alert(`递归计算错误: ${error.message}`);
                 console.error('递归推理错误:', error);
             } finally {
-                predictBtn.innerHTML = '<i class="fas fa-calculator"></i> 计算预测结果';
+                predictBtn.innerHTML = '<i class="fas fa-calculator"></i> Calculate Prob|计算预测结果';
                 predictBtn.disabled = false;
             }
         }
