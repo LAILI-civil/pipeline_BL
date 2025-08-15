@@ -343,7 +343,6 @@
                 </div>
                 
                 <div class="input-group">
-                    <!-- 修正输入顺序 -->
                     <div class="input-row">
                         <label for="smys">SMYS</label>
                         <input type="number" id="smys" value="483" step="1" min="290" max="690">
@@ -359,6 +358,12 @@
                     </div>
                     
                     <div class="input-row">
+                        <label for="thickness">Thickness</label>
+                        <input type="number" id="thickness" value="12" step="0.1">
+                        <span class="unit">mm</span>
+                    </div>
+                    
+                    <div class="input-row">
                         <label for="dia">Diameter</label>
                         <input type="number" id="dia" value="1066.8" step="0.2" min="168.2" max="1219.2">
                         <span class="unit">168.2-1219.2 mm</span>
@@ -366,22 +371,22 @@
                     </div>
                     
                     <div class="input-row">
-                        <label for="depth">Depth</label>
-                        <input type="number" id="depth" value="40.85220151" step="0.1" min="0" max="80">
-                        <span class="unit">0-80 %</span>
-                        <span class="error-message" id="depth-error"></span>
-                    </div>
-                    
-                    <div class="input-row">
                         <label for="d_grow">d_grow</label>
-                        <input type="number" id="d_grow" value="0.281853817" step="0.000001" min="0.0" max="0.8">
+                        <input type="number" id="d_grow" value="0.282" step="0.001" min="0.0" max="0.8">
                         <span class="unit">0.0-0.8 mm</span>
                         <span class="error-message" id="d_grow-error"></span>
                     </div>
                     
                     <div class="input-row">
+                        <label for="depth">Depth</label>
+                        <input type="number" id="depth" value="42.7" step="0.1" min="0" max="80">
+                        <span class="unit">0-80 %</span>
+                        <span class="error-message" id="depth-error"></span>
+                    </div>
+                    
+                    <div class="input-row">
                         <label for="length">Length</label>
-                        <input type="number" id="length" value="275.3460866" step="0.1" min="10" max="400">
+                        <input type="number" id="length" value="98.1" step="0.1" min="10" max="400">
                         <span class="unit">10-400 mm</span>
                         <span class="error-message" id="length-error"></span>
                     </div>
@@ -391,13 +396,6 @@
                         <input type="number" id="prestress" value="8.69" step="0.001" min="4.137" max="9.653">
                         <span class="unit">4.137-9.653 Mpa</span>
                         <span class="error-message" id="prestress-error"></span>
-                    </div>
-                    
-                    <!-- thickness移动到正确位置 -->
-                    <div class="input-row">
-                        <label for="thickness">Thickness</label>
-                        <input type="number" id="thickness" value="12" step="0.1">
-                        <span class="unit">mm</span>
                     </div>
                 </div>
                 
@@ -494,11 +492,12 @@
             35.0, 0.45000001788139343, 205.0,
             6.894999980926514, 10.273015975952148, -3.6427652835845947
         ];
-        const NORM_STD = [
+        const NORM_VAR = [
             98.27871704101562, 83.28172302246094, 354.2989807128906,
             20.4939022064209, 0.22912879288196564, 115.43396759033203,
             1.7802813053131104, 4.854230880737305, 1.6788053512573242
         ];
+        const NORM_STD = NORM_VAR.map(v => Math.sqrt(v));
         const zNorm = (v, i) => (v - NORM_MEAN[i]) / NORM_STD[i];
         const zDenorm = (v, i) => v * NORM_STD[i] + NORM_MEAN[i];
         
@@ -687,78 +686,18 @@
             }
         }
         
-        // 获取输入值（修正参数顺序）
+        // 获取输入值
         function getInputValues() {
             return [
-                parseFloat(document.getElementById('smys').value) || 0,      // 0: smys
-                parseFloat(document.getElementById('smts').value) || 0,      // 1: smts
-                parseFloat(document.getElementById('dia').value) || 0,       // 2: dia
-                parseFloat(document.getElementById('depth').value) || 0,      // 3: depth
-                parseFloat(document.getElementById('d_grow').value) || 0,     // 4: d_grow
-                parseFloat(document.getElementById('length').value) || 0,     // 5: length
-                parseFloat(document.getElementById('prestress').value) || 0,  // 6: prestress
-                parseFloat(document.getElementById('thickness').value) || 0   // 7: thickness
+                parseFloat(document.getElementById('smys').value) || 0,
+                parseFloat(document.getElementById('smts').value) || 0,
+                parseFloat(document.getElementById('dia').value) || 0,
+                parseFloat(document.getElementById('depth').value) || 0,
+                parseFloat(document.getElementById('d_grow').value) || 0,
+                parseFloat(document.getElementById('length').value) || 0,
+                parseFloat(document.getElementById('prestress').value) || 0,
+                parseFloat(document.getElementById('thickness').value) || 0
             ];
-        }
-        
-        // Burst_92模型的自回归预测函数（根据Python代码重写）
-        async function autoregressivePredictBurst(modelBurst, inputData) {
-            const SEQ_LEN = 31;
-            const FEAT_SIZE = 9;
-            const REPL_LOG = -6; // log10(1e-6)
-            
-            // 获取概率的归一化参数
-            const probMean = NORM_MEAN[8];
-            const probStd = NORM_STD[8];
-            
-            // 存储预测的概率值（log10尺度）
-            const predictedLogProbs = new Array(SEQ_LEN).fill(0);
-            
-            // 第0年已知，不需要预测
-            predictedLogProbs[0] = (REPL_LOG - probMean) / probStd;
-            
-            // 更新输入数据
-            let dataArray = await inputData.array();
-            dataArray[0][0][8] = predictedLogProbs[0];
-            
-            // 创建新的张量
-            let tensor = tf.tensor3d(dataArray, [1, SEQ_LEN, FEAT_SIZE]);
-            
-            // 逐步预测第1年到第30年
-            for (let year = 1; year < SEQ_LEN; year++) {
-                // 使用当前数据预测
-                const output = modelBurst.predict(tensor);
-                
-                // 获取预测结果
-                const outputData = await output.array();
-                const nextLogProb = outputData[0][year-1][8];  // 使用year-1索引
-                
-                // 更新预测结果
-                predictedLogProbs[year] = nextLogProb;
-                
-                // 更新输入数据
-                dataArray = await tensor.array();
-                dataArray[0][year][8] = nextLogProb;
-                
-                // 释放旧张量
-                tensor.dispose();
-                output.dispose();
-                
-                // 创建新张量
-                tensor = tf.tensor3d(dataArray, [1, SEQ_LEN, FEAT_SIZE]);
-            }
-            
-            // 释放最后一个张量
-            tensor.dispose();
-            
-            // 转换回原始概率尺度
-            const predictedLog = predictedLogProbs.map(logProb => 
-                logProb * probStd + probMean
-            );
-            
-            const predictedProbs = predictedLog.map(logVal => Math.pow(10, logVal));
-            
-            return predictedProbs.slice(0, 11); // 只返回前11年（0-10年）
         }
         
         // 递归推理
@@ -777,70 +716,81 @@
             predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating|计算中...';
             predictBtn.disabled = true;
 
-            // 获取用户输入（顺序已修正）
+            // 获取用户输入
             const userInputs = getInputValues();
             const SEQ_LEN = 31;
             const FEAT_SIZE = 9;
+            const REPL_LOG = -6; // log10(1e-6)
+
+            // 创建输入张量
+            const initOld = [];
+            const initBurst = [];
+            
+            for (let t = 0; t < SEQ_LEN; t++) {
+                // 旧模型输入
+                const rowOld = [
+                    ...userInputs,
+                    t === 0 ? REPL_LOG : 0
+                ];
+                initOld.push(rowOld);
+                
+                // 新模型输入
+                const rowBurst = [];
+                for (let j = 0; j < 8; j++) {
+                    rowBurst.push(zNorm(userInputs[j], j));
+                }
+                const lp0 = (t === 0 ? REPL_LOG : 0);
+                rowBurst.push(zNorm(lp0, 8));
+                initBurst.push(rowBurst);
+            }
+            
+            let tensorOld = tf.tensor3d([initOld], [1, SEQ_LEN, FEAT_SIZE]);
+            let tensorBurst = tf.tensor3d([initBurst], [1, SEQ_LEN, FEAT_SIZE]);
+
+            // 预测结果存储
+            const predictionsOld = new Array(11).fill(0);
+            const predictionsBurst = new Array(11).fill(0);
             const tStart = performance.now();
 
-            // 1. 处理旧模型预测
-            // 创建旧模型输入张量
-            const initOld = [];
-            for (let t = 0; t < SEQ_LEN; t++) {
-                const row = [
-                    ...userInputs,
-                    t === 0 ? -6 : 0 // 第0年使用-6（log10(1e-6)）
-                ];
-                initOld.push(row);
-            }
-            let tensorOld = tf.tensor3d([initOld], [1, SEQ_LEN, FEAT_SIZE]);
-            
-            // 存储预测结果
-            const predictionsOld = new Array(11).fill(0);
-            
-            // 递归预测旧模型
+            // 递归预测
             for (let year = 0; year <= 10; year++) {
-                // 预测
+                // 旧模型预测
                 let outOld = model.predict(tensorOld);
                 if (Array.isArray(outOld)) outOld = outOld[0];
-                
-                // 获取预测值
                 const logOld = (await outOld.array())[0][year][8];
                 predictionsOld[year] = Math.pow(10, logOld);
 
+                // 新模型预测
+                let outBurst = modelBurst.predict(tensorBurst);
+                if (Array.isArray(outBurst)) outBurst = outBurst[0];
+                const normPred = (await outBurst.array())[0][year][8];
+                const logBurst = zDenorm(normPred, 8);
+                predictionsBurst[year] = Math.pow(10, logBurst);
+
                 // 更新输入张量
                 if (year < 10) {
+                    // 更新旧模型张量
                     const dataOld = await tensorOld.array();
                     dataOld[0][year + 1][8] = logOld;
                     tensorOld.dispose();
                     outOld.dispose();
                     tensorOld = tf.tensor3d(dataOld, [1, SEQ_LEN, FEAT_SIZE]);
+                    
+                    // 更新新模型张量
+                    const dataBurst = await tensorBurst.array();
+                    dataBurst[0][year + 1][8] = normPred;
+                    tensorBurst.dispose();
+                    outBurst.dispose();
+                    tensorBurst = tf.tensor3d(dataBurst, [1, SEQ_LEN, FEAT_SIZE]);
                 } else {
                     outOld.dispose();
+                    outBurst.dispose();
                 }
             }
-            tensorOld.dispose();
-            
-            // 2. 处理Burst_92模型预测
-            // 归一化用户输入
-            const normUserInputs = [];
-            for (let i = 0; i < 8; i++) {
-                normUserInputs.push(zNorm(userInputs[i], i));
-            }
-            
-            // 创建Burst_92模型输入张量
-            const inputDataBurst = [];
-            for (let t = 0; t < SEQ_LEN; t++) {
-                const row = [...normUserInputs];
-                row.push(0); // 初始化为0，将在autoregressivePredictBurst中更新
-                inputDataBurst.push(row);
-            }
-            let tensorBurst = tf.tensor3d([inputDataBurst], [1, SEQ_LEN, FEAT_SIZE]);
-            
-            // 使用自回归预测
-            const predictionsBurst = await autoregressivePredictBurst(modelBurst, tensorBurst);
-            
+
             // 释放资源
+            tensorOld.dispose();
+            tensorBurst.dispose();
             tf.disposeVariables();
 
             // 绘制结果
@@ -859,25 +809,6 @@
             predictBtn.disabled = false;
         }
         
-        // 计算图表Y轴最大值（动态调整）
-        function calculateYMax(predictions) {
-            const maxValue = Math.max(...predictions);
-            
-            // 如果所有值都为零，返回0.01作为默认值
-            if (maxValue === 0) return 0.01;
-            
-            // 计算合适的Y轴最大值
-            if (maxValue > 0.1) {
-                return 1.0; // 对于较大值，固定到1
-            } else if (maxValue > 0.01) {
-                return Math.min(1, maxValue * 1.5); // 中等范围
-            } else if (maxValue > 0.001) {
-                return maxValue * 10; // 小范围
-            } else {
-                return maxValue * 100; // 极小范围
-            }
-        }
-        
         // 绘制预测图表
         function drawPredictionChart(predictions) {
             const ctx = document.getElementById('prediction-chart').getContext('2d');
@@ -886,9 +817,6 @@
             if (predictionChart) {
                 predictionChart.destroy();
             }
-            
-            // 动态计算Y轴范围
-            const yMax = calculateYMax(predictions);
             
             // 创建新图表
             predictionChart = new Chart(ctx, {
@@ -929,7 +857,7 @@
                             padding: 12,
                             callbacks: {
                                 label: function(context) {
-                                    return `Probability: ${context.parsed.y.toExponential(4)}`;
+                                    return `Probability: ${context.parsed.y.toFixed(5)}`;
                                 }
                             }
                         }
@@ -954,18 +882,14 @@
                         },
                         y: {
                             min: 0,
-                            max: yMax,
+                            max: 1,
                             grid: {
                                 color: 'rgba(255, 255, 255, 0.1)'
                             },
                             ticks: {
                                 color: '#a8d8ea',
                                 callback: function(value) {
-                                    if (value < 0.001) {
-                                        return value.toExponential(1);
-                                    } else {
-                                        return value.toFixed(4);
-                                    }
+                                    return value.toFixed(2);
                                 }
                             },
                             title: {
@@ -991,9 +915,6 @@
             if (predictionChartBurst) {
                 predictionChartBurst.destroy();
             }
-            
-            // 动态计算Y轴范围
-            const yMax = calculateYMax(predictions);
             
             // 创建新图表
             predictionChartBurst = new Chart(ctx, {
@@ -1034,7 +955,7 @@
                             padding: 12,
                             callbacks: {
                                 label: function(context) {
-                                    return `Probability: ${context.parsed.y.toExponential(4)}`;
+                                    return `Probability: ${context.parsed.y.toFixed(5)}`;
                                 }
                             }
                         }
@@ -1059,18 +980,14 @@
                         },
                         y: {
                             min: 0,
-                            max: yMax,
+                            max: 1,
                             grid: {
                                 color: 'rgba(255, 255, 255, 0.1)'
                             },
                             ticks: {
                                 color: '#ffcd56',
                                 callback: function(value) {
-                                    if (value < 0.001) {
-                                        return value.toExponential(1);
-                                    } else {
-                                        return value.toFixed(4);
-                                    }
+                                    return value.toFixed(2);
                                 }
                             },
                             title: {
@@ -1090,15 +1007,14 @@
 
         // 重置输入
         function resetInputs() {
-            // 设置默认值（根据Python代码中的示例值）
             document.getElementById('smys').value = '483';
             document.getElementById('smts').value = '565';
-            document.getElementById('dia').value = '1066.8';
-            document.getElementById('depth').value = '40.85220151';
-            document.getElementById('d_grow').value = '0.281853817';
-            document.getElementById('length').value = '275.3460866';
-            document.getElementById('prestress').value = '8.69';
             document.getElementById('thickness').value = '12';
+            document.getElementById('dia').value = '1066.8';
+            document.getElementById('d_grow').value = '0.282';
+            document.getElementById('depth').value = '42.7';
+            document.getElementById('length').value = '98.1';
+            document.getElementById('prestress').value = '8.69';
             
             // 清除错误信息
             for (const inputId in inputValidations) {
