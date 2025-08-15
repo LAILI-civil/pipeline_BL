@@ -433,6 +433,9 @@
                 
                 <div id="output-container" style="display: none;">
                     <div class="chart-container">
+                        <canvas id="prediction-chart-burst"></canvas>
+                    </div>
+                    <div class="chart-container">
                         <canvas id="prediction-chart"></canvas>
                     </div>
                     
@@ -483,14 +486,36 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
+        /* ===============   全局常量 / 归一化参数   =============== */
+        /* Mean、Var 来自你的描述 */
+        const NORM_MEAN = [
+          423.0857238769531, 517.4285888671875, 738.7656860351562,
+           35.0, 0.45000001788139343, 205.0,
+            6.894999980926514, 10.273015975952148, -3.6427652835845947
+        ];
+        const NORM_VAR = [
+           98.27871704101562,  83.28172302246094, 354.2989807128906,
+           20.4939022064209,   0.22912879288196564, 115.43396759033203,
+            1.7802813053131104, 4.854230880737305,   1.6788053512573242
+        ];
+        const NORM_STD = NORM_VAR.map(v => Math.sqrt(v));
+        const zNorm   = (v, i) => (v - NORM_MEAN[i]) / NORM_STD[i];
+        const zDenorm = (v, i) => v * NORM_STD[i] + NORM_MEAN[i];
+
+        
         // 全局变量
         let model = null;
+        let modelBurst = null;  // 新网络 (Burst_92)
         let predictionChart = null;
+        let predictionChartBurst = null;
         const GITHUB_USER = 'LAILI-civil';
         const GITHUB_REPO = 'pipeline_BL';
         const MODEL_PATH = 'tfjs_model/model.json';
+        const MODEL_BURST_PATH = 'Burst_92/model.json';
         // 构建模型的绝对URL
         const MODEL_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${MODEL_PATH}`;
+        const MODEL_BURST_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${MODEL_BURST_PATH}`;
+
         
         // DOM元素
         const modelStatus = document.getElementById('model-status');
@@ -614,12 +639,15 @@
                 modelStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在加载神经网络模型...';
                 
                 // 加载TensorFlow.js模型
+                modelStatus.innerHTML = 'Loading BN model...';
                 model = await tf.loadGraphModel(MODEL_URL, {
-                    onProgress: (fractions) => {
-                        const percent = Math.floor(fractions * 100);
-                        modelProgress.style.width = `${percent}%`;
-                        modelStatus.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 加载模型中: ${percent}%`;
-                    }
+                  onProgress: f => modelProgress.style.width = `${Math.floor(f*50)}%`
+                });
+
+                /* 再加载新网络 */
+                modelStatus.innerHTML = 'Loading Burst_92 model...';
+                modelBurst = await tf.loadGraphModel(MODEL_BURST_URL, {
+                  onProgress: f => modelProgress.style.width = `${50+Math.floor(f*50)}%`
                 });
                 
                 // 更新状态
@@ -657,121 +685,110 @@
             ];
         }
         
-        // 递归推理函数
-        async function runRecursiveInference() {
-            if (!model) {
+        // ============================================================
+        // 递归推理 (同时运行旧 BatchNorm 网络 model 与新 Burst_92 网络 modelBurst)
+        // ============================================================
+        async function runRecursiveInference () {
+
+            /* ---------- 1. 前置检查 ---------- */
+            if (!model || !modelBurst) {                 // 两个模型都要加载成功
                 alert('模型尚未加载完成，请稍候...');
                 return;
             }
-            
-            if (!validateAllInputs()) {
+            if (!validateAllInputs()) {                  // 输入范围校验
                 alert('请检查输入参数，部分值超出允许范围');
                 return;
             }
-            
-            try {
-                predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating|计算中...';
-                predictBtn.disabled = true;
-                
-                const inputs = getInputValues();
-                console.log('输入参数:', inputs);
-                
-                // 初始化结果数组 (0-10年，共11个值)
-                const predictions = new Array(11).fill(0);
-                
-                const sequenceLength = 31;
-                const featureSize = 9;
-                
-                // 创建初始张量 - 所有时间步概率值初始为0
-                const initialData = [];
-                const REPLACEMENT_LOG = -6; // log10(1e-6)
-                for (let i = 0; i < sequenceLength; i++) {
-                    const timestep = [];
-                    for (let j = 0; j < 8; j++) {
-                        timestep.push(inputs[j]);
-                    }
-                    // 所有年份概率值初始为0
-                    timestep.push(i === 0 ? REPLACEMENT_LOG : 0);
-                    initialData.push(timestep);
-                }
-                
-                // 转换为张量 [1, 31, 9]
-                let inputTensor = tf.tensor3d([initialData], [1, sequenceLength, featureSize]);
-                console.log('初始输入张量形状:', inputTensor.shape);
-                
-                // 记录开始时间
-                const startTime = performance.now();
-                let totalInferenceTime = 0;
-                let recursionSteps = 0;
-                
-                // 关键修改：递归预测0-10年（共11次）
-                for (let year = 0; year <= 10; year++) {
-                    recursionSteps++;
-                    const inferenceStartTime = performance.now();
-                    
-                    // 执行推理 
-                    let outputTensor = model.predict(inputTensor);
-                    if (Array.isArray(outputTensor)) {
-                        outputTensor = outputTensor[0];
-                    }
-                    
-                    // 获取预测结果
-                    const outputData = await outputTensor.array();
-                    const predictionLog = outputData[0][year][8]; // 获取当前年份的log10概率
-                    
-                    // 转换为实际概率
-                    const predictionProb = Math.pow(10, predictionLog);
-                    predictions[year] = predictionProb;
-                    
-                    console.log(`第 ${year} 年预测值(log10):`, predictionLog);
-                    console.log(`第 ${year} 年实际概率:`, predictionProb);
-                    
-                    // 如果不是最后一年，更新输入张量（将预测值放入下一年位置）
-                    if (year < 10) {
-                        const newInputData = await inputTensor.array();
-                        // 将当前年份的预测值放入下一年的输入位置
-                        newInputData[0][year + 1][8] = predictionLog;
-                        
-                        // 清理旧张量
-                        inputTensor.dispose();
-                        outputTensor.dispose();
-                        
-                        // 创建新的输入张量
-                        inputTensor = tf.tensor3d(newInputData, [1, sequenceLength, featureSize]);
-                    } else {
-                        // 最后一年只需清理输出张量
-                        outputTensor.dispose();
-                    }
-                    
-                    const inferenceEndTime = performance.now();
-                    totalInferenceTime += inferenceEndTime - inferenceStartTime;
-                }
-                
-                // 记录结束时间
-                const endTime = performance.now();
-                
-                // 显示结果
-                drawPredictionChart(predictions);
-                
-                outputContainer.style.display = 'block';
-                resultPlaceholder.style.display = 'none';
-                
-                const totalTime = (endTime - startTime).toFixed(2);
-                const avgInferenceTime = (totalInferenceTime / recursionSteps).toFixed(2);
-                inferenceTimeEl.textContent = `${totalTime} ms`;
-                recursionCountEl.textContent = `${recursionSteps} `;
-                
-                // 清理Tensor
-                inputTensor.dispose();
-                tf.disposeVariables();
-                
-            } catch (error) {
-                alert(`递归计算错误: ${error.message}`);
-                console.error('递归推理错误:', error);
-            } finally {
-                predictBtn.innerHTML = '<i class="fas fa-calculator"></i> Calculate Prob|计算结果';
-                predictBtn.disabled = false;
+
+            /* ---------- 2. UI: 按钮置灰 ---------- */
+            predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating|计算中...';
+            predictBtn.disabled  = true;
+
+            /* ---------- 3. 共用的一些常量 ---------- */
+            const userInputs      = getInputValues();    // 8 个原始输入
+            const SEQ_LEN         = 31;                  // 序列长度
+            const FEAT_SIZE       = 9;                   // 特征数
+            const REPL_LOG        = -6;                  // log10(1e-6)
+
+            /* ---------- 4. 旧网络 (BatchNorm) 初始输入张量 ---------- */
+            const initOld = [];
+            for (let t = 0; t < SEQ_LEN; t++) {
+                const row = [];
+                for (let j = 0; j < 8; j++) row.push(userInputs[j]);   // 原始量纲
+                row.push( t === 0 ? REPL_LOG : 0 );
+                initOld.push(row);
             }
+            let tensorOld = tf.tensor3d([initOld], [1, SEQ_LEN, FEAT_SIZE]);
+
+            /* ---------- 5. 新网络 (Burst_92, Z-Score) 初始输入张量 ---------- */
+            const initBurst = [];
+            for (let t = 0; t < SEQ_LEN; t++) {
+                const row = [];
+                for (let j = 0; j < 8; j++) row.push( zNorm(userInputs[j], j) ); // 归一化
+                const lp0 = (t === 0 ? REPL_LOG : 0);
+                row.push( zNorm(lp0, 8) );                                       // 第 9 个特征
+                initBurst.push(row);
+            }
+            let tensorBurst = tf.tensor3d([initBurst], [1, SEQ_LEN, FEAT_SIZE]);
+
+            /* ---------- 6. 开始递归 ---------- */
+            const predictionsOld    = new Array(11).fill(0);   // 旧网络概率
+            const predictionsBurst  = new Array(11).fill(0);   // 新网络概率
+            const tStart            = performance.now();
+
+            for (let year = 0; year <= 10; year++) {
+
+                /* === 6.1 旧网络推理 === */
+                let outOld = model.predict(tensorOld);
+                if (Array.isArray(outOld)) outOld = outOld[0];
+                const logOld = (await outOld.array())[0][year][8];   // log10 值
+                predictionsOld[year] = Math.pow(10, logOld);         // 概率
+
+                // 写回到下一时间步
+                if (year < 10) {
+                    const dataOld = await tensorOld.array();
+                    dataOld[0][year + 1][8] = logOld;
+                    tensorOld.dispose();  outOld.dispose();
+                    tensorOld = tf.tensor3d(dataOld, [1, SEQ_LEN, FEAT_SIZE]);
+                    } else {
+                    outOld.dispose();
+                }
+
+                /* === 6.2 新网络推理 === */
+                let outBurst = modelBurst.predict(tensorBurst);
+                if (Array.isArray(outBurst)) outBurst = outBurst[0];
+                const normPred  = (await outBurst.array())[0][year][8]; // 归一化空间
+                const logBurst  = zDenorm(normPred, 8);                 // 反归一化
+                predictionsBurst[year] = Math.pow(10, logBurst);        // 概率
+
+                if (year < 10) {
+                    const dataBurst = await tensorBurst.array();
+                    dataBurst[0][year + 1][8] = normPred;               // 仍存归一化值
+                    tensorBurst.dispose(); outBurst.dispose();
+                    tensorBurst = tf.tensor3d(dataBurst, [1, SEQ_LEN, FEAT_SIZE]);
+                } else {
+                    outBurst.dispose();
+                }
+            }
+
+            /* ---------- 7. 释放张量 ---------- */
+            tensorOld.dispose();
+            tensorBurst.dispose();
+            tf.disposeVariables();
+
+            /* ---------- 8. 绘图 & UI 恢复 ---------- */
+            drawPredictionChartBurst(predictionsBurst);   // 上方新网络图
+            drawPredictionChart(predictionsOld);          // 下方旧网络图
+
+            outputContainer.style.display = 'block';
+            resultPlaceholder.style.display = 'none';
+
+            const tEnd = performance.now();
+            inferenceTimeEl.textContent = `${(tEnd - tStart).toFixed(2)} ms`;
+            recursionCountEl.textContent = '11';
+
+            predictBtn.innerHTML = '<i class="fas fa-calculator"></i> Calculate Prob|计算结果';
+            predictBtn.disabled  = false;
         }
         
         // 绘制预测图表
@@ -871,7 +888,147 @@
                 }
             });
         }
-        
+
+        function drawPredictionChartBurst(predictions) {
+            const ctx = document.getElementById('prediction-chart-burst').getContext('2d');
+
+            // 已有则先销毁
+            if (predictionChartBurst) {
+                predictionChartBurst.destroy();
+            }
+
+            predictionChartBurst = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 11}, (_, i) => `Year ${i}`),
+                    datasets: [{
+                        label: 'Burst_92 预测',
+                        data: predictions,
+                        borderColor: '#ff9f40',
+                        backgroundColor: 'rgba(255, 159, 64, .15)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffcd56',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        fill: true,       
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#ffcd56', font: { size: 14 } }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(20,30,48,.9)',
+                            titleColor: '#ff9f40',
+                            bodyColor: '#ffcd56',
+                            borderColor: 'rgba(255,255,255,.1)',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                label: ctx => `Prob: ${ctx.parsed.y.toFixed(5)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {color: 'rgba(255,255,255,.1)'},
+                            ticks: {color: '#ffcd56'},
+                            title: {display:true,text:'年限',color:'#ff9f40',
+                                    font:{size:14,weight:'bold'}}
+                        },
+                        y: {
+                            min:0,max:1,
+                            grid:{color:'rgba(255,255,255,.1)'},
+                            ticks:{color:'#ffcd56',callback:v=>v.toFixed(2)},
+                            title:{display:true,text:'失效概率',color:'#ff9f40',
+                                   font:{size:14,weight:'bold'}}
+                        }
+                    }
+                }
+            });
+        }
+
+        // ===================================================================
+        // 绘制 Burst_92 网络预测曲线 (prediction-chart-burst)
+        // ===================================================================
+        function drawPredictionChartBurst(predictions) {
+            const ctx = document.getElementById('prediction-chart-burst').getContext('2d');
+
+            // 已存在则先销毁
+            if (predictionChartBurst) {
+                predictionChartBurst.destroy();
+            }
+
+            predictionChartBurst = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: 11 }, (_, i) => `Year ${i}`),
+                    datasets: [{
+                        label: 'Burst_92 预测',
+                        data: predictions,
+                        borderColor: '#ff9f40',
+                        backgroundColor: 'rgba(255, 159, 64, 0.15)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffcd56',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#ffcd56', font: { size: 14 } }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(20,30,48,.9)',
+                            titleColor: '#ff9f40',
+                            bodyColor: '#ffcd56',
+                            borderColor: 'rgba(255,255,255,.1)',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                label: ctx => `Prob: ${ctx.parsed.y.toFixed(5)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,.1)' },
+                            ticks: { color: '#ffcd56' },
+                            title: {
+                                display: true,
+                                text: '年限',
+                                color: '#ff9f40',
+                                font: { size: 14, weight: 'bold' }
+                            }
+                        },
+                        y: {
+                            min: 0,
+                            max: 1,
+                            grid: { color: 'rgba(255,255,255,.1)' },
+                            ticks: {
+                                color: '#ffcd56',
+                                callback: v => v.toFixed(2)
+                            },
+                            title: {
+                                display: true,
+                                text: '失效概率',
+                                color: '#ff9f40',
+                                font: { size: 14, weight: 'bold' }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         // 重置输入
         function resetInputs() {
             document.getElementById('smys').value = '483';
@@ -898,7 +1055,10 @@
                 predictionChart.destroy();
                 predictionChart = null;
             }
-        }
+            if (predictionChartBurst) {
+            predictionChartBurst.destroy();
+            predictionChartBurst = null;
+            }
         
         // 设备兼容性检查
         if (!tf?.backend) {
