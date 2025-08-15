@@ -513,9 +513,8 @@
         const MODEL_PATH = 'tfjs_model/model.json';
         const MODEL_BURST_PATH = 'Burst_92/model.json';
         // 构建模型的绝对URL
-        const MODEL_BASE_URL = `https://${GITHUB_USER}.github.io/${GITHUB_REPO}/`;
-        const MODEL_URL = `${MODEL_BASE_URL}tfjs_model/model.json`;
-        const MODEL_BURST_URL = `${MODEL_BASE_URL}Burst_92/model.json`;
+        const MODEL_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${MODEL_PATH}`;
+        const MODEL_BURST_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${MODEL_PATH}`;
 
         
         // DOM元素
