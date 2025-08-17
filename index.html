@@ -752,6 +752,7 @@
             // 预测结果存储
             const predictionsOld = new Array(11).fill(0);
             const predictionsBurst = new Array(11).fill(0);
+            predictionsBurst[0] = 1e-6; 
             const tStart = performance.now();
 
             // 递归预测
