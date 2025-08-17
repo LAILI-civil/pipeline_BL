@@ -765,7 +765,8 @@
                 // 新模型预测
                 let outBurst = modelBurst.predict(tensorBurst);
                 if (Array.isArray(outBurst)) outBurst = outBurst[0];
-                const normPred = (await outBurst.array())[0][year][8];
+                const outputIndex = year === 0 ? 0 : year - 1;
+                const normPred = (await outBurst.array())[0][outputIndex][8];
                 const logBurst = zDenorm(normPred, 8);
                 predictionsBurst[year] = Math.pow(10, logBurst);
 
