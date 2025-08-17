@@ -343,6 +343,7 @@
                 </div>
                 
                 <div class="input-group">
+                    <!-- 修正输入顺序 -->
                     <div class="input-row">
                         <label for="smys">SMYS</label>
                         <input type="number" id="smys" value="483" step="1" min="290" max="690">
@@ -358,12 +359,6 @@
                     </div>
                     
                     <div class="input-row">
-                        <label for="thickness">Thickness</label>
-                        <input type="number" id="thickness" value="12" step="0.1">
-                        <span class="unit">mm</span>
-                    </div>
-                    
-                    <div class="input-row">
                         <label for="dia">Diameter</label>
                         <input type="number" id="dia" value="1066.8" step="0.2" min="168.2" max="1219.2">
                         <span class="unit">168.2-1219.2 mm</span>
@@ -371,17 +366,17 @@
                     </div>
                     
                     <div class="input-row">
-                        <label for="d_grow">d_grow</label>
-                        <input type="number" id="d_grow" value="0.282" step="0.001" min="0.0" max="0.8">
-                        <span class="unit">0.0-0.8 mm</span>
-                        <span class="error-message" id="d_grow-error"></span>
-                    </div>
-                    
-                    <div class="input-row">
                         <label for="depth">Depth</label>
                         <input type="number" id="depth" value="42.7" step="0.1" min="0" max="80">
                         <span class="unit">0-80 %</span>
                         <span class="error-message" id="depth-error"></span>
+                    </div>
+                    
+                    <div class="input-row">
+                        <label for="d_grow">d_grow</label>
+                        <input type="number" id="d_grow" value="0.281853817" step="0.000001" min="0.0" max="0.8">
+                        <span class="unit">0.0-0.8 mm</span>
+                        <span class="error-message" id="d_grow-error"></span>
                     </div>
                     
                     <div class="input-row">
@@ -396,6 +391,13 @@
                         <input type="number" id="prestress" value="8.69" step="0.001" min="4.137" max="9.653">
                         <span class="unit">4.137-9.653 Mpa</span>
                         <span class="error-message" id="prestress-error"></span>
+                    </div>
+                    
+                    <!-- thickness移动到正确位置 -->
+                    <div class="input-row">
+                        <label for="thickness">Thickness</label>
+                        <input type="number" id="thickness" value="12" step="0.1">
+                        <span class="unit">mm</span>
                     </div>
                 </div>
                 
@@ -686,17 +688,17 @@
             }
         }
         
-        // 获取输入值
+        // 获取输入值（修正参数顺序）
         function getInputValues() {
             return [
-                parseFloat(document.getElementById('smys').value) || 0,
-                parseFloat(document.getElementById('smts').value) || 0,
-                parseFloat(document.getElementById('dia').value) || 0,
-                parseFloat(document.getElementById('depth').value) || 0,
-                parseFloat(document.getElementById('d_grow').value) || 0,
-                parseFloat(document.getElementById('length').value) || 0,
-                parseFloat(document.getElementById('prestress').value) || 0,
-                parseFloat(document.getElementById('thickness').value) || 0
+                parseFloat(document.getElementById('smys').value) || 0,      // 0: smys
+                parseFloat(document.getElementById('smts').value) || 0,      // 1: smts
+                parseFloat(document.getElementById('dia').value) || 0,       // 2: dia
+                parseFloat(document.getElementById('depth').value) || 0,      // 3: depth
+                parseFloat(document.getElementById('d_grow').value) || 0,     // 4: d_grow
+                parseFloat(document.getElementById('length').value) || 0,     // 5: length
+                parseFloat(document.getElementById('prestress').value) || 0,  // 6: prestress
+                parseFloat(document.getElementById('thickness').value) || 0   // 7: thickness
             ];
         }
         
@@ -716,7 +718,7 @@
             predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating|计算中...';
             predictBtn.disabled = true;
 
-            // 获取用户输入
+            // 获取用户输入（顺序已修正）
             const userInputs = getInputValues();
             const SEQ_LEN = 31;
             const FEAT_SIZE = 9;
@@ -734,7 +736,7 @@
                 ];
                 initOld.push(rowOld);
                 
-                // 新模型输入
+                // 新模型输入（归一化）
                 const rowBurst = [];
                 for (let j = 0; j < 8; j++) {
                     rowBurst.push(zNorm(userInputs[j], j));
@@ -809,6 +811,25 @@
             predictBtn.disabled = false;
         }
         
+        // 计算图表Y轴最大值（动态调整）
+        function calculateYMax(predictions) {
+            const maxValue = Math.max(...predictions);
+            
+            // 如果所有值都为零，返回0.01作为默认值
+            if (maxValue === 0) return 0.01;
+            
+            // 计算合适的Y轴最大值
+            if (maxValue > 0.1) {
+                return 1.0; // 对于较大值，固定到1
+            } else if (maxValue > 0.01) {
+                return Math.min(1, maxValue * 1.5); // 中等范围
+            } else if (maxValue > 0.001) {
+                return maxValue * 10; // 小范围
+            } else {
+                return maxValue * 100; // 极小范围
+            }
+        }
+        
         // 绘制预测图表
         function drawPredictionChart(predictions) {
             const ctx = document.getElementById('prediction-chart').getContext('2d');
@@ -817,6 +838,9 @@
             if (predictionChart) {
                 predictionChart.destroy();
             }
+            
+            // 动态计算Y轴范围
+            const yMax = calculateYMax(predictions);
             
             // 创建新图表
             predictionChart = new Chart(ctx, {
@@ -857,7 +881,7 @@
                             padding: 12,
                             callbacks: {
                                 label: function(context) {
-                                    return `Probability: ${context.parsed.y.toFixed(5)}`;
+                                    return `Probability: ${context.parsed.y.toExponential(4)}`;
                                 }
                             }
                         }
@@ -882,14 +906,18 @@
                         },
                         y: {
                             min: 0,
-                            max: 1,
+                            max: yMax,
                             grid: {
                                 color: 'rgba(255, 255, 255, 0.1)'
                             },
                             ticks: {
                                 color: '#a8d8ea',
                                 callback: function(value) {
-                                    return value.toFixed(2);
+                                    if (value < 0.001) {
+                                        return value.toExponential(1);
+                                    } else {
+                                        return value.toFixed(4);
+                                    }
                                 }
                             },
                             title: {
@@ -915,6 +943,9 @@
             if (predictionChartBurst) {
                 predictionChartBurst.destroy();
             }
+            
+            // 动态计算Y轴范围
+            const yMax = calculateYMax(predictions);
             
             // 创建新图表
             predictionChartBurst = new Chart(ctx, {
@@ -955,7 +986,7 @@
                             padding: 12,
                             callbacks: {
                                 label: function(context) {
-                                    return `Probability: ${context.parsed.y.toFixed(5)}`;
+                                    return `Probability: ${context.parsed.y.toExponential(4)}`;
                                 }
                             }
                         }
@@ -980,14 +1011,18 @@
                         },
                         y: {
                             min: 0,
-                            max: 1,
+                            max: yMax,
                             grid: {
                                 color: 'rgba(255, 255, 255, 0.1)'
                             },
                             ticks: {
                                 color: '#ffcd56',
                                 callback: function(value) {
-                                    return value.toFixed(2);
+                                    if (value < 0.001) {
+                                        return value.toExponential(1);
+                                    } else {
+                                        return value.toFixed(4);
+                                    }
                                 }
                             },
                             title: {
@@ -1007,14 +1042,15 @@
 
         // 重置输入
         function resetInputs() {
+            // 设置默认值（包含修正的d_grow值）
             document.getElementById('smys').value = '483';
             document.getElementById('smts').value = '565';
-            document.getElementById('thickness').value = '12';
             document.getElementById('dia').value = '1066.8';
-            document.getElementById('d_grow').value = '0.282';
             document.getElementById('depth').value = '42.7';
+            document.getElementById('d_grow').value = '0.281853817';
             document.getElementById('length').value = '98.1';
             document.getElementById('prestress').value = '8.69';
+            document.getElementById('thickness').value = '12';
             
             // 清除错误信息
             for (const inputId in inputValidations) {
