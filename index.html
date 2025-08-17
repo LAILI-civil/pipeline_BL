@@ -755,7 +755,7 @@
             const tStart = performance.now();
 
             // 递归预测
-            for (let year = 0; year <= 10; year++) {
+            for (let year = 1; year <= 10; year++) {
                 // 旧模型预测
                 let outOld = model.predict(tensorOld);
                 if (Array.isArray(outOld)) outOld = outOld[0];
@@ -765,8 +765,7 @@
                 // 新模型预测
                 let outBurst = modelBurst.predict(tensorBurst);
                 if (Array.isArray(outBurst)) outBurst = outBurst[0];
-                const outputIndex = year === 0 ? 0 : year - 1;
-                const normPred = (await outBurst.array())[0][outputIndex][8];
+                const normPred = (await outBurst.array())[0][year - 1][8];   // year-1
                 const logBurst = zDenorm(normPred, 8);
                 predictionsBurst[year] = Math.pow(10, logBurst);
 
@@ -781,7 +780,7 @@
                     
                     // 更新新模型张量
                     const dataBurst = await tensorBurst.array();
-                    dataBurst[0][year + 1][8] = normPred;
+                    dataBurst[0][year][8] = normPred;
                     tensorBurst.dispose();
                     outBurst.dispose();
                     tensorBurst = tf.tensor3d(dataBurst, [1, SEQ_LEN, FEAT_SIZE]);
