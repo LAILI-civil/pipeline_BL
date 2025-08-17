@@ -805,7 +805,7 @@
 
             const tEnd = performance.now();
             inferenceTimeEl.textContent = `${(tEnd - tStart).toFixed(2)} ms`;
-            recursionCountEl.textContent = '11';
+            recursionCountEl.textContent = '10';
 
             predictBtn.innerHTML = '<i class="fas fa-calculator"></i> Calculate|计算结果';
             predictBtn.disabled = false;
@@ -832,6 +832,9 @@
         
         // 绘制预测图表
         function drawPredictionChart(predictions) {
+            const dataToPlot = predictions.slice(1); 
+            const labels      = Array.from({length: 10}, (_, i) => 
+                                           `Year ${i+1}`);
             const ctx = document.getElementById('prediction-chart').getContext('2d');
             
             // 如果已有图表实例，先销毁
@@ -840,7 +843,7 @@
             }
             
             // 动态计算Y轴范围
-            const yMax = calculateYMax(predictions);
+            const yMax = calculateYMax(dataToPlot);
             
             // 创建新图表
             predictionChart = new Chart(ctx, {
@@ -937,6 +940,9 @@
 
         // 绘制Burst模型预测图表
         function drawPredictionChartBurst(predictions) {
+            const dataToPlot = predictions.slice(1);                 // 去掉 Year 0
+            const labels      = Array.from({length: 10}, (_, i) =>   // 生成 Year 1-10
+                                           `Year ${i+1}`);
             const ctx = document.getElementById('prediction-chart-burst').getContext('2d');
             
             // 如果已有图表实例，先销毁
@@ -945,7 +951,7 @@
             }
             
             // 动态计算Y轴范围
-            const yMax = calculateYMax(predictions);
+            const yMax = calculateYMax(dataToPlot);
             
             // 创建新图表
             predictionChartBurst = new Chart(ctx, {
