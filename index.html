@@ -849,10 +849,10 @@
             predictionChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: Array.from({length: 11}, (_, i) => `Year ${i}`),
+                    labels: labels,
                     datasets: [{
                         label: 'Failure Probability|失效概率',
-                        data: predictions,
+                        data: dataToPlot,
                         borderColor: '#00c9ff',
                         backgroundColor: 'rgba(0, 201, 255, 0.1)',
                         borderWidth: 3,
@@ -957,10 +957,10 @@
             predictionChartBurst = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: Array.from({length: 11}, (_, i) => `Year ${i}`),
+                    labels: labels,
                     datasets: [{
                         label: 'Burst Probability|破裂概率',
-                        data: predictions,
+                        data: dataToPlot,
                         borderColor: '#ff9f40',
                         backgroundColor: 'rgba(255, 159, 64, 0.15)',
                         borderWidth: 3,
