@@ -39,6 +39,7 @@
             --model-info-bg: rgba(0, 0, 0, 0.3);
             --footer-border: rgba(255, 255, 255, 0.1);
             --chart-grid: rgba(255, 255, 255, 0.1);
+            --unit-color: #92fe9d; /* 深色模式下的单位颜色 */
         }
         
         [data-theme="light"] {
@@ -66,6 +67,7 @@
             --model-info-bg: rgba(0, 0, 0, 0.05);
             --footer-border: rgba(0, 0, 0, 0.1);
             --chart-grid: rgba(0, 0, 0, 0.1);
+            --unit-color: #2c3e50; /* 浅色模式下的单位颜色改为深色 */
         }
         
         body {
@@ -212,7 +214,7 @@
         
         .unit {
             margin-left: 10px;
-            color: #92fe9d;
+            color: var(--unit-color); /* 使用变量控制单位颜色 */
             font-weight: 500;
             min-width: 120px;
             text-align: right;
@@ -415,7 +417,7 @@
         <header>
             <div class="theme-switch" id="theme-switch">
                 <i class="fas fa-moon"></i>
-                <span>深色模式</span>
+                <span>Deep color</span>
             </div>
             <h1><i class="fas fa-network-wired"></i> Pipeline defect failure estimation system | 管道缺陷失效概率预测系统</h1>
             <p class="subtitle">Recursive prediction of 0-10 year failure probability | 递归预测0-10年失效概率</p>
@@ -702,10 +704,20 @@
         function setTheme(theme) {
             if (theme === 'light') {
                 document.documentElement.setAttribute('data-theme', 'light');
-                themeSwitch.innerHTML = '<i class="fas fa-sun"></i><span>浅色模式</span>';
+                themeSwitch.innerHTML = '<i class="fas fa-sun"></i><span>light color</span>';
+                
+                // 更新性能值颜色
+                document.querySelectorAll('.perf-value').forEach(el => {
+                    el.style.color = '#4facfe';
+                });
             } else {
                 document.documentElement.removeAttribute('data-theme');
                 themeSwitch.innerHTML = '<i class="fas fa-moon"></i><span>深色模式</span>';
+                
+                // 恢复性能值颜色
+                document.querySelectorAll('.perf-value').forEach(el => {
+                    el.style.color = '#92fe9d';
+                });
             }
             
             // 重新绘制图表以应用新主题
