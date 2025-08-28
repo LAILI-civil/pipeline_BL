@@ -40,6 +40,9 @@
             --footer-border: rgba(255, 255, 255, 0.1);
             --chart-grid: rgba(255, 255, 255, 0.1);
             --unit-color: #92fe9d; /* 深色模式下的单位颜色 */
+            --success-color: #92fe9d; /* 深色模式下的成功颜色 */
+            --highlight-color: #92fe9d; /* 深色模式下的高亮颜色 */
+            --perf-value-color: #92fe9d; /* 深色模式下的性能值颜色 */
         }
         
         [data-theme="light"] {
@@ -68,6 +71,9 @@
             --footer-border: rgba(0, 0, 0, 0.1);
             --chart-grid: rgba(0, 0, 0, 0.1);
             --unit-color: #2c3e50; /* 浅色模式下的单位颜色改为深色 */
+            --success-color: #2c3e50; /* 浅色模式下的成功颜色改为深色 */
+            --highlight-color: #2c3e50; /* 浅色模式下的高亮颜色改为深色 */
+            --perf-value-color: #4facfe; /* 浅色模式下的性能值颜色 */
         }
         
         body {
@@ -289,7 +295,7 @@
         }
         
         .success {
-            color: #92fe9d;
+            color: var(--success-color); /* 使用变量控制成功颜色 */
         }
         
         .error {
@@ -350,7 +356,7 @@
         .perf-value {
             font-size: 1.2rem;
             font-weight: 700;
-            color: #92fe9d;
+            color: var(--perf-value-color); /* 使用变量控制性能值颜色 */
             margin-top: 5px;
         }
         
@@ -373,6 +379,11 @@
             border-bottom: none;
         }
         
+        .highlight {
+            color: var(--highlight-color); /* 使用变量控制高亮颜色 */
+            font-weight: 500;
+        }
+        
         .footer {
             text-align: center;
             margin-top: 40px;
@@ -380,11 +391,6 @@
             border-top: 1px solid var(--footer-border);
             color: var(--output-label);
             font-size: 0.9rem;
-        }
-        
-        .highlight {
-            color: #92fe9d;
-            font-weight: 500;
         }
         
         /* 图表容器样式 */
@@ -417,7 +423,7 @@
         <header>
             <div class="theme-switch" id="theme-switch">
                 <i class="fas fa-moon"></i>
-                <span>Deep color</span>
+                <span>深色模式</span>
             </div>
             <h1><i class="fas fa-network-wired"></i> Pipeline defect failure estimation system | 管道缺陷失效概率预测系统</h1>
             <p class="subtitle">Recursive prediction of 0-10 year failure probability | 递归预测0-10年失效概率</p>
@@ -704,20 +710,10 @@
         function setTheme(theme) {
             if (theme === 'light') {
                 document.documentElement.setAttribute('data-theme', 'light');
-                themeSwitch.innerHTML = '<i class="fas fa-sun"></i><span>light color</span>';
-                
-                // 更新性能值颜色
-                document.querySelectorAll('.perf-value').forEach(el => {
-                    el.style.color = '#4facfe';
-                });
+                themeSwitch.innerHTML = '<i class="fas fa-sun"></i><span>浅色模式</span>';
             } else {
                 document.documentElement.removeAttribute('data-theme');
                 themeSwitch.innerHTML = '<i class="fas fa-moon"></i><span>深色模式</span>';
-                
-                // 恢复性能值颜色
-                document.querySelectorAll('.perf-value').forEach(el => {
-                    el.style.color = '#92fe9d';
-                });
             }
             
             // 重新绘制图表以应用新主题
@@ -834,7 +830,6 @@
                 modelStatus.innerHTML = '<i class="fas fa-check-circle"></i> ✅NN successful loading|加载成功！';
                 modelStatus.className = 'success';
                 modelReadyEl.textContent = 'Loaded|已加载';
-                modelReadyEl.style.color = '#92fe9d';
                 
                 // 启用预测按钮
                 predictBtn.disabled = false;
@@ -843,7 +838,6 @@
                 modelStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ❌NN failure loading|加载失败: ${error.message}`;
                 modelStatus.className = 'error';
                 modelReadyEl.textContent = 'Failed to load|加载失败';
-                modelReadyEl.style.color = '#ff6b6b';
                 console.error('Error|加载错误:', error);
             }
         }
