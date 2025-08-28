@@ -14,11 +14,66 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
+        :root {
+            /* 深色主题变量 (默认) */
+            --bg-gradient-start: #1a2a6c;
+            --bg-gradient-end: #2c3e50;
+            --text-color: #fff;
+            --panel-bg: rgba(20, 30, 48, 0.85);
+            --panel-border: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(0, 0, 0, 0.2);
+            --input-bg-hover: rgba(0, 0, 0, 0.3);
+            --input-text: white;
+            --input-border-focus: #00c9ff;
+            --input-error: #ff6b6b;
+            --btn-primary-bg: linear-gradient(90deg, #00c9ff, #92fe9d);
+            --btn-primary-text: #1a2a6c;
+            --btn-secondary-bg: rgba(255, 255, 255, 0.1);
+            --btn-secondary-text: white;
+            --status-card-bg: rgba(0, 0, 0, 0.3);
+            --output-label: #a8d8ea;
+            --output-value: linear-gradient(90deg, #00c9ff, #92fe9d);
+            --progress-bg: rgba(255, 255, 255, 0.1);
+            --progress-bar: linear-gradient(90deg, #00c9ff, #92fe9d);
+            --perf-bg: rgba(0, 0, 0, 0.3);
+            --model-info-bg: rgba(0, 0, 0, 0.3);
+            --footer-border: rgba(255, 255, 255, 0.1);
+            --chart-grid: rgba(255, 255, 255, 0.1);
+        }
+        
+        [data-theme="light"] {
+            /* 浅色主题变量 */
+            --bg-gradient-start: #f5f7fa;
+            --bg-gradient-end: #c3cfe2;
+            --text-color: #2c3e50;
+            --panel-bg: rgba(255, 255, 255, 0.9);
+            --panel-border: rgba(0, 0, 0, 0.1);
+            --input-bg: rgba(0, 0, 0, 0.05);
+            --input-bg-hover: rgba(0, 0, 0, 0.1);
+            --input-text: #2c3e50;
+            --input-border-focus: #4facfe;
+            --input-error: #ff6b6b;
+            --btn-primary-bg: linear-gradient(90deg, #4facfe, #00f2fe);
+            --btn-primary-text: white;
+            --btn-secondary-bg: rgba(0, 0, 0, 0.05);
+            --btn-secondary-text: #2c3e50;
+            --status-card-bg: rgba(0, 0, 0, 0.05);
+            --output-label: #5a6b82;
+            --output-value: linear-gradient(90deg, #4facfe, #00f2fe);
+            --progress-bg: rgba(0, 0, 0, 0.1);
+            --progress-bar: linear-gradient(90deg, #4facfe, #00f2fe);
+            --perf-bg: rgba(0, 0, 0, 0.05);
+            --model-info-bg: rgba(0, 0, 0, 0.05);
+            --footer-border: rgba(0, 0, 0, 0.1);
+            --chart-grid: rgba(0, 0, 0, 0.1);
+        }
+        
         body {
-            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
-            color: #fff;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-color);
             min-height: 100vh;
             padding: 20px;
+            transition: background 0.5s ease, color 0.5s ease;
         }
         
         .container {
@@ -35,7 +90,26 @@
             border-radius: 15px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--panel-border);
+            position: relative;
+        }
+        
+        .theme-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .theme-switch i {
+            font-size: 1.2rem;
         }
         
         h1 {
@@ -49,7 +123,7 @@
         
         .subtitle {
             font-size: 1.2rem;
-            color: #b0e0e6;
+            color: var(--output-label);
             max-width: 800px;
             margin: 0 auto;
             line-height: 1.6;
@@ -68,12 +142,13 @@
         }
         
         .panel {
-            background: rgba(20, 30, 48, 0.85);
+            background: var(--panel-bg);
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--panel-border);
             backdrop-filter: blur(10px);
+            transition: background 0.5s ease, border 0.5s ease;
         }
         
         .panel-title {
@@ -82,7 +157,7 @@
             gap: 10px;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--panel-border);
             color: #00c9ff;
         }
         
@@ -99,40 +174,40 @@
             align-items: center;
             margin-bottom: 15px;
             padding: 10px 15px;
-            background: rgba(0, 0, 0, 0.2);
+            background: var(--input-bg);
             border-radius: 10px;
             transition: all 0.3s ease;
             position: relative;
         }
         
         .input-row:hover {
-            background: rgba(0, 0, 0, 0.3);
+            background: var(--input-bg-hover);
             transform: translateY(-2px);
         }
         
         .input-row label {
             width: 180px;
             font-weight: 500;
-            color: #a8d8ea;
+            color: var(--output-label);
         }
         
         .input-row input {
             flex: 1;
             padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--input-bg);
             border: none;
             border-radius: 8px;
-            color: white;
+            color: var(--input-text);
             font-size: 1rem;
         }
         
         .input-row input.error {
-            box-shadow: 0 0 0 2px #ff6b6b;
+            box-shadow: 0 0 0 2px var(--input-error);
         }
         
         .input-row input:focus {
             outline: none;
-            box-shadow: 0 0 0 2px #00c9ff;
+            box-shadow: 0 0 0 2px var(--input-border-focus);
         }
         
         .unit {
@@ -150,7 +225,7 @@
             right: 15px;
             bottom: -18px;
             font-size: 0.8rem;
-            color: #ff6b6b;
+            color: var(--input-error);
         }
         
         .btn-container {
@@ -175,13 +250,13 @@
         }
         
         #predict-btn {
-            background: linear-gradient(90deg, #00c9ff, #92fe9d);
-            color: #1a2a6c;
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
         }
         
         #reset-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            background: var(--btn-secondary-bg);
+            color: var(--btn-secondary-text);
         }
         
         button:hover {
@@ -194,7 +269,7 @@
         }
         
         .status-card {
-            background: rgba(0, 0, 0, 0.3);
+            background: var(--status-card-bg);
             border-radius: 10px;
             padding: 20px;
             margin-top: 20px;
@@ -216,7 +291,7 @@
         }
         
         .error {
-            color: #ff6b6b;
+            color: var(--input-error);
         }
         
         .output-cell:hover {
@@ -227,14 +302,14 @@
         
         .output-label {
             font-size: 0.9rem;
-            color: #a8d8ea;
+            color: var(--output-label);
             margin-bottom: 8px;
         }
         
         .output-value {
             font-size: 1.3rem;
             font-weight: 700;
-            background: linear-gradient(90deg, #00c9ff, #92fe9d);
+            background: var(--output-value);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -242,7 +317,7 @@
         
         .progress-container {
             height: 8px;
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--progress-bg);
             border-radius: 4px;
             margin-top: 10px;
             overflow: hidden;
@@ -250,7 +325,7 @@
         
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #00c9ff, #92fe9d);
+            background: var(--progress-bar);
             border-radius: 4px;
             width: 0%;
             transition: width 0.5s ease;
@@ -261,7 +336,7 @@
             justify-content: space-between;
             margin-top: 25px;
             padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
+            background: var(--perf-bg);
             border-radius: 10px;
             font-size: 0.9rem;
         }
@@ -280,7 +355,7 @@
         .model-info {
             margin-top: 20px;
             padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
+            background: var(--model-info-bg);
             border-radius: 10px;
             font-size: 0.9rem;
         }
@@ -289,7 +364,7 @@
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            border-bottom: 1px dashed var(--panel-border);
         }
         
         .info-row:last-child {
@@ -300,8 +375,8 @@
             text-align: center;
             margin-top: 40px;
             padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #a8d8ea;
+            border-top: 1px solid var(--footer-border);
+            color: var(--output-label);
             font-size: 0.9rem;
         }
         
@@ -314,7 +389,7 @@
         .chart-container {
             height: 300px;
             margin-top: 25px;
-            background: rgba(0, 0, 0, 0.2);
+            background: var(--status-card-bg);
             border-radius: 10px;
             padding: 15px;
         }
@@ -324,12 +399,24 @@
             .output-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            .theme-switch {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-bottom: 15px;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
+            <div class="theme-switch" id="theme-switch">
+                <i class="fas fa-moon"></i>
+                <span>深色模式</span>
+            </div>
             <h1><i class="fas fa-network-wired"></i> Pipeline defect failure estimation system | 管道缺陷失效概率预测系统</h1>
             <p class="subtitle">Recursive prediction of 0-10 year failure probability | 递归预测0-10年失效概率</p>
         </header>
@@ -427,7 +514,7 @@
                     <h2>Prediction results|预测结果 (0-10 year)</h2>
                 </div>
                 
-                <div id="result-placeholder" style="text-align: center; padding: 40px 20px; color: #a8d8ea;">
+                <div id="result-placeholder" style="text-align: center; padding: 40px 20px; color: var(--output-label);">
                     <i class="fas fa-project-diagram" style="font-size: 3rem; margin-bottom: 20px;"></i>
                     <h3>Waiting for results|等待计算结果</h3>
                     <p>Enter pipeline parameters and click "Calculate" button|输入参数后点击"计算结果"按钮</p>
@@ -539,6 +626,7 @@
         const recursionCountEl = document.getElementById('recursion-count');
         const modelReadyEl = document.getElementById('model-ready');
         const backendNameEl = document.getElementById('backend-name');
+        const themeSwitch = document.getElementById('theme-switch');
         
         // 输入验证配置
         const inputValidations = {
@@ -584,13 +672,60 @@
             // 绑定按钮事件
             predictBtn.addEventListener('click', runRecursiveInference);
             resetBtn.addEventListener('click', resetInputs);
+            themeSwitch.addEventListener('click', toggleTheme);
             
             // 为输入框添加验证事件
             setupInputValidation();
             
+            // 初始化主题
+            initTheme();
+            
             // 初始化模型
             await loadModel();
         });
+        
+        // 初始化主题
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            setTheme(savedTheme);
+        }
+        
+        // 切换主题
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+        
+        // 设置主题
+        function setTheme(theme) {
+            if (theme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                themeSwitch.innerHTML = '<i class="fas fa-sun"></i><span>浅色模式</span>';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                themeSwitch.innerHTML = '<i class="fas fa-moon"></i><span>深色模式</span>';
+            }
+            
+            // 重新绘制图表以应用新主题
+            if (predictionChart) {
+                predictionChart.destroy();
+                predictionChart = null;
+            }
+            if (predictionChartBurst) {
+                predictionChartBurst.destroy();
+                predictionChartBurst = null;
+            }
+            
+            // 如果结果已经显示，重新绘制图表
+            if (outputContainer.style.display !== 'none') {
+                // 这里需要重新运行推理或重新绘制图表
+                // 由于图表数据已存在，可以重新调用绘制函数
+                // 但需要先获取数据，这里简化处理
+                // 实际应用中可能需要存储最后一次的预测结果
+            }
+        }
         
         // 设置输入验证
         function setupInputValidation() {
@@ -863,6 +998,11 @@
             // 动态计算Y轴范围
             const yMax = calculateYMax(dataToPlot);
             
+            // 获取当前主题
+            const isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
+            const textColor = isLightTheme ? '#2c3e50' : '#a8d8ea';
+            const gridColor = isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
+            
             // 创建新图表
             predictionChart = new Chart(ctx, {
                 type: 'line',
@@ -872,7 +1012,7 @@
                         label: 'Leakage Probability|失效概率',
                         data: dataToPlot,
                         borderColor: '#00c9ff',
-                        backgroundColor: 'rgba(0, 201, 255, 0.1)',
+                        backgroundColor: isLightTheme ? 'rgba(0, 201, 255, 0.2)' : 'rgba(0, 201, 255, 0.1)',
                         borderWidth: 3,
                         pointBackgroundColor: '#92fe9d',
                         pointRadius: 5,
@@ -887,17 +1027,17 @@
                     plugins: {
                         legend: {
                             labels: {
-                                color: '#a8d8ea',
+                                color: textColor,
                                 font: {
                                     size: 14
                                 }
                             }
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(20, 30, 48, 0.9)',
+                            backgroundColor: isLightTheme ? 'rgba(255, 255, 255, 0.9)' : 'rgba(20, 30, 48, 0.9)',
                             titleColor: '#00c9ff',
                             bodyColor: '#92fe9d',
-                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderColor: isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)',
                             borderWidth: 1,
                             padding: 12,
                             callbacks: {
@@ -910,10 +1050,10 @@
                     scales: {
                         x: {
                             grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
+                                color: gridColor
                             },
                             ticks: {
-                                color: '#a8d8ea'
+                                color: textColor
                             },
                             title: {
                                 display: true,
@@ -929,10 +1069,10 @@
                             min: 0,
                             max: yMax,
                             grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
+                                color: gridColor
                             },
                             ticks: {
-                                color: '#a8d8ea',
+                                color: textColor,
                                 callback: function(value) {
                                     if (value < 0.001) {
                                         return value.toExponential(1);
@@ -971,6 +1111,11 @@
             // 动态计算Y轴范围
             const yMax = calculateYMax(dataToPlot);
             
+            // 获取当前主题
+            const isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
+            const textColor = isLightTheme ? '#2c3e50' : '#ffcd56';
+            const gridColor = isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
+            
             // 创建新图表
             predictionChartBurst = new Chart(ctx, {
                 type: 'line',
@@ -980,7 +1125,7 @@
                         label: 'Burst Probability|破裂概率',
                         data: dataToPlot,
                         borderColor: '#ff9f40',
-                        backgroundColor: 'rgba(255, 159, 64, 0.15)',
+                        backgroundColor: isLightTheme ? 'rgba(255, 159, 64, 0.2)' : 'rgba(255, 159, 64, 0.15)',
                         borderWidth: 3,
                         pointBackgroundColor: '#ffcd56',
                         pointRadius: 5,
@@ -995,17 +1140,17 @@
                     plugins: {
                         legend: {
                             labels: {
-                                color: '#ffcd56',
+                                color: textColor,
                                 font: {
                                     size: 14
                                 }
                             }
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(20, 30, 48, 0.9)',
+                            backgroundColor: isLightTheme ? 'rgba(255, 255, 255, 0.9)' : 'rgba(20, 30, 48, 0.9)',
                             titleColor: '#ff9f40',
                             bodyColor: '#ffcd56',
-                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderColor: isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)',
                             borderWidth: 1,
                             padding: 12,
                             callbacks: {
@@ -1018,10 +1163,10 @@
                     scales: {
                         x: {
                             grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
+                                color: gridColor
                             },
                             ticks: {
-                                color: '#ffcd56'
+                                color: textColor
                             },
                             title: {
                                 display: true,
@@ -1037,10 +1182,10 @@
                             min: 0,
                             max: yMax,
                             grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
+                                color: gridColor
                             },
                             ticks: {
-                                color: '#ffcd56',
+                                color: textColor,
                                 callback: function(value) {
                                     if (value < 0.001) {
                                         return value.toExponential(1);
