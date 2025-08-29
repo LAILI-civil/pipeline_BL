@@ -710,10 +710,10 @@
         function setTheme(theme) {
             if (theme === 'light') {
                 document.documentElement.setAttribute('data-theme', 'light');
-                themeSwitch.innerHTML = '<i class="fas fa-sun"></i><span>浅色模式</span>';
+                themeSwitch.innerHTML = '<i class="fas fa-sun"></i><span>light color</span>';
             } else {
                 document.documentElement.removeAttribute('data-theme');
-                themeSwitch.innerHTML = '<i class="fas fa-moon"></i><span>深色模式</span>';
+                themeSwitch.innerHTML = '<i class="fas fa-moon"></i><span>dark color</span>';
             }
             
             // 重新绘制图表以应用新主题
