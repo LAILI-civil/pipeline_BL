@@ -9,7 +9,7 @@ The model demonstrates exceptional performance on our test dataset of **768,000*
 
 ---
 Our work has been integrated into an interactive web interface at:  
-[https://laili-civil.github.io/pipelineBL/](https://laili-civil.github.io/pipelineBL/)  
+[https://laili-civil.github.io/pipeline_BL/](https://laili-civil.github.io/pipelineBL/)  
 Users can directly input pipeline parameters to calculate failure probabilities in real-time.
 
 ---
