@@ -102,10 +102,21 @@
             position: relative;
         }
         
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .theme-switch-container {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
         .theme-switch {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -114,6 +125,12 @@
             border-radius: 20px;
             cursor: pointer;
             user-select: none;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-switch:hover {
+            background: rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
         }
         
         .theme-switch i {
@@ -408,12 +425,17 @@
                 grid-template-columns: repeat(2, 1fr);
             }
             
-            .theme-switch {
-                position: relative;
-                top: 0;
-                right: 0;
-                margin-bottom: 15px;
+            .theme-switch-container {
                 justify-content: center;
+                margin-bottom: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
             }
         }
     </style>
@@ -421,12 +443,16 @@
 <body>
     <div class="container">
         <header>
-            <div class="theme-switch" id="theme-switch">
-                <i class="fas fa-moon"></i>
-                <span>深色模式</span>
+            <div class="header-content">
+                <div class="theme-switch-container">
+                    <div class="theme-switch" id="theme-switch">
+                        <i class="fas fa-moon"></i>
+                        <span>深色模式</span>
+                    </div>
+                </div>
+                <h1><i class="fas fa-network-wired"></i> Pipeline defect failure estimation system | 管道缺陷失效概率预测系统</h1>
+                <p class="subtitle">Recursive prediction of 0-10 year failure probability | 递归预测0-10年失效概率</p>
             </div>
-            <h1><i class="fas fa-network-wired"></i> Pipeline defect failure estimation system | 管道缺陷失效概率预测系统</h1>
-            <p class="subtitle">Recursive prediction of 0-10 year failure probability | 递归预测0-10年失效概率</p>
         </header>
         
         <div class="content">
@@ -1090,7 +1116,7 @@
                             title: {
                                 display: true,
                                 text: 'Probability|概率',
-                                color: '#00c9ff',
+                                color: '#00c9流',
                                 font: {
                                     size: 14,
                                     weight: 'bold'
