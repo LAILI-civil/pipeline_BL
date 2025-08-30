@@ -438,6 +438,23 @@
                 font-size: 1rem;
             }
         }
+        
+        /* 新增保存按钮样式 */
+        .save-btn {
+            margin-top: 15px;
+            background: linear-gradient(90deg, #ff9a3d, #ff6b6b);
+            color: white;
+        }
+        
+        .save-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .save-btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
     </style>
 </head>
 <body>
@@ -538,6 +555,10 @@
                     <div class="progress-container">
                         <div id="model-progress" class="progress-bar"></div>
                     </div>
+                    <!-- 新增保存按钮 -->
+                    <button id="save-btn" class="save-btn" disabled>
+                        <i class="fas fa-download"></i> 保存计算结果
+                    </button>
                 </div>
             </div>
             
@@ -654,6 +675,7 @@
         const modelProgress = document.getElementById('model-progress');
         const predictBtn = document.getElementById('predict-btn');
         const resetBtn = document.getElementById('reset-btn');
+        const saveBtn = document.getElementById('save-btn'); // 新增保存按钮
         const outputContainer = document.getElementById('output-container');
         const resultPlaceholder = document.getElementById('result-placeholder');
         const inferenceTimeEl = document.getElementById('inference-time');
@@ -661,6 +683,10 @@
         const modelReadyEl = document.getElementById('model-ready');
         const backendNameEl = document.getElementById('backend-name');
         const themeSwitch = document.getElementById('theme-switch');
+        
+        // 存储预测结果
+        let lastBurstPredictions = [];
+        let lastLeakPredictions = [];
         
         // 输入验证配置
         const inputValidations = {
@@ -706,6 +732,7 @@
             // 绑定按钮事件
             predictBtn.addEventListener('click', runRecursiveInference);
             resetBtn.addEventListener('click', resetInputs);
+            saveBtn.addEventListener('click', saveToCSV); // 新增保存按钮事件
             themeSwitch.addEventListener('click', toggleTheme);
             
             // 为输入框添加验证事件
@@ -980,6 +1007,10 @@
             tensorLeak.dispose();
             tf.disposeVariables();
 
+            // 存储预测结果用于导出
+            lastBurstPredictions = predictionsBurst;
+            lastLeakPredictions = predictionsLeak;
+
             // 绘制结果
             drawPredictionChartBurst(predictionsBurst);
             drawPredictionChart(predictionsLeak);
@@ -994,6 +1025,9 @@
 
             predictBtn.innerHTML = '<i class="fas fa-calculator"></i> Calculate|计算结果';
             predictBtn.disabled = false;
+            
+            // 启用保存按钮
+            saveBtn.disabled = false;
         }
         
         // 计算图表Y轴最大值（动态调整）
@@ -1263,6 +1297,9 @@
             outputContainer.style.display = 'none';
             resultPlaceholder.style.display = 'block';
             
+            // 禁用保存按钮
+            saveBtn.disabled = true;
+            
             // 销毁图表
             if (predictionChart) {
                 predictionChart.destroy();
@@ -1272,6 +1309,52 @@
                 predictionChartBurst.destroy();
                 predictionChartBurst = null;
             }
+        }
+        
+        // 保存为CSV文件
+        function saveToCSV() {
+            // 检查是否有可保存的数据
+            if (lastBurstPredictions.length === 0 || lastLeakPredictions.length === 0) {
+                alert("没有可保存的数据，请先进行计算");
+                return;
+            }
+            
+            // 创建CSV内容
+            let csvContent = "Year,Burst Probability,Leakage Probability\n";
+            
+            // 添加数据行
+            for (let i = 0; i < lastBurstPredictions.length; i++) {
+                const year = i;
+                const burstProb = lastBurstPredictions[i];
+                const leakProb = lastLeakPredictions[i];
+                
+                csvContent += `${year},${burstProb.toExponential(6)},${leakProb.toExponential(6)}\n`;
+            }
+            
+            // 创建Blob对象
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            
+            // 创建下载链接
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            
+            // 获取当前日期时间作为文件名的一部分
+            const now = new Date();
+            const dateTimeStr = now.toISOString().slice(0, 19).replace(/:/g, '-');
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", `pipeline_prediction_${dateTimeStr}.csv`);
+            link.style.visibility = 'hidden';
+            
+            // 添加到DOM并触发点击
+            document.body.appendChild(link);
+            link.click();
+            
+            // 清理
+            document.body.removeChild(link);
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100);
         }
     </script>
 </body>
