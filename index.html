@@ -439,19 +439,27 @@
             }
         }
         
-        /* 新增保存按钮样式 */
-        .save-btn {
+        /* 修改后的保存按钮样式 */
+        .save-btn-container {
+            display: flex;
+            justify-content: center;
             margin-top: 15px;
-            background: linear-gradient(90deg, #ff9a3d, #ff6b6b);
-            color: white;
+            width: 100%;
         }
         
-        .save-btn:disabled {
+        #save-btn {
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            max-width: 300px;
+            width: 100%;
+        }
+        
+        #save-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
         
-        .save-btn:disabled:hover {
+        #save-btn:disabled:hover {
             transform: none;
             box-shadow: none;
         }
@@ -555,10 +563,12 @@
                     <div class="progress-container">
                         <div id="model-progress" class="progress-bar"></div>
                     </div>
-                    <!-- 新增保存按钮 -->
-                    <button id="save-btn" class="save-btn" disabled>
-                        <i class="fas fa-download"></i> Save results as .csv file|保存结果到csv文件
-                    </button>
+                    <!-- 修改后的保存按钮容器 -->
+                    <div class="save-btn-container">
+                        <button id="save-btn" disabled>
+                            <i class="fas fa-download"></i> Save results as .csv|保存结果到csv
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -782,7 +792,6 @@
             // 如果结果已经显示，重新绘制图表
             if (outputContainer.style.display !== 'none') {
                 // 这里需要重新运行推理或重新绘制图表
-                // 由于图表数据已存在，可以重新调用绘制函数
                 // 但需要先获取数据，这里简化处理
                 // 实际应用中可能需要存储最后一次的预测结果
             }
