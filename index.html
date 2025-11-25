@@ -1062,7 +1062,7 @@
         function drawPredictionChart(predictions) {
             const dataToPlot = predictions.slice(1); 
             const labels      = Array.from({length: 10}, (_, i) => 
-                                           `Year ${i+1}`);
+                                           `Year ${i}`);
             const ctx = document.getElementById('prediction-chart').getContext('2d');
             
             // 如果已有图表实例，先销毁
@@ -1175,7 +1175,7 @@
         function drawPredictionChartBurst(predictions) {
             const dataToPlot = predictions.slice(1);                 // 去掉 Year 0
             const labels      = Array.from({length: 10}, (_, i) =>   // 生成 Year 1-10
-                                           `Year ${i+1}`);
+                                           `Year ${i}`);
             const ctx = document.getElementById('prediction-chart-burst').getContext('2d');
             
             // 如果已有图表实例，先销毁
