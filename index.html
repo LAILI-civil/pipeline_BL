@@ -1332,10 +1332,10 @@
             let csvContent = "Year,Burst Probability,Leakage Probability\n";
             
             // 添加数据行
-            for (let i = 0; i < lastBurstPredictions.length; i++) {
+            for (let i = 0; i < lastBurstPredictions.length - 1; i++) {
                 const year = i;
-                const burstProb = lastBurstPredictions[i];
-                const leakProb = lastLeakPredictions[i];
+                const burstProb = lastBurstPredictions[i + 1];
+                const leakProb = lastLeakPredictions[i + 1];
                 
                 csvContent += `${year},${burstProb.toExponential(6)},${leakProb.toExponential(6)}\n`;
             }
