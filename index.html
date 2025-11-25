@@ -1039,23 +1039,15 @@
             saveBtn.disabled = false;
         }
         
-        // 计算图表Y轴最大值（动态调整）
+        // 计算图表Y轴最大值（固定从0开始到最大值*1.1倍）
         function calculateYMax(predictions) {
             const maxValue = Math.max(...predictions);
             
             // 如果所有值都为零，返回0.01作为默认值
             if (maxValue === 0) return 0.01;
             
-            // 计算合适的Y轴最大值
-            if (maxValue > 0.1) {
-                return 1.0; // 对于较大值，固定到1
-            } else if (maxValue > 0.01) {
-                return Math.min(1, maxValue * 1.5); // 中等范围
-            } else if (maxValue > 0.001) {
-                return maxValue * 10; // 小范围
-            } else {
-                return maxValue * 100; // 极小范围
-            }
+            // 固定为最大值的1.1倍，确保Y轴从0开始
+            return maxValue * 1.1;
         }
         
         // 绘制预测图表
@@ -1159,7 +1151,7 @@
                             title: {
                                 display: true,
                                 text: 'Probability|概率',
-                                color: '#00c9流',
+                                color: '#00c9ff',
                                 font: {
                                     size: 14,
                                     weight: 'bold'
