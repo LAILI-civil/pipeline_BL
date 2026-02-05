@@ -150,12 +150,12 @@
             background-clip: text;
             color: transparent;
             line-height: 1.15;
-            font-weight: 700; /* 加粗 */
+            font-weight: 700;
         }
 
         /* 副标题：调大一号 */
         .subtitle {
-            font-size: 1.6rem; /* 调大 */
+            font-size: 1.6rem;
             color: var(--output-label);
             max-width: 900px;
             margin: 0 auto;
@@ -233,6 +233,7 @@
             border-radius: 10px;
             transition: all 0.3s ease;
             position: relative;
+            gap: 12px;
         }
 
         .input-row:hover {
@@ -249,8 +250,15 @@
             flex: 0 0 auto;
         }
 
-        .input-row input {
+        /* 关键：把 input + unit 放进一个“输入框容器”，让 unit 显示在文本框内部右侧 */
+        .input-box {
             flex: 1;
+            position: relative;
+            min-width: 0;
+        }
+
+        .input-box input {
+            width: 100%;
             padding: 16px 18px;
             background: var(--input-bg);
             border: none;
@@ -260,30 +268,42 @@
             font-weight: 400;
             line-height: 1.2;
 
-            /* 关键：给输入框一个更大的最小宽度，Thickness行不会挤到错位 */
-            min-width: 260px;
+            /* 给右侧单位留出内边距空间（单位在框内右侧显示） */
+            padding-right: 230px;
+
+            /* 稍微增大最小宽度，避免 Thickness 行挤压 */
+            min-width: 280px;
         }
 
-        .input-row input.error {
+        .input-box input.error {
             box-shadow: 0 0 0 2px var(--input-error);
         }
 
-        .input-row input:focus {
+        .input-box input:focus {
             outline: none;
             box-shadow: 0 0 0 2px var(--input-border-focus);
         }
 
-        .unit {
-            margin-left: 10px;
+        /* 单位：绝对定位到 input 内部右侧 */
+        .input-box .unit {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
             color: var(--unit-color);
-            min-width: 170px;
-            text-align: right;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             opacity: 0.95;
-            line-height: 1.2;
+            line-height: 1.1;
             font-weight: 400;
-            flex: 0 0 auto;
+            white-space: nowrap;
+            pointer-events: none; /* 不挡住输入点击 */
+            text-align: right;
         }
+
+        /* 不同单位长度不一样，这里用 class 做细调：长单位留更多右 padding */
+        .unit-long input { padding-right: 260px; }
+        .unit-mid  input { padding-right: 230px; }
+        .unit-short input { padding-right: 120px; }
 
         .error-message {
             position: absolute;
@@ -315,8 +335,6 @@
             justify-content: center;
             gap: 10px;
             line-height: 1.1;
-
-            /* 避免按钮文字换行 */
             white-space: nowrap;
         }
 
@@ -465,13 +483,19 @@
             }
 
             h1 { font-size: 2rem; }
-
             body { font-size: 20px; }
-
             .subtitle { font-size: 1.35rem; }
 
             .input-row label { font-size: 1.25rem; }
-            .input-row input { font-size: 1.3rem; min-width: 220px; }
+
+            .input-box input {
+                font-size: 1.3rem;
+                min-width: 220px;
+            }
+
+            .input-box .unit {
+                font-size: 1.05rem;
+            }
 
             button {
                 font-size: 1.35rem;
@@ -486,11 +510,10 @@
             width: 100%;
         }
 
-        /* 关键：加宽保存按钮，保证一行显示 */
         #save-btn {
             background: var(--btn-primary-bg);
             color: var(--btn-primary-text);
-            max-width: 520px;  /* 加宽 */
+            max-width: 520px;
             width: 100%;
         }
 
@@ -529,60 +552,75 @@
                 </div>
 
                 <div class="input-group">
-                    <!-- 修正输入顺序 -->
                     <div class="input-row">
                         <label for="smys">SMYS</label>
-                        <input type="number" id="smys" value="483" step="1" min="290" max="690">
-                        <span class="unit">290-690 Mpa</span>
+                        <div class="input-box unit-mid">
+                            <input type="number" id="smys" value="483" step="1" min="290" max="690">
+                            <span class="unit">290-690 Mpa</span>
+                        </div>
                         <span class="error-message" id="smys-error"></span>
                     </div>
 
                     <div class="input-row">
                         <label for="smts">SMTS</label>
-                        <input type="number" id="smts" value="565" step="1" min="414" max="758">
-                        <span class="unit">414-758 Mpa</span>
+                        <div class="input-box unit-mid">
+                            <input type="number" id="smts" value="565" step="1" min="414" max="758">
+                            <span class="unit">414-758 Mpa</span>
+                        </div>
                         <span class="error-message" id="smts-error"></span>
                     </div>
 
                     <div class="input-row">
                         <label for="dia">Diameter</label>
-                        <input type="number" id="dia" value="1066.8" step="0.2" min="168.2" max="1422">
-                        <span class="unit">168.2-1422 mm</span>
+                        <div class="input-box unit-long">
+                            <input type="number" id="dia" value="1066.8" step="0.2" min="168.2" max="1422">
+                            <span class="unit">168.2-1422 mm</span>
+                        </div>
                         <span class="error-message" id="dia-error"></span>
                     </div>
 
                     <div class="input-row">
                         <label for="depth">Depth</label>
-                        <input type="number" id="depth" value="40.85" step="0.1" min="0" max="80">
-                        <span class="unit">0-80 %</span>
+                        <div class="input-box unit-short">
+                            <input type="number" id="depth" value="40.85" step="0.1" min="0" max="80">
+                            <span class="unit">0-80 %</span>
+                        </div>
                         <span class="error-message" id="depth-error"></span>
                     </div>
 
                     <div class="input-row">
                         <label for="d_grow">d_grow</label>
-                        <input type="number" id="d_grow" value="0.282" step="0.000001" min="0.0" max="0.8">
-                        <span class="unit">0.0-0.8 mm</span>
+                        <div class="input-box unit-mid">
+                            <input type="number" id="d_grow" value="0.282" step="0.000001" min="0.0" max="0.8">
+                            <span class="unit">0.0-0.8 mm</span>
+                        </div>
                         <span class="error-message" id="d_grow-error"></span>
                     </div>
 
                     <div class="input-row">
                         <label for="length">Length</label>
-                        <input type="number" id="length" value="275.3" step="0.1" min="10" max="400">
-                        <span class="unit">10-400 mm</span>
+                        <div class="input-box unit-mid">
+                            <input type="number" id="length" value="275.3" step="0.1" min="10" max="400">
+                            <span class="unit">10-400 mm</span>
+                        </div>
                         <span class="error-message" id="length-error"></span>
                     </div>
 
                     <div class="input-row">
                         <label for="prestress">Prestress</label>
-                        <input type="number" id="prestress" value="8.69" step="0.001" min="4.137" max="9.928">
-                        <span class="unit">4.137-9.928 Mpa</span>
+                        <div class="input-box unit-mid">
+                            <input type="number" id="prestress" value="8.69" step="0.001" min="4.137" max="9.928">
+                            <span class="unit">4.137-9.928 Mpa</span>
+                        </div>
                         <span class="error-message" id="prestress-error"></span>
                     </div>
 
                     <div class="input-row">
                         <label for="thickness">Thickness</label>
-                        <input type="number" id="thickness" value="12" step="0.1">
-                        <span class="unit">mm</span>
+                        <div class="input-box unit-short">
+                            <input type="number" id="thickness" value="12" step="0.1">
+                            <span class="unit">mm</span>
+                        </div>
                     </div>
                 </div>
 
