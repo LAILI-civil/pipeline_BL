@@ -11,7 +11,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            /* 统一字体：Times New Roman；去掉全局加粗 */
             font-family: "Times New Roman", Times, serif;
             font-weight: 400;
         }
@@ -41,10 +40,10 @@
             --model-info-bg: rgba(0, 0, 0, 0.3);
             --footer-border: rgba(255, 255, 255, 0.1);
             --chart-grid: rgba(255, 255, 255, 0.1);
-            --unit-color: #92fe9d; /* 深色模式下的单位颜色 */
-            --success-color: #92fe9d; /* 深色模式下的成功颜色 */
-            --highlight-color: #92fe9d; /* 深色模式下的高亮颜色 */
-            --perf-value-color: #92fe9d; /* 深色模式下的性能值颜色 */
+            --unit-color: #92fe9d;
+            --success-color: #92fe9d;
+            --highlight-color: #92fe9d;
+            --perf-value-color: #92fe9d;
         }
 
         [data-theme="light"] {
@@ -72,10 +71,10 @@
             --model-info-bg: rgba(0, 0, 0, 0.05);
             --footer-border: rgba(0, 0, 0, 0.1);
             --chart-grid: rgba(0, 0, 0, 0.1);
-            --unit-color: #2c3e50; /* 浅色模式下的单位颜色改为深色 */
-            --success-color: #2c3e50; /* 浅色模式下的成功颜色改为深色 */
-            --highlight-color: #2c3e50; /* 浅色模式下的高亮颜色改为深色 */
-            --perf-value-color: #4facfe; /* 浅色模式下的性能值颜色 */
+            --unit-color: #2c3e50;
+            --success-color: #2c3e50;
+            --highlight-color: #2c3e50;
+            --perf-value-color: #4facfe;
         }
 
         body {
@@ -84,12 +83,14 @@
             min-height: 100vh;
             padding: 20px;
             transition: background 0.5s ease, color 0.5s ease;
-            /* 除主标题外整体字体“大一号” */
-            font-size: 19px;
+
+            /* 关键：除主标题外整体再放大一档，远处更清晰 */
+            font-size: 22px;
         }
 
         .container {
-            max-width: 1200px;
+            /* 关键：整体容器加宽，让右侧标题行更“宽” */
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -125,12 +126,12 @@
             align-items: center;
             gap: 10px;
             background: rgba(0, 0, 0, 0.2);
-            padding: 10px 16px;
+            padding: 12px 18px;
             border-radius: 20px;
             cursor: pointer;
             user-select: none;
             transition: all 0.3s ease;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             line-height: 1.2;
         }
 
@@ -140,10 +141,10 @@
         }
 
         .theme-switch i {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
         }
 
-        /* 主标题：保持大小不变（沿用你原来的 2.5rem） */
+        /* 主标题：保持你说的“足够大”，不再放大 */
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
@@ -155,23 +156,10 @@
             font-weight: 400;
         }
 
-        /* 其余标题/文本：整体大一号 */
-        h2 {
-            font-size: 1.45rem;
-            line-height: 1.2;
-            font-weight: 400;
-        }
-
-        h3 {
-            font-size: 1.35rem;
-            line-height: 1.25;
-            font-weight: 400;
-        }
-
         .subtitle {
-            font-size: 1.3rem;
+            font-size: 1.45rem;
             color: var(--output-label);
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             line-height: 1.6;
             font-weight: 400;
@@ -197,12 +185,15 @@
             border: 1px solid var(--panel-border);
             backdrop-filter: blur(10px);
             transition: background 0.5s ease, border 0.5s ease;
+
+            /* 关键：面板最小宽度，避免右侧标题区域显得拥挤 */
+            min-width: 0;
         }
 
         .panel-title {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--panel-border);
@@ -210,7 +201,28 @@
         }
 
         .panel-title i {
-            font-size: 1.7rem;
+            font-size: 1.9rem;
+            flex: 0 0 auto;
+        }
+
+        /* 关键：让“Prediction results|预测结果 (0-9 year)”这一行不被挤压，宽度更充足 */
+        .panel-title h2 {
+            flex: 1 1 auto;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: visible;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            line-height: 1.2;
+            font-weight: 400;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            line-height: 1.25;
+            font-weight: 400;
         }
 
         .input-group {
@@ -221,7 +233,7 @@
             display: flex;
             align-items: center;
             margin-bottom: 15px;
-            padding: 12px 15px;
+            padding: 14px 16px;
             background: var(--input-bg);
             border-radius: 10px;
             transition: all 0.3s ease;
@@ -234,21 +246,21 @@
         }
 
         .input-row label {
-            width: 180px;
+            width: 190px;
             color: var(--output-label);
-            font-size: 1.25rem;
+            font-size: 1.45rem;
             line-height: 1.2;
             font-weight: 400;
         }
 
         .input-row input {
             flex: 1;
-            padding: 14px 16px;
+            padding: 16px 18px;
             background: var(--input-bg);
             border: none;
             border-radius: 8px;
             color: var(--input-text);
-            font-size: 1.3rem;
+            font-size: 1.55rem;
             font-weight: 400;
             line-height: 1.2;
         }
@@ -265,9 +277,9 @@
         .unit {
             margin-left: 10px;
             color: var(--unit-color);
-            min-width: 140px;
+            min-width: 170px;
             text-align: right;
-            font-size: 1.15rem;
+            font-size: 1.3rem;
             opacity: 0.95;
             line-height: 1.2;
             font-weight: 400;
@@ -276,8 +288,8 @@
         .error-message {
             position: absolute;
             right: 15px;
-            bottom: -20px;
-            font-size: 1.05rem;
+            bottom: -24px;
+            font-size: 1.15rem;
             color: var(--input-error);
             line-height: 1.1;
             font-weight: 400;
@@ -291,11 +303,11 @@
 
         button {
             flex: 1;
-            padding: 18px 16px;
+            padding: 20px 16px;
             border: none;
             border-radius: 10px;
-            font-size: 1.4rem;
-            font-weight: 400; /* 去掉加粗 */
+            font-size: 1.6rem;
+            font-weight: 400;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
@@ -334,31 +346,17 @@
         }
 
         #model-status {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             font-weight: 400;
             line-height: 1.2;
         }
 
-        .loading {
-            color: #00c9ff;
-        }
-
-        .success {
-            color: var(--success-color);
-        }
-
-        .error {
-            color: var(--input-error);
-        }
-
-        .output-cell:hover {
-            transform: translateY(-3px);
-            background: rgba(0, 0, 0, 0.4);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
+        .loading { color: #00c9ff; }
+        .success { color: var(--success-color); }
+        .error { color: var(--input-error); }
 
         .output-label {
-            font-size: 1.15rem;
+            font-size: 1.3rem;
             color: var(--output-label);
             margin-bottom: 8px;
             line-height: 1.2;
@@ -366,8 +364,8 @@
         }
 
         .output-value {
-            font-size: 1.55rem;
-            font-weight: 600; /* 数值略微突出但不“粗体”压迫 */
+            font-size: 1.7rem;
+            font-weight: 600;
             background: var(--output-value);
             -webkit-background-clip: text;
             background-clip: text;
@@ -376,7 +374,7 @@
         }
 
         .progress-container {
-            height: 10px;
+            height: 12px;
             background: var(--progress-bg);
             border-radius: 4px;
             margin-top: 12px;
@@ -398,18 +396,16 @@
             padding: 15px;
             background: var(--perf-bg);
             border-radius: 10px;
-            font-size: 1.15rem;
+            font-size: 1.35rem;
             line-height: 1.2;
             font-weight: 400;
         }
 
-        .perf-item {
-            text-align: center;
-        }
+        .perf-item { text-align: center; }
 
         .perf-value {
-            font-size: 1.45rem;
-            font-weight: 600; /* 数值略突出 */
+            font-size: 1.65rem;
+            font-weight: 600;
             color: var(--perf-value-color);
             margin-top: 6px;
             line-height: 1.1;
@@ -420,7 +416,7 @@
             padding: 15px;
             background: var(--model-info-bg);
             border-radius: 10px;
-            font-size: 1.15rem;
+            font-size: 1.3rem;
             line-height: 1.2;
             font-weight: 400;
         }
@@ -428,18 +424,16 @@
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            padding: 12px 0;
             border-bottom: 1px dashed var(--panel-border);
             gap: 12px;
         }
 
-        .info-row:last-child {
-            border-bottom: none;
-        }
+        .info-row:last-child { border-bottom: none; }
 
         .highlight {
             color: var(--highlight-color);
-            font-weight: 600; /* 轻微强调 */
+            font-weight: 600;
         }
 
         .footer {
@@ -448,55 +442,40 @@
             padding-top: 20px;
             border-top: 1px solid var(--footer-border);
             color: var(--output-label);
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             font-weight: 400;
             line-height: 1.4;
         }
 
-        /* 图表容器样式 */
         .chart-container {
-            height: 300px;
+            height: 320px;
             margin-top: 25px;
             background: var(--status-card-bg);
             border-radius: 10px;
             padding: 15px;
         }
 
-        /* 响应式调整 */
         @media (max-width: 600px) {
-            .output-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
             .theme-switch-container {
                 justify-content: center;
                 margin-bottom: 20px;
             }
 
-            /* 小屏：主标题仍保持“原大小规则”不额外放大 */
-            h1 {
-                font-size: 2rem;
-            }
+            h1 { font-size: 2rem; } /* 小屏主标题维持原逻辑 */
 
-            .subtitle {
-                font-size: 1.1rem;
-            }
+            body { font-size: 20px; } /* 小屏也别太小 */
 
-            .input-row label {
-                font-size: 1.15rem;
-            }
+            .subtitle { font-size: 1.2rem; }
 
-            .input-row input {
-                font-size: 1.2rem;
-            }
+            .input-row label { font-size: 1.25rem; }
+            .input-row input { font-size: 1.3rem; }
 
             button {
-                font-size: 1.25rem;
-                padding: 16px 14px;
+                font-size: 1.35rem;
+                padding: 18px 14px;
             }
         }
 
-        /* 修改后的保存按钮样式 */
         .save-btn-container {
             display: flex;
             justify-content: center;
@@ -507,7 +486,7 @@
         #save-btn {
             background: var(--btn-primary-bg);
             color: var(--btn-primary-text);
-            max-width: 320px;
+            max-width: 360px;
             width: 100%;
         }
 
@@ -620,7 +599,7 @@
                     <div class="progress-container">
                         <div id="model-progress" class="progress-bar"></div>
                     </div>
-                    <!-- 修改后的保存按钮容器 -->
+
                     <div class="save-btn-container">
                         <button id="save-btn" disabled>
                             <i class="fas fa-download"></i> Save results as .csv|保存到csv
@@ -742,7 +721,7 @@
         const modelProgress = document.getElementById('model-progress');
         const predictBtn = document.getElementById('predict-btn');
         const resetBtn = document.getElementById('reset-btn');
-        const saveBtn = document.getElementById('save-btn'); // 新增保存按钮
+        const saveBtn = document.getElementById('save-btn');
         const outputContainer = document.getElementById('output-container');
         const resultPlaceholder = document.getElementById('result-placeholder');
         const inferenceTimeEl = document.getElementById('inference-time');
@@ -793,32 +772,23 @@
                 return;
             }
 
-            // 设置默认后端显示
             backendNameEl.textContent = tf.getBackend();
 
-            // 绑定按钮事件
             predictBtn.addEventListener('click', runRecursiveInference);
             resetBtn.addEventListener('click', resetInputs);
-            saveBtn.addEventListener('click', saveToCSV); // 新增保存按钮事件
+            saveBtn.addEventListener('click', saveToCSV);
             themeSwitch.addEventListener('click', toggleTheme);
 
-            // 为输入框添加验证事件
             setupInputValidation();
-
-            // 初始化主题
             initTheme();
-
-            // 初始化模型
             await loadModel();
         });
 
-        // 初始化主题
         function initTheme() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             setTheme(savedTheme);
         }
 
-        // 切换主题
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -826,7 +796,6 @@
             localStorage.setItem('theme', newTheme);
         }
 
-        // 设置主题
         function setTheme(theme) {
             if (theme === 'light') {
                 document.documentElement.setAttribute('data-theme', 'light');
@@ -836,7 +805,6 @@
                 themeSwitch.innerHTML = '<i class="fas fa-moon"></i><span>dark color</span>';
             }
 
-            // 重新绘制图表以应用新主题
             if (predictionChart) {
                 predictionChart.destroy();
                 predictionChart = null;
@@ -845,16 +813,8 @@
                 predictionChartBurst.destroy();
                 predictionChartBurst = null;
             }
-
-            // 如果结果已经显示，重新绘制图表
-            if (outputContainer.style.display !== 'none') {
-                // 这里需要重新运行推理或重新绘制图表
-                // 但需要先获取数据，这里简化处理
-                // 实际应用中可能需要存储最后一次的预测结果
-            }
         }
 
-        // 设置输入验证
         function setupInputValidation() {
             for (const inputId in inputValidations) {
                 const input = document.getElementById(inputId);
@@ -863,7 +823,6 @@
             }
         }
 
-        // 清除错误状态
         function clearError(event) {
             const input = event.target;
             const inputId = input.id;
@@ -875,13 +834,11 @@
             }
         }
 
-        // 验证输入值
         function validateInput(event) {
             const input = event.target;
             const inputId = input.id;
             const value = parseFloat(input.value);
 
-            // 检查是否在验证配置中
             if (!inputValidations[inputId]) return;
 
             const { min, max, errorId } = inputValidations[inputId];
@@ -904,7 +861,6 @@
             return true;
         }
 
-        // 验证所有输入
         function validateAllInputs() {
             let allValid = true;
 
@@ -930,27 +886,22 @@
             return allValid;
         }
 
-        // 加载模型
         async function loadModel() {
             try {
                 modelStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在加载神经网络模型...';
 
-                // 加载第一个模型
                 model = await tf.loadGraphModel(MODEL_URL, {
                     onProgress: f => modelProgress.style.width = `${Math.floor(f*50)}%`
                 });
 
-                // 加载第二个模型
                 modelBurst = await tf.loadGraphModel(MODEL_BURST_URL, {
                     onProgress: f => modelProgress.style.width = `${50 + Math.floor(f*50)}%`
                 });
 
-                // 更新状态
                 modelStatus.innerHTML = '<i class="fas fa-check-circle"></i> ✅NN successful loading|加载成功！';
                 modelStatus.className = 'success';
                 modelReadyEl.textContent = 'Loaded|已加载';
 
-                // 启用预测按钮
                 predictBtn.disabled = false;
 
             } catch (error) {
@@ -961,23 +912,20 @@
             }
         }
 
-        // 获取输入值（修正参数顺序）
         function getInputValues() {
             return [
-                parseFloat(document.getElementById('smys').value) || 0,      // 0: smys
-                parseFloat(document.getElementById('smts').value) || 0,      // 1: smts
-                parseFloat(document.getElementById('dia').value) || 0,       // 2: dia
-                parseFloat(document.getElementById('depth').value) || 0,      // 3: depth
-                parseFloat(document.getElementById('d_grow').value) || 0,     // 4: d_grow
-                parseFloat(document.getElementById('length').value) || 0,     // 5: length
-                parseFloat(document.getElementById('prestress').value) || 0,  // 6: prestress
-                parseFloat(document.getElementById('thickness').value) || 0   // 7: thickness
+                parseFloat(document.getElementById('smys').value) || 0,
+                parseFloat(document.getElementById('smts').value) || 0,
+                parseFloat(document.getElementById('dia').value) || 0,
+                parseFloat(document.getElementById('depth').value) || 0,
+                parseFloat(document.getElementById('d_grow').value) || 0,
+                parseFloat(document.getElementById('length').value) || 0,
+                parseFloat(document.getElementById('prestress').value) || 0,
+                parseFloat(document.getElementById('thickness').value) || 0
             ];
         }
 
-        // 递归推理
         async function runRecursiveInference() {
-            // 前置检查
             if (!model || !modelBurst) {
                 alert('模型尚未加载完成，请稍候...');
                 return;
@@ -987,35 +935,26 @@
                 return;
             }
 
-            // UI状态更新
             predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating|计算中...';
             predictBtn.disabled = true;
 
-            // 获取用户输入（顺序已修正）
             const userInputs = getInputValues();
             const SEQ_LEN = 31;
             const FEAT_SIZE = 9;
-            const REPL_LOG = -6; // log10(1e-6)
+            const REPL_LOG = -6;
 
-            // 创建输入张量
             const initBurst = [];
             const initLeak = [];
 
             for (let t = 0; t < SEQ_LEN; t++) {
-                // Burst模型输入（归一化）
                 const rowBurst = [];
-                for (let j = 0; j < 8; j++) {
-                    rowBurst.push(zNorm(userInputs[j], j));
-                }
+                for (let j = 0; j < 8; j++) rowBurst.push(zNorm(userInputs[j], j));
                 const lp0 = (t === 0 ? REPL_LOG : 0);
                 rowBurst.push(zNorm(lp0, 8));
                 initBurst.push(rowBurst);
 
-                // Leak模型输入（使用新的归一化参数）
                 const rowLeak = [];
-                for (let j = 0; j < 8; j++) {
-                    rowLeak.push(modelZNorm(userInputs[j], j));
-                }
+                for (let j = 0; j < 8; j++) rowLeak.push(modelZNorm(userInputs[j], j));
                 const lp0Leak = (t === 0 ? REPL_LOG : 0);
                 rowLeak.push(modelZNorm(lp0Leak, 8));
                 initLeak.push(rowLeak);
@@ -1024,39 +963,33 @@
             let tensorBurst = tf.tensor3d([initBurst], [1, SEQ_LEN, FEAT_SIZE]);
             let tensorLeak = tf.tensor3d([initLeak], [1, SEQ_LEN, FEAT_SIZE]);
 
-            // 预测结果存储
             const predictionsBurst = new Array(11).fill(0);
             const predictionsLeak = new Array(11).fill(0);
             predictionsBurst[0] = 1e-6;
             predictionsLeak[0] = 1e-6;
+
             const tStart = performance.now();
 
-            // 递归预测
             for (let year = 1; year <= 10; year++) {
-                // Burst模型预测
                 let outBurst = modelBurst.predict(tensorBurst);
                 if (Array.isArray(outBurst)) outBurst = outBurst[0];
-                const normPred = (await outBurst.array())[0][year - 1][8];   // year-1
+                const normPred = (await outBurst.array())[0][year - 1][8];
                 const logBurst = zDenorm(normPred, 8);
                 predictionsBurst[year] = Math.pow(10, logBurst);
 
-                // Leak模型预测（模仿Burst模型的计算流程）
                 let outLeak = model.predict(tensorLeak);
                 if (Array.isArray(outLeak)) outLeak = outLeak[0];
-                const normPredLeak = (await outLeak.array())[0][year - 1][8];   // year-1
+                const normPredLeak = (await outLeak.array())[0][year - 1][8];
                 const logLeak = modelZDenorm(normPredLeak, 8);
                 predictionsLeak[year] = Math.pow(10, logLeak);
 
-                // 更新输入张量
                 if (year < 10) {
-                    // 更新Burst模型张量
                     const dataBurst = await tensorBurst.array();
                     dataBurst[0][year][8] = normPred;
                     tensorBurst.dispose();
                     outBurst.dispose();
                     tensorBurst = tf.tensor3d(dataBurst, [1, SEQ_LEN, FEAT_SIZE]);
 
-                    // 更新Leak模型张量
                     const dataLeak = await tensorLeak.array();
                     dataLeak[0][year][8] = normPredLeak;
                     tensorLeak.dispose();
@@ -1068,20 +1001,16 @@
                 }
             }
 
-            // 释放资源
             tensorBurst.dispose();
             tensorLeak.dispose();
             tf.disposeVariables();
 
-            // 存储预测结果用于导出
             lastBurstPredictions = predictionsBurst;
             lastLeakPredictions = predictionsLeak;
 
-            // 绘制结果
             drawPredictionChartBurst(predictionsBurst);
             drawPredictionChart(predictionsLeak);
 
-            // 更新UI
             outputContainer.style.display = 'block';
             resultPlaceholder.style.display = 'none';
 
@@ -1092,42 +1021,28 @@
             predictBtn.innerHTML = '<i class="fas fa-calculator"></i> Calculate|计算结果';
             predictBtn.disabled = false;
 
-            // 启用保存按钮
             saveBtn.disabled = false;
         }
 
-        // 计算图表Y轴最大值（固定从0开始到最大值*1.1倍）
         function calculateYMax(predictions) {
             const maxValue = Math.max(...predictions);
-
-            // 如果所有值都为零，返回0.01作为默认值
             if (maxValue === 0) return 0.01;
-
-            // 固定为最大值的1.1倍，确保Y轴从0开始
             return maxValue * 1.1;
         }
 
-        // 绘制预测图表
         function drawPredictionChart(predictions) {
             const dataToPlot = predictions.slice(1);
-            const labels      = Array.from({length: 10}, (_, i) =>
-                                           `Year ${i}`);
+            const labels = Array.from({ length: 10 }, (_, i) => `Year ${i}`);
             const ctx = document.getElementById('prediction-chart').getContext('2d');
 
-            // 如果已有图表实例，先销毁
-            if (predictionChart) {
-                predictionChart.destroy();
-            }
+            if (predictionChart) predictionChart.destroy();
 
-            // 动态计算Y轴范围
             const yMax = calculateYMax(dataToPlot);
 
-            // 获取当前主题
             const isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
             const textColor = isLightTheme ? '#2c3e50' : '#a8d8ea';
             const gridColor = isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
 
-            // 创建新图表
             predictionChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -1152,11 +1067,7 @@
                         legend: {
                             labels: {
                                 color: textColor,
-                                font: {
-                                    size: 16,
-                                    family: "Times New Roman",
-                                    weight: "normal"
-                                }
+                                font: { size: 18, family: "Times New Roman", weight: "normal" }
                             }
                         },
                         tooltip: {
@@ -1175,48 +1086,32 @@
                     },
                     scales: {
                         x: {
-                            grid: {
-                                color: gridColor
-                            },
-                            ticks: {
-                                color: textColor
-                            },
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { size: 16, family: "Times New Roman" } },
                             title: {
                                 display: true,
                                 text: 'Year|年份',
                                 color: '#00c9ff',
-                                font: {
-                                    size: 16,
-                                    weight: 'normal',
-                                    family: "Times New Roman"
-                                }
+                                font: { size: 18, weight: 'normal', family: "Times New Roman" }
                             }
                         },
                         y: {
                             min: 0,
                             max: yMax,
-                            grid: {
-                                color: gridColor
-                            },
+                            grid: { color: gridColor },
                             ticks: {
                                 color: textColor,
+                                font: { size: 16, family: "Times New Roman" },
                                 callback: function(value) {
-                                    if (value < 0.001) {
-                                        return value.toExponential(1);
-                                    } else {
-                                        return value.toFixed(4);
-                                    }
+                                    if (value < 0.001) return value.toExponential(1);
+                                    return value.toFixed(4);
                                 }
                             },
                             title: {
                                 display: true,
                                 text: 'Probability|概率',
                                 color: '#00c9ff',
-                                font: {
-                                    size: 16,
-                                    weight: 'normal',
-                                    family: "Times New Roman"
-                                }
+                                font: { size: 18, weight: 'normal', family: "Times New Roman" }
                             }
                         }
                     }
@@ -1224,27 +1119,19 @@
             });
         }
 
-        // 绘制Burst模型预测图表
         function drawPredictionChartBurst(predictions) {
-            const dataToPlot = predictions.slice(1);                 // 去掉 Year 0
-            const labels      = Array.from({length: 10}, (_, i) =>   // 生成 Year 1-10
-                                           `Year ${i}`);
+            const dataToPlot = predictions.slice(1);
+            const labels = Array.from({ length: 10 }, (_, i) => `Year ${i}`);
             const ctx = document.getElementById('prediction-chart-burst').getContext('2d');
 
-            // 如果已有图表实例，先销毁
-            if (predictionChartBurst) {
-                predictionChartBurst.destroy();
-            }
+            if (predictionChartBurst) predictionChartBurst.destroy();
 
-            // 动态计算Y轴范围
             const yMax = calculateYMax(dataToPlot);
 
-            // 获取当前主题
             const isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
             const textColor = isLightTheme ? '#2c3e50' : '#ffcd56';
             const gridColor = isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
 
-            // 创建新图表
             predictionChartBurst = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -1269,11 +1156,7 @@
                         legend: {
                             labels: {
                                 color: textColor,
-                                font: {
-                                    size: 16,
-                                    family: "Times New Roman",
-                                    weight: "normal"
-                                }
+                                font: { size: 18, family: "Times New Roman", weight: "normal" }
                             }
                         },
                         tooltip: {
@@ -1292,48 +1175,32 @@
                     },
                     scales: {
                         x: {
-                            grid: {
-                                color: gridColor
-                            },
-                            ticks: {
-                                color: textColor
-                            },
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { size: 16, family: "Times New Roman" } },
                             title: {
                                 display: true,
                                 text: 'Year|年份',
                                 color: '#ff9f40',
-                                font: {
-                                    size: 16,
-                                    weight: 'normal',
-                                    family: "Times New Roman"
-                                }
+                                font: { size: 18, weight: 'normal', family: "Times New Roman" }
                             }
                         },
                         y: {
                             min: 0,
                             max: yMax,
-                            grid: {
-                                color: gridColor
-                            },
+                            grid: { color: gridColor },
                             ticks: {
                                 color: textColor,
+                                font: { size: 16, family: "Times New Roman" },
                                 callback: function(value) {
-                                    if (value < 0.001) {
-                                        return value.toExponential(1);
-                                    } else {
-                                        return value.toFixed(4);
-                                    }
+                                    if (value < 0.001) return value.toExponential(1);
+                                    return value.toFixed(4);
                                 }
                             },
                             title: {
                                 display: true,
                                 text: 'Probability|概率',
                                 color: '#ff9f40',
-                                font: {
-                                    size: 16,
-                                    weight: 'normal',
-                                    family: "Times New Roman"
-                                }
+                                font: { size: 18, weight: 'normal', family: "Times New Roman" }
                             }
                         }
                     }
@@ -1341,9 +1208,7 @@
             });
         }
 
-        // 重置输入
         function resetInputs() {
-            // 设置默认值（包含修正的d_grow值）
             document.getElementById('smys').value = '483';
             document.getElementById('smts').value = '565';
             document.getElementById('dia').value = '1066.8';
@@ -1353,58 +1218,39 @@
             document.getElementById('prestress').value = '8.69';
             document.getElementById('thickness').value = '12';
 
-            // 清除错误信息
             for (const inputId in inputValidations) {
                 document.getElementById(inputId).classList.remove('error');
                 document.getElementById(inputValidations[inputId].errorId).textContent = '';
             }
 
-            // 隐藏结果容器
             outputContainer.style.display = 'none';
             resultPlaceholder.style.display = 'block';
 
-            // 禁用保存按钮
             saveBtn.disabled = true;
 
-            // 销毁图表
-            if (predictionChart) {
-                predictionChart.destroy();
-                predictionChart = null;
-            }
-            if (predictionChartBurst) {
-                predictionChartBurst.destroy();
-                predictionChartBurst = null;
-            }
+            if (predictionChart) { predictionChart.destroy(); predictionChart = null; }
+            if (predictionChartBurst) { predictionChartBurst.destroy(); predictionChartBurst = null; }
         }
 
-        // 保存为CSV文件
         function saveToCSV() {
-            // 检查是否有可保存的数据
             if (lastBurstPredictions.length === 0 || lastLeakPredictions.length === 0) {
                 alert("没有可保存的数据，请先进行计算");
                 return;
             }
 
-            // 创建CSV内容
             let csvContent = "Year,Burst Probability,Leakage Probability\n";
 
-            // 添加数据行
             for (let i = 0; i < lastBurstPredictions.length - 1; i++) {
                 const year = i;
                 const burstProb = lastBurstPredictions[i + 1];
                 const leakProb = lastLeakPredictions[i + 1];
-
                 csvContent += `${year},${burstProb.toExponential(6)},${leakProb.toExponential(6)}\n`;
             }
 
-            // 创建Blob对象
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-
-            // 创建下载链接
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
 
-            // 获取当前日期时间作为文件名的一部分
             const now = new Date();
             const dateTimeStr = now.toISOString().slice(0, 19).replace(/:/g, '-');
 
@@ -1412,15 +1258,11 @@
             link.setAttribute("download", `pipeline_prediction_${dateTimeStr}.csv`);
             link.style.visibility = 'hidden';
 
-            // 添加到DOM并触发点击
             document.body.appendChild(link);
             link.click();
 
-            // 清理
             document.body.removeChild(link);
-            setTimeout(() => {
-                URL.revokeObjectURL(url);
-            }, 100);
+            setTimeout(() => URL.revokeObjectURL(url), 100);
         }
     </script>
 </body>
