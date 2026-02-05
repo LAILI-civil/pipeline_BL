@@ -83,13 +83,10 @@
             min-height: 100vh;
             padding: 20px;
             transition: background 0.5s ease, color 0.5s ease;
-
-            /* 关键：除主标题外整体再放大一档，远处更清晰 */
             font-size: 22px;
         }
 
         .container {
-            /* 关键：整体容器加宽，让右侧标题行更“宽” */
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
@@ -144,7 +141,7 @@
             font-size: 1.4rem;
         }
 
-        /* 主标题：保持你说的“足够大”，不再放大 */
+        /* 主标题：保持原大小，但加粗 */
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
@@ -153,11 +150,12 @@
             background-clip: text;
             color: transparent;
             line-height: 1.15;
-            font-weight: 400;
+            font-weight: 700; /* 加粗 */
         }
 
+        /* 副标题：调大一号 */
         .subtitle {
-            font-size: 1.45rem;
+            font-size: 1.6rem; /* 调大 */
             color: var(--output-label);
             max-width: 900px;
             margin: 0 auto;
@@ -185,8 +183,6 @@
             border: 1px solid var(--panel-border);
             backdrop-filter: blur(10px);
             transition: background 0.5s ease, border 0.5s ease;
-
-            /* 关键：面板最小宽度，避免右侧标题区域显得拥挤 */
             min-width: 0;
         }
 
@@ -205,7 +201,6 @@
             flex: 0 0 auto;
         }
 
-        /* 关键：让“Prediction results|预测结果 (0-9 year)”这一行不被挤压，宽度更充足 */
         .panel-title h2 {
             flex: 1 1 auto;
             min-width: 0;
@@ -251,6 +246,7 @@
             font-size: 1.45rem;
             line-height: 1.2;
             font-weight: 400;
+            flex: 0 0 auto;
         }
 
         .input-row input {
@@ -263,6 +259,9 @@
             font-size: 1.55rem;
             font-weight: 400;
             line-height: 1.2;
+
+            /* 关键：给输入框一个更大的最小宽度，Thickness行不会挤到错位 */
+            min-width: 260px;
         }
 
         .input-row input.error {
@@ -283,6 +282,7 @@
             opacity: 0.95;
             line-height: 1.2;
             font-weight: 400;
+            flex: 0 0 auto;
         }
 
         .error-message {
@@ -315,6 +315,9 @@
             justify-content: center;
             gap: 10px;
             line-height: 1.1;
+
+            /* 避免按钮文字换行 */
+            white-space: nowrap;
         }
 
         #predict-btn {
@@ -461,14 +464,14 @@
                 margin-bottom: 20px;
             }
 
-            h1 { font-size: 2rem; } /* 小屏主标题维持原逻辑 */
+            h1 { font-size: 2rem; }
 
-            body { font-size: 20px; } /* 小屏也别太小 */
+            body { font-size: 20px; }
 
-            .subtitle { font-size: 1.2rem; }
+            .subtitle { font-size: 1.35rem; }
 
             .input-row label { font-size: 1.25rem; }
-            .input-row input { font-size: 1.3rem; }
+            .input-row input { font-size: 1.3rem; min-width: 220px; }
 
             button {
                 font-size: 1.35rem;
@@ -483,10 +486,11 @@
             width: 100%;
         }
 
+        /* 关键：加宽保存按钮，保证一行显示 */
         #save-btn {
             background: var(--btn-primary-bg);
             color: var(--btn-primary-text);
-            max-width: 360px;
+            max-width: 520px;  /* 加宽 */
             width: 100%;
         }
 
@@ -575,7 +579,6 @@
                         <span class="error-message" id="prestress-error"></span>
                     </div>
 
-                    <!-- thickness移动到正确位置 -->
                     <div class="input-row">
                         <label for="thickness">Thickness</label>
                         <input type="number" id="thickness" value="12" step="0.1">
@@ -672,7 +675,6 @@
         </div>
     </div>
 
-    <!-- 添加Chart.js库用于绘制图表 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
@@ -747,7 +749,6 @@
 
         // 初始化页面
         document.addEventListener('DOMContentLoaded', async () => {
-            // 检查浏览器兼容性
             if (!tf?.backend) {
                 document.body.innerHTML = `
                     <div class="container" style="text-align: center; padding: 50px 20px;">
@@ -891,11 +892,11 @@
                 modelStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在加载神经网络模型...';
 
                 model = await tf.loadGraphModel(MODEL_URL, {
-                    onProgress: f => modelProgress.style.width = `${Math.floor(f*50)}%`
+                    onProgress: f => modelProgress.style.width = `${Math.floor(f * 50)}%`
                 });
 
                 modelBurst = await tf.loadGraphModel(MODEL_BURST_URL, {
-                    onProgress: f => modelProgress.style.width = `${50 + Math.floor(f*50)}%`
+                    onProgress: f => modelProgress.style.width = `${50 + Math.floor(f * 50)}%`
                 });
 
                 modelStatus.innerHTML = '<i class="fas fa-check-circle"></i> ✅NN successful loading|加载成功！';
