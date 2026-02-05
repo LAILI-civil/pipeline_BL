@@ -20,62 +20,86 @@
             --bg-gradient-start: #1a2a6c;
             --bg-gradient-end: #2c3e50;
             --text-color: #fff;
+
             --panel-bg: rgba(20, 30, 48, 0.85);
             --panel-border: rgba(255, 255, 255, 0.1);
-            --input-bg: rgba(0, 0, 0, 0.2);
-            --input-bg-hover: rgba(0, 0, 0, 0.3);
-            --input-text: #ffffff;              /* 输入数值颜色 */
-            --unit-text: rgba(146, 254, 157, 0.9); /* 单位颜色（更偏绿，区分明显） */
-            --unit-divider: rgba(255, 255, 255, 0.18); /* 单位与输入之间的分隔线 */
-            --unit-bg: rgba(0, 0, 0, 0.18);     /* 单位区域微背景，提升区分度 */
+
+            /* 行底色（SMYS & 单位等“底色文本”用） */
+            --row-bg: rgba(0, 0, 0, 0.22);
+            --row-bg-hover: rgba(0, 0, 0, 0.30);
+
+            /* label(如SMYS) 与 unit(如290-690) 颜色：一致、偏淡 = 底色文字 */
+            --dim-text: rgba(168, 216, 234, 0.95);
+
+            /* 输入值颜色：更深/更亮，突出 */
+            --value-text: #ffffff;
+
+            /* 输入框背景略深一点，突出“483” */
+            --input-bg: rgba(0, 0, 0, 0.42);
+            --input-bg-hover: rgba(0, 0, 0, 0.52);
+
             --input-border-focus: #00c9ff;
             --input-error: #ff6b6b;
+
             --btn-primary-bg: linear-gradient(90deg, #00c9ff, #92fe9d);
             --btn-primary-text: #1a2a6c;
             --btn-secondary-bg: rgba(255, 255, 255, 0.1);
             --btn-secondary-text: white;
+
             --status-card-bg: rgba(0, 0, 0, 0.3);
+
             --output-label: #a8d8ea;
             --output-value: linear-gradient(90deg, #00c9ff, #92fe9d);
             --progress-bg: rgba(255, 255, 255, 0.1);
             --progress-bar: linear-gradient(90deg, #00c9ff, #92fe9d);
+
             --perf-bg: rgba(0, 0, 0, 0.3);
             --model-info-bg: rgba(0, 0, 0, 0.3);
             --footer-border: rgba(255, 255, 255, 0.1);
             --chart-grid: rgba(255, 255, 255, 0.1);
+
             --success-color: #92fe9d;
             --highlight-color: #92fe9d;
             --perf-value-color: #92fe9d;
         }
 
         [data-theme="light"] {
-            /* 浅色主题变量 */
             --bg-gradient-start: #f5f7fa;
             --bg-gradient-end: #c3cfe2;
             --text-color: #2c3e50;
+
             --panel-bg: rgba(255, 255, 255, 0.9);
             --panel-border: rgba(0, 0, 0, 0.1);
-            --input-bg: rgba(0, 0, 0, 0.05);
-            --input-bg-hover: rgba(0, 0, 0, 0.1);
-            --input-text: #1f2a3a;               /* 输入数值颜色（深色） */
-            --unit-text: rgba(44, 62, 80, 0.85); /* 单位颜色（比输入更浅） */
-            --unit-divider: rgba(0, 0, 0, 0.15);
-            --unit-bg: rgba(0, 0, 0, 0.04);
+
+            --row-bg: rgba(0, 0, 0, 0.05);
+            --row-bg-hover: rgba(0, 0, 0, 0.08);
+
+            --dim-text: rgba(44, 62, 80, 0.72); /* label+unit 一致的淡色 */
+            --value-text: #1f2a3a;
+
+            --input-bg: rgba(0, 0, 0, 0.10);
+            --input-bg-hover: rgba(0, 0, 0, 0.14);
+
             --input-border-focus: #4facfe;
             --input-error: #ff6b6b;
+
             --btn-primary-bg: linear-gradient(90deg, #4facfe, #00f2fe);
             --btn-primary-text: white;
             --btn-secondary-bg: rgba(0, 0, 0, 0.05);
             --btn-secondary-text: #2c3e50;
+
             --status-card-bg: rgba(0, 0, 0, 0.05);
+
             --output-label: #5a6b82;
             --output-value: linear-gradient(90deg, #4facfe, #00f2fe);
             --progress-bg: rgba(0, 0, 0, 0.1);
             --progress-bar: linear-gradient(90deg, #4facfe, #00f2fe);
+
             --perf-bg: rgba(0, 0, 0, 0.05);
             --model-info-bg: rgba(0, 0, 0, 0.05);
             --footer-border: rgba(0, 0, 0, 0.1);
             --chart-grid: rgba(0, 0, 0, 0.1);
+
             --success-color: #2c3e50;
             --highlight-color: #2c3e50;
             --perf-value-color: #4facfe;
@@ -141,9 +165,7 @@
             transform: translateY(-2px);
         }
 
-        .theme-switch i {
-            font-size: 1.4rem;
-        }
+        .theme-switch i { font-size: 1.4rem; }
 
         h1 {
             font-size: 2.5rem;
@@ -208,47 +230,36 @@
             overflow: visible;
         }
 
-        h2 {
-            font-size: 1.75rem;
-            line-height: 1.2;
-            font-weight: 400;
-        }
-
-        h3 {
-            font-size: 1.6rem;
-            line-height: 1.25;
-            font-weight: 400;
-        }
+        h2 { font-size: 1.75rem; line-height: 1.2; font-weight: 400; }
+        h3 { font-size: 1.6rem; line-height: 1.25; font-weight: 400; }
 
         .input-group { margin-bottom: 20px; }
 
+        /* 行底色：label 和 unit 都是“底色文字” */
         .input-row {
             display: flex;
             align-items: center;
             margin-bottom: 15px;
             padding: 14px 16px;
-            background: var(--input-bg);
+            background: var(--row-bg);
             border-radius: 10px;
             transition: all 0.3s ease;
             position: relative;
             gap: 12px;
         }
 
-        .input-row:hover {
-            background: var(--input-bg-hover);
-            transform: translateY(-2px);
-        }
+        .input-row:hover { background: var(--row-bg-hover); transform: translateY(-2px); }
 
         .input-row label {
             width: 190px;
-            color: var(--output-label);
+            color: var(--dim-text); /* SMYS 等：底色文字 */
             font-size: 1.45rem;
             line-height: 1.2;
             font-weight: 400;
             flex: 0 0 auto;
         }
 
-        /* input + unit 在同一个“输入框容器”里，但通过颜色/背景/分隔线增强区分度 */
+        /* 中间输入框：更深色背景，让“483”更突出 */
         .input-box {
             flex: 1;
             position: relative;
@@ -261,51 +272,55 @@
             background: var(--input-bg);
             border: none;
             border-radius: 8px;
-            color: var(--input-text);
+            color: var(--value-text); /* 483：加深色 */
             font-size: 1.55rem;
-            font-weight: 400;
+            font-weight: 600;         /* 让数值更“硬朗” */
             line-height: 1.2;
 
             /* 单位在框内右侧，预留空间 */
             padding-right: 230px;
 
             min-width: 280px;
+            transition: background 0.3s ease;
         }
 
-        /* 让输入数字更“亮”，单位更“淡/偏色”，一眼区分 */
-        .input-box input::placeholder {
-            color: rgba(255, 255, 255, 0.45);
-        }
+        .input-row:hover .input-box input { background: var(--input-bg-hover); }
 
-        [data-theme="light"] .input-box input::placeholder {
-            color: rgba(0, 0, 0, 0.35);
+        /* number input 的默认箭头在某些浏览器会影响视觉，这里略优化 */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
+        input[type="number"] { -moz-appearance: textfield; }
 
         .input-box input.error { box-shadow: 0 0 0 2px var(--input-error); }
         .input-box input:focus { outline: none; box-shadow: 0 0 0 2px var(--input-border-focus); }
 
+        /* 单位（290-690）：底色文字，和 SMYS 同色；放在框内但“更淡” */
         .input-box .unit {
             position: absolute;
-            right: 10px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--unit-text);
+            color: var(--dim-text);   /* 与 label 一致 */
             font-size: 1.15rem;
-            opacity: 1;
-            line-height: 1.1;
             font-weight: 400;
             white-space: nowrap;
             pointer-events: none;
             text-align: right;
+            opacity: 0.95;
 
-            /* 关键：给单位加一个“胶囊背景”+ 左侧分隔线，和输入数字明显区分 */
-            padding: 8px 10px;
-            border-left: 1px solid var(--unit-divider);
-            background: var(--unit-bg);
+            /* 轻微胶囊底，让它即使同色也能看出区域 */
+            padding: 7px 10px;
             border-radius: 8px;
+            background: rgba(255, 255, 255, 0.04);
         }
 
-        /* 按单位长度微调右侧预留空间 */
+        [data-theme="light"] .input-box .unit {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
         .unit-long input { padding-right: 260px; }
         .unit-mid  input { padding-right: 230px; }
         .unit-short input { padding-right: 120px; }
@@ -346,11 +361,7 @@
         #predict-btn { background: var(--btn-primary-bg); color: var(--btn-primary-text); }
         #reset-btn { background: var(--btn-secondary-bg); color: var(--btn-secondary-text); }
 
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
+        button:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
         button:active { transform: translateY(0); }
 
         .status-card {
@@ -362,12 +373,7 @@
             transition: all 0.3s ease;
         }
 
-        #model-status {
-            font-size: 1.5rem;
-            font-weight: 400;
-            line-height: 1.2;
-        }
-
+        #model-status { font-size: 1.5rem; font-weight: 400; line-height: 1.2; }
         .loading { color: #00c9ff; }
         .success { color: var(--success-color); }
         .error { color: var(--input-error); }
@@ -459,15 +465,8 @@
 
             .input-row label { font-size: 1.25rem; }
 
-            .input-box input {
-                font-size: 1.3rem;
-                min-width: 220px;
-            }
-
-            .input-box .unit {
-                font-size: 1.0rem;
-                padding: 6px 8px;
-            }
+            .input-box input { font-size: 1.3rem; min-width: 220px; }
+            .input-box .unit { font-size: 1.0rem; padding: 6px 8px; }
 
             button { font-size: 1.35rem; padding: 18px 14px; }
         }
@@ -506,7 +505,6 @@
         </header>
 
         <div class="content">
-            <!-- 输入面板 -->
             <div class="panel">
                 <div class="panel-title">
                     <i class="fas fa-sliders-h"></i>
@@ -611,7 +609,6 @@
                 </div>
             </div>
 
-            <!-- 输出面板 -->
             <div class="panel">
                 <div class="panel-title">
                     <i class="fas fa-chart-bar"></i>
@@ -1227,7 +1224,6 @@
             }
 
             let csvContent = "Year,Burst Probability,Leakage Probability\n";
-
             for (let i = 0; i < lastBurstPredictions.length - 1; i++) {
                 const year = i;
                 const burstProb = lastBurstPredictions[i + 1];
