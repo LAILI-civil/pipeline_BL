@@ -24,7 +24,10 @@
             --panel-border: rgba(255, 255, 255, 0.1);
             --input-bg: rgba(0, 0, 0, 0.2);
             --input-bg-hover: rgba(0, 0, 0, 0.3);
-            --input-text: white;
+            --input-text: #ffffff;              /* 输入数值颜色 */
+            --unit-text: rgba(146, 254, 157, 0.9); /* 单位颜色（更偏绿，区分明显） */
+            --unit-divider: rgba(255, 255, 255, 0.18); /* 单位与输入之间的分隔线 */
+            --unit-bg: rgba(0, 0, 0, 0.18);     /* 单位区域微背景，提升区分度 */
             --input-border-focus: #00c9ff;
             --input-error: #ff6b6b;
             --btn-primary-bg: linear-gradient(90deg, #00c9ff, #92fe9d);
@@ -40,7 +43,6 @@
             --model-info-bg: rgba(0, 0, 0, 0.3);
             --footer-border: rgba(255, 255, 255, 0.1);
             --chart-grid: rgba(255, 255, 255, 0.1);
-            --unit-color: #92fe9d;
             --success-color: #92fe9d;
             --highlight-color: #92fe9d;
             --perf-value-color: #92fe9d;
@@ -55,7 +57,10 @@
             --panel-border: rgba(0, 0, 0, 0.1);
             --input-bg: rgba(0, 0, 0, 0.05);
             --input-bg-hover: rgba(0, 0, 0, 0.1);
-            --input-text: #2c3e50;
+            --input-text: #1f2a3a;               /* 输入数值颜色（深色） */
+            --unit-text: rgba(44, 62, 80, 0.85); /* 单位颜色（比输入更浅） */
+            --unit-divider: rgba(0, 0, 0, 0.15);
+            --unit-bg: rgba(0, 0, 0, 0.04);
             --input-border-focus: #4facfe;
             --input-error: #ff6b6b;
             --btn-primary-bg: linear-gradient(90deg, #4facfe, #00f2fe);
@@ -71,7 +76,6 @@
             --model-info-bg: rgba(0, 0, 0, 0.05);
             --footer-border: rgba(0, 0, 0, 0.1);
             --chart-grid: rgba(0, 0, 0, 0.1);
-            --unit-color: #2c3e50;
             --success-color: #2c3e50;
             --highlight-color: #2c3e50;
             --perf-value-color: #4facfe;
@@ -141,7 +145,6 @@
             font-size: 1.4rem;
         }
 
-        /* 主标题：保持原大小，但加粗 */
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
@@ -153,7 +156,6 @@
             font-weight: 700;
         }
 
-        /* 副标题：调大一号 */
         .subtitle {
             font-size: 1.6rem;
             color: var(--output-label);
@@ -170,9 +172,7 @@
         }
 
         @media (max-width: 900px) {
-            .content {
-                grid-template-columns: 1fr;
-            }
+            .content { grid-template-columns: 1fr; }
         }
 
         .panel {
@@ -220,9 +220,7 @@
             font-weight: 400;
         }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
+        .input-group { margin-bottom: 20px; }
 
         .input-row {
             display: flex;
@@ -250,7 +248,7 @@
             flex: 0 0 auto;
         }
 
-        /* 关键：把 input + unit 放进一个“输入框容器”，让 unit 显示在文本框内部右侧 */
+        /* input + unit 在同一个“输入框容器”里，但通过颜色/背景/分隔线增强区分度 */
         .input-box {
             flex: 1;
             position: relative;
@@ -268,39 +266,46 @@
             font-weight: 400;
             line-height: 1.2;
 
-            /* 给右侧单位留出内边距空间（单位在框内右侧显示） */
+            /* 单位在框内右侧，预留空间 */
             padding-right: 230px;
 
-            /* 稍微增大最小宽度，避免 Thickness 行挤压 */
             min-width: 280px;
         }
 
-        .input-box input.error {
-            box-shadow: 0 0 0 2px var(--input-error);
+        /* 让输入数字更“亮”，单位更“淡/偏色”，一眼区分 */
+        .input-box input::placeholder {
+            color: rgba(255, 255, 255, 0.45);
         }
 
-        .input-box input:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px var(--input-border-focus);
+        [data-theme="light"] .input-box input::placeholder {
+            color: rgba(0, 0, 0, 0.35);
         }
 
-        /* 单位：绝对定位到 input 内部右侧 */
+        .input-box input.error { box-shadow: 0 0 0 2px var(--input-error); }
+        .input-box input:focus { outline: none; box-shadow: 0 0 0 2px var(--input-border-focus); }
+
         .input-box .unit {
             position: absolute;
-            right: 14px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--unit-color);
-            font-size: 1.2rem;
-            opacity: 0.95;
+            color: var(--unit-text);
+            font-size: 1.15rem;
+            opacity: 1;
             line-height: 1.1;
             font-weight: 400;
             white-space: nowrap;
-            pointer-events: none; /* 不挡住输入点击 */
+            pointer-events: none;
             text-align: right;
+
+            /* 关键：给单位加一个“胶囊背景”+ 左侧分隔线，和输入数字明显区分 */
+            padding: 8px 10px;
+            border-left: 1px solid var(--unit-divider);
+            background: var(--unit-bg);
+            border-radius: 8px;
         }
 
-        /* 不同单位长度不一样，这里用 class 做细调：长单位留更多右 padding */
+        /* 按单位长度微调右侧预留空间 */
         .unit-long input { padding-right: 260px; }
         .unit-mid  input { padding-right: 230px; }
         .unit-short input { padding-right: 120px; }
@@ -338,24 +343,15 @@
             white-space: nowrap;
         }
 
-        #predict-btn {
-            background: var(--btn-primary-bg);
-            color: var(--btn-primary-text);
-        }
-
-        #reset-btn {
-            background: var(--btn-secondary-bg);
-            color: var(--btn-secondary-text);
-        }
+        #predict-btn { background: var(--btn-primary-bg); color: var(--btn-primary-text); }
+        #reset-btn { background: var(--btn-secondary-bg); color: var(--btn-secondary-text); }
 
         button:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        button:active {
-            transform: translateY(0);
-        }
+        button:active { transform: translateY(0); }
 
         .status-card {
             background: var(--status-card-bg);
@@ -375,24 +371,6 @@
         .loading { color: #00c9ff; }
         .success { color: var(--success-color); }
         .error { color: var(--input-error); }
-
-        .output-label {
-            font-size: 1.3rem;
-            color: var(--output-label);
-            margin-bottom: 8px;
-            line-height: 1.2;
-            font-weight: 400;
-        }
-
-        .output-value {
-            font-size: 1.7rem;
-            font-weight: 600;
-            background: var(--output-value);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            line-height: 1.1;
-        }
 
         .progress-container {
             height: 12px;
@@ -452,10 +430,7 @@
 
         .info-row:last-child { border-bottom: none; }
 
-        .highlight {
-            color: var(--highlight-color);
-            font-weight: 600;
-        }
+        .highlight { color: var(--highlight-color); font-weight: 600; }
 
         .footer {
             text-align: center;
@@ -477,11 +452,7 @@
         }
 
         @media (max-width: 600px) {
-            .theme-switch-container {
-                justify-content: center;
-                margin-bottom: 20px;
-            }
-
+            .theme-switch-container { justify-content: center; margin-bottom: 20px; }
             h1 { font-size: 2rem; }
             body { font-size: 20px; }
             .subtitle { font-size: 1.35rem; }
@@ -494,13 +465,11 @@
             }
 
             .input-box .unit {
-                font-size: 1.05rem;
+                font-size: 1.0rem;
+                padding: 6px 8px;
             }
 
-            button {
-                font-size: 1.35rem;
-                padding: 18px 14px;
-            }
+            button { font-size: 1.35rem; padding: 18px 14px; }
         }
 
         .save-btn-container {
@@ -517,15 +486,8 @@
             width: 100%;
         }
 
-        #save-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        #save-btn:disabled:hover {
-            transform: none;
-            box-shadow: none;
-        }
+        #save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        #save-btn:disabled:hover { transform: none; box-shadow: none; }
     </style>
 </head>
 <body>
@@ -716,7 +678,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        // 全局常量 / 归一化参数
         const NORM_MEAN = [
             423.0857238769531, 517.4285888671875, 738.7656860351562,
             35.0, 0.45000001788139343, 205.0,
@@ -730,7 +691,6 @@
         const zNorm = (v, i) => (v - NORM_MEAN[i]) / NORM_STD[i];
         const zDenorm = (v, i) => v * NORM_STD[i] + NORM_MEAN[i];
 
-        // 模型特定的归一化参数
         const MODEL_MEAN = [
             423.0857238769531, 517.4285888671875, 738.7656860351562,
             35.0, 0.45000001788139343, 205.0,
@@ -744,7 +704,6 @@
         const modelZNorm = (v, i) => (v - MODEL_MEAN[i]) / MODEL_STD[i];
         const modelZDenorm = (v, i) => v * MODEL_STD[i] + MODEL_MEAN[i];
 
-        // 全局变量
         let model = null;
         let modelBurst = null;
         let predictionChart = null;
@@ -756,7 +715,6 @@
         const MODEL_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${MODEL_PATH}`;
         const MODEL_BURST_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${MODEL_BURST_PATH}`;
 
-        // DOM元素
         const modelStatus = document.getElementById('model-status');
         const modelProgress = document.getElementById('model-progress');
         const predictBtn = document.getElementById('predict-btn');
@@ -770,11 +728,9 @@
         const backendNameEl = document.getElementById('backend-name');
         const themeSwitch = document.getElementById('theme-switch');
 
-        // 存储预测结果
         let lastBurstPredictions = [];
         let lastLeakPredictions = [];
 
-        // 输入验证配置
         const inputValidations = {
             smys: { min: 290, max: 690, errorId: 'smys-error' },
             smts: { min: 414, max: 758, errorId: 'smts-error' },
@@ -785,7 +741,6 @@
             prestress: { min: 4.137, max: 9.928, errorId: 'prestress-error' }
         };
 
-        // 初始化页面
         document.addEventListener('DOMContentLoaded', async () => {
             if (!tf?.backend) {
                 document.body.innerHTML = `
@@ -844,14 +799,8 @@
                 themeSwitch.innerHTML = '<i class="fas fa-moon"></i><span>dark color</span>';
             }
 
-            if (predictionChart) {
-                predictionChart.destroy();
-                predictionChart = null;
-            }
-            if (predictionChartBurst) {
-                predictionChartBurst.destroy();
-                predictionChartBurst = null;
-            }
+            if (predictionChart) { predictionChart.destroy(); predictionChart = null; }
+            if (predictionChartBurst) { predictionChartBurst.destroy(); predictionChartBurst = null; }
         }
 
         function setupInputValidation() {
