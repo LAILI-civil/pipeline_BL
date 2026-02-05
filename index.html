@@ -11,9 +11,9 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            /* 统一改为 Times New Roman + 加粗，并提供回退字体 */
+            /* 统一字体：Times New Roman；去掉全局加粗 */
             font-family: "Times New Roman", Times, serif;
-            font-weight: 700;
+            font-weight: 400;
         }
 
         :root {
@@ -84,8 +84,8 @@
             min-height: 100vh;
             padding: 20px;
             transition: background 0.5s ease, color 0.5s ease;
-            /* 整体基础字号调大 */
-            font-size: 18px;
+            /* 除主标题外整体字体“大一号” */
+            font-size: 19px;
         }
 
         .container {
@@ -125,12 +125,12 @@
             align-items: center;
             gap: 10px;
             background: rgba(0, 0, 0, 0.2);
-            padding: 10px 16px; /* 略微加大 */
+            padding: 10px 16px;
             border-radius: 20px;
             cursor: pointer;
             user-select: none;
             transition: all 0.3s ease;
-            font-size: 1.1rem; /* 调大 */
+            font-size: 1.1rem;
             line-height: 1.2;
         }
 
@@ -140,35 +140,41 @@
         }
 
         .theme-switch i {
-            font-size: 1.3rem; /* 调大 */
+            font-size: 1.3rem;
         }
 
+        /* 主标题：保持大小不变（沿用你原来的 2.5rem） */
         h1 {
-            font-size: 3.0rem; /* 调大 */
+            font-size: 2.5rem;
             margin-bottom: 10px;
             background: linear-gradient(90deg, #00c9ff, #92fe9d);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             line-height: 1.15;
+            font-weight: 400;
         }
 
+        /* 其余标题/文本：整体大一号 */
         h2 {
-            font-size: 1.6rem; /* 调大面板标题 */
+            font-size: 1.45rem;
             line-height: 1.2;
+            font-weight: 400;
         }
 
         h3 {
-            font-size: 1.5rem; /* 等待结果标题调大 */
+            font-size: 1.35rem;
             line-height: 1.25;
+            font-weight: 400;
         }
 
         .subtitle {
-            font-size: 1.35rem; /* 调大 */
+            font-size: 1.3rem;
             color: var(--output-label);
             max-width: 800px;
             margin: 0 auto;
             line-height: 1.6;
+            font-weight: 400;
         }
 
         .content {
@@ -204,7 +210,7 @@
         }
 
         .panel-title i {
-            font-size: 1.7rem; /* 调大 */
+            font-size: 1.7rem;
         }
 
         .input-group {
@@ -215,7 +221,7 @@
             display: flex;
             align-items: center;
             margin-bottom: 15px;
-            padding: 12px 15px; /* 略微加大 */
+            padding: 12px 15px;
             background: var(--input-bg);
             border-radius: 10px;
             transition: all 0.3s ease;
@@ -229,21 +235,21 @@
 
         .input-row label {
             width: 180px;
-            font-weight: 700;
             color: var(--output-label);
-            font-size: 1.2rem; /* 调大，让标签更“占满” */
+            font-size: 1.25rem;
             line-height: 1.2;
+            font-weight: 400;
         }
 
         .input-row input {
             flex: 1;
-            padding: 14px 16px; /* 调大输入框内部文字区域 */
+            padding: 14px 16px;
             background: var(--input-bg);
             border: none;
             border-radius: 8px;
             color: var(--input-text);
-            font-size: 1.25rem; /* 调大输入字体 */
-            font-weight: 700;
+            font-size: 1.3rem;
+            font-weight: 400;
             line-height: 1.2;
         }
 
@@ -258,23 +264,23 @@
 
         .unit {
             margin-left: 10px;
-            color: var(--unit-color); /* 使用变量控制单位颜色 */
-            font-weight: 700;
-            min-width: 140px; /* 稍微加宽以配合更大字体 */
+            color: var(--unit-color);
+            min-width: 140px;
             text-align: right;
-            font-size: 1.1rem; /* 调大单位字体 */
+            font-size: 1.15rem;
             opacity: 0.95;
             line-height: 1.2;
+            font-weight: 400;
         }
 
         .error-message {
             position: absolute;
             right: 15px;
-            bottom: -20px; /* 适配更大字号 */
-            font-size: 1.0rem; /* 调大错误提示 */
+            bottom: -20px;
+            font-size: 1.05rem;
             color: var(--input-error);
-            font-weight: 700;
             line-height: 1.1;
+            font-weight: 400;
         }
 
         .btn-container {
@@ -285,11 +291,11 @@
 
         button {
             flex: 1;
-            padding: 18px 16px; /* 调大按钮高度，让文字更“占满” */
+            padding: 18px 16px;
             border: none;
             border-radius: 10px;
-            font-size: 1.4rem; /* 调大按钮文字 */
-            font-weight: 800; /* 更粗一点 */
+            font-size: 1.4rem;
+            font-weight: 400; /* 去掉加粗 */
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
@@ -328,8 +334,8 @@
         }
 
         #model-status {
-            font-size: 1.25rem; /* 调大 */
-            font-weight: 800;
+            font-size: 1.3rem;
+            font-weight: 400;
             line-height: 1.2;
         }
 
@@ -338,7 +344,7 @@
         }
 
         .success {
-            color: var(--success-color); /* 使用变量控制成功颜色 */
+            color: var(--success-color);
         }
 
         .error {
@@ -352,16 +358,16 @@
         }
 
         .output-label {
-            font-size: 1.1rem; /* 调大 */
+            font-size: 1.15rem;
             color: var(--output-label);
             margin-bottom: 8px;
-            font-weight: 700;
             line-height: 1.2;
+            font-weight: 400;
         }
 
         .output-value {
-            font-size: 1.6rem; /* 调大 */
-            font-weight: 900;
+            font-size: 1.55rem;
+            font-weight: 600; /* 数值略微突出但不“粗体”压迫 */
             background: var(--output-value);
             -webkit-background-clip: text;
             background-clip: text;
@@ -370,7 +376,7 @@
         }
 
         .progress-container {
-            height: 10px; /* 稍微加粗进度条 */
+            height: 10px;
             background: var(--progress-bg);
             border-radius: 4px;
             margin-top: 12px;
@@ -392,8 +398,9 @@
             padding: 15px;
             background: var(--perf-bg);
             border-radius: 10px;
-            font-size: 1.1rem; /* 调大 */
+            font-size: 1.15rem;
             line-height: 1.2;
+            font-weight: 400;
         }
 
         .perf-item {
@@ -401,9 +408,9 @@
         }
 
         .perf-value {
-            font-size: 1.45rem; /* 调大 */
-            font-weight: 900;
-            color: var(--perf-value-color); /* 使用变量控制性能值颜色 */
+            font-size: 1.45rem;
+            font-weight: 600; /* 数值略突出 */
+            color: var(--perf-value-color);
             margin-top: 6px;
             line-height: 1.1;
         }
@@ -413,8 +420,9 @@
             padding: 15px;
             background: var(--model-info-bg);
             border-radius: 10px;
-            font-size: 1.1rem; /* 调大 */
+            font-size: 1.15rem;
             line-height: 1.2;
+            font-weight: 400;
         }
 
         .info-row {
@@ -430,8 +438,8 @@
         }
 
         .highlight {
-            color: var(--highlight-color); /* 使用变量控制高亮颜色 */
-            font-weight: 800;
+            color: var(--highlight-color);
+            font-weight: 600; /* 轻微强调 */
         }
 
         .footer {
@@ -440,8 +448,8 @@
             padding-top: 20px;
             border-top: 1px solid var(--footer-border);
             color: var(--output-label);
-            font-size: 1.05rem; /* 调大页脚文字 */
-            font-weight: 700;
+            font-size: 1.1rem;
+            font-weight: 400;
             line-height: 1.4;
         }
 
@@ -465,20 +473,21 @@
                 margin-bottom: 20px;
             }
 
+            /* 小屏：主标题仍保持“原大小规则”不额外放大 */
             h1 {
-                font-size: 2.3rem; /* 小屏也调大一些 */
+                font-size: 2rem;
             }
 
             .subtitle {
-                font-size: 1.15rem;
-            }
-
-            .input-row label {
                 font-size: 1.1rem;
             }
 
-            .input-row input {
+            .input-row label {
                 font-size: 1.15rem;
+            }
+
+            .input-row input {
+                font-size: 1.2rem;
             }
 
             button {
@@ -1145,8 +1154,8 @@
                                 color: textColor,
                                 font: {
                                     size: 16,
-                                    weight: 'bold',
-                                    family: "Times New Roman"
+                                    family: "Times New Roman",
+                                    weight: "normal"
                                 }
                             }
                         },
@@ -1170,12 +1179,7 @@
                                 color: gridColor
                             },
                             ticks: {
-                                color: textColor,
-                                font: {
-                                    size: 14,
-                                    weight: 'bold',
-                                    family: "Times New Roman"
-                                }
+                                color: textColor
                             },
                             title: {
                                 display: true,
@@ -1183,7 +1187,7 @@
                                 color: '#00c9ff',
                                 font: {
                                     size: 16,
-                                    weight: 'bold',
+                                    weight: 'normal',
                                     family: "Times New Roman"
                                 }
                             }
@@ -1196,11 +1200,6 @@
                             },
                             ticks: {
                                 color: textColor,
-                                font: {
-                                    size: 14,
-                                    weight: 'bold',
-                                    family: "Times New Roman"
-                                },
                                 callback: function(value) {
                                     if (value < 0.001) {
                                         return value.toExponential(1);
@@ -1215,7 +1214,7 @@
                                 color: '#00c9ff',
                                 font: {
                                     size: 16,
-                                    weight: 'bold',
+                                    weight: 'normal',
                                     family: "Times New Roman"
                                 }
                             }
@@ -1272,8 +1271,8 @@
                                 color: textColor,
                                 font: {
                                     size: 16,
-                                    weight: 'bold',
-                                    family: "Times New Roman"
+                                    family: "Times New Roman",
+                                    weight: "normal"
                                 }
                             }
                         },
@@ -1297,12 +1296,7 @@
                                 color: gridColor
                             },
                             ticks: {
-                                color: textColor,
-                                font: {
-                                    size: 14,
-                                    weight: 'bold',
-                                    family: "Times New Roman"
-                                }
+                                color: textColor
                             },
                             title: {
                                 display: true,
@@ -1310,7 +1304,7 @@
                                 color: '#ff9f40',
                                 font: {
                                     size: 16,
-                                    weight: 'bold',
+                                    weight: 'normal',
                                     family: "Times New Roman"
                                 }
                             }
@@ -1323,11 +1317,6 @@
                             },
                             ticks: {
                                 color: textColor,
-                                font: {
-                                    size: 14,
-                                    weight: 'bold',
-                                    family: "Times New Roman"
-                                },
                                 callback: function(value) {
                                     if (value < 0.001) {
                                         return value.toExponential(1);
@@ -1342,7 +1331,7 @@
                                 color: '#ff9f40',
                                 font: {
                                     size: 16,
-                                    weight: 'bold',
+                                    weight: 'normal',
                                     family: "Times New Roman"
                                 }
                             }
