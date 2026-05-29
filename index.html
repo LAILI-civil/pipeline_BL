@@ -548,7 +548,7 @@
                     <div class="input-row">
                         <label for="dia">Diameter</label>
                         <div class="input-box unit-long">
-                            <input type="number" id="dia" value="1066.8" step="0.2" min="168.2" max="1422">
+                            <input type="number" id="dia" value="203.2" step="0.2" min="168.2" max="1422">
                             <span class="unit">168.2-1422 mm</span>
                         </div>
                         <span class="error-message" id="dia-error"></span>
@@ -557,7 +557,7 @@
                     <div class="input-row">
                         <label for="depth">Depth</label>
                         <div class="input-box unit-short">
-                            <input type="number" id="depth" value="40.85" step="0.1" min="0" max="80">
+                            <input type="number" id="depth" value="29" step="0.1" min="0" max="80">
                             <span class="unit">0-80 %</span>
                         </div>
                         <span class="error-message" id="depth-error"></span>
@@ -566,7 +566,7 @@
                     <div class="input-row">
                         <label for="d_grow">d_grow</label>
                         <div class="input-box unit-mid">
-                            <input type="number" id="d_grow" value="0.282" step="0.000001" min="0.0" max="0.8">
+                            <input type="number" id="d_grow" value="0.2" step="0.000001" min="0.0" max="0.8">
                             <span class="unit">0.0-0.8 mm</span>
                         </div>
                         <span class="error-message" id="d_grow-error"></span>
@@ -575,7 +575,7 @@
                     <div class="input-row">
                         <label for="length">Length</label>
                         <div class="input-box unit-mid">
-                            <input type="number" id="length" value="275.3" step="0.1" min="10" max="400">
+                            <input type="number" id="length" value="170" step="0.1" min="10" max="400">
                             <span class="unit">10-400 mm</span>
                         </div>
                         <span class="error-message" id="length-error"></span>
@@ -584,7 +584,7 @@
                     <div class="input-row">
                         <label for="prestress">Prestress</label>
                         <div class="input-box unit-mid">
-                            <input type="number" id="prestress" value="8.69" step="0.001" min="4.137" max="9.928">
+                            <input type="number" id="prestress" value="6.895" step="0.001" min="4.137" max="9.928">
                             <span class="unit">4.137-9.928 MPa</span>
                         </div>
                         <span class="error-message" id="prestress-error"></span>
@@ -593,7 +593,7 @@
                     <div class="input-row">
                         <label for="thickness">Thickness</label>
                         <div class="input-box unit-short">
-                            <input type="number" id="thickness" value="12" step="0.1">
+                            <input type="number" id="thickness" value="2" step="0.1">
                             <span class="unit">mm</span>
                         </div>
                     </div>
@@ -972,8 +972,10 @@
 
             for (let year = 1; year <= 10; year++) {
                 let outBurst = modelBurst.predict(tensorBurst);
+                console.log("outBurst shape:", outBurst.shape);  // 新增
                 if (Array.isArray(outBurst)) outBurst = outBurst[0];
                 const normPred = (await outBurst.array())[0][year - 1][8];
+                console.log(`Year ${year} normPred (burst):`, normPred); // 新增
                 const logBurst = zDenorm(normPred, 8);
                 predictionsBurst[year] = Math.pow(10, logBurst);
 
