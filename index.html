@@ -631,11 +631,11 @@
                         </div>
                         <div class="info-row">
                             <span>Calculation mode|计算方式:</span>
-                            <span class="highlight">Burst: recursive | Leakage: recursive</span>
+                            <span class="highlight">Burst: recursive | Leakage: one‑step</span>
                         </div>
                         <div class="info-row">
                             <span>Post-processing|后处理:</span>
-                            <span class="highlight">Smoothing + Isotonic Regression</span>
+                            <span class="highlight">Leakage only (Smoothing + Isotonic)</span>
                         </div>
                     </div>
                 </div>
@@ -663,7 +663,7 @@
         const LEAK_STD  = [120.62177276611328, 104.03054809570312, 369.7414245605469, 20.449750900268555, 0.2276550978422165, 115.43975830078125, 1.7802821397781372, 4.7601752281188965];
         const leakNorm = (v, i) => (v - LEAK_MEAN[i]) / LEAK_STD[i];
 
-        // ===================== 后处理函数（与 Python 测试代码一致） =====================
+        // ===================== 后处理函数（仅用于泄漏模型，与 Python 测试代码一致） =====================
         function clipProb(p) {
             let clipped = p.slice();
             for (let i = 0; i < clipped.length; i++) {
@@ -902,7 +902,7 @@
             const INIT_LOG = -6.0;
             const start = performance.now();
 
-            // ========== 1. 爆裂模型 (递归推理，保持原样) ==========
+            // ========== 1. 爆裂模型 (递归推理，无后处理) ==========
             const burstInput = [];
             for (let t = 0; t < SEQ; t++) {
                 let row = [];
@@ -932,11 +932,11 @@
                 }
             }
             burstTensor.dispose();
-            let burstFinal = burstProbs.slice(1);  // 10个值
-            burstFinal = smoothCdfSequence(clipProb(burstFinal), 'savgol', { threshold_low: 1e-1 });
+            // 爆裂概率不经过任何平滑、保序，直接使用原始计算结果
+            const burstFinal = burstProbs.slice(1);  // 10个值
             lastBurstPredictions = burstFinal;
 
-            // ========== 2. 泄漏模型 (一次性推理，非递归) ==========
+            // ========== 2. 泄漏模型 (一次性推理，应用后处理) ==========
             const leakInput = [];
             for (let t = 0; t < SEQ; t++) {
                 let row = [];
@@ -950,6 +950,7 @@
             let leakLog = leakArr[0].slice(1).map(row => row[8]); // 30个log10
             let leakProb = leakLog.map(v => Math.pow(10, v));
             leakProb = leakProb.slice(0, 10); // 只取前10年
+            // 泄漏模型应用后处理：裁剪 → 平滑 → 保序
             leakProb = smoothCdfSequence(clipProb(leakProb), 'savgol', { threshold_low: 1e-1 });
             lastLeakPredictions = leakProb;
 
