@@ -7,506 +7,1120 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 样式与之前完全一致，为节省篇幅此处省略（复制前面的完整样式） */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Times New Roman", Times, serif; font-weight: 400; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Times New Roman", Times, serif;
+            font-weight: 400;
+        }
+
         :root {
-            --bg-gradient-start: #1a2a6c; --bg-gradient-end: #2c3e50; --text-color: #fff;
-            --panel-bg: rgba(20,30,48,0.85); --panel-border: rgba(255,255,255,0.1);
-            --row-bg: rgba(0,0,0,0.22); --row-bg-hover: rgba(0,0,0,0.30);
-            --dim-text: rgba(168,216,234,0.95); --value-text: #ffffff;
-            --input-bg: var(--row-bg); --input-bg-hover: var(--row-bg-hover);
-            --input-border-focus: #00c9ff; --input-error: #ff6b6b;
-            --btn-primary-bg: linear-gradient(90deg, #00c9ff, #92fe9d); --btn-primary-text: #1a2a6c;
-            --btn-secondary-bg: rgba(255,255,255,0.1); --btn-secondary-text: white;
-            --status-card-bg: rgba(0,0,0,0.3); --output-label: #a8d8ea;
-            --progress-bg: rgba(255,255,255,0.1); --progress-bar: linear-gradient(90deg, #00c9ff, #92fe9d);
-            --perf-bg: rgba(0,0,0,0.3); --model-info-bg: rgba(0,0,0,0.3);
-            --footer-border: rgba(255,255,255,0.1); --chart-grid: rgba(255,255,255,0.1);
-            --success-color: #92fe9d; --highlight-color: #92fe9d; --perf-value-color: #92fe9d;
+            --bg-gradient-start: #1a2a6c;
+            --bg-gradient-end: #2c3e50;
+            --text-color: #fff;
+            --panel-bg: rgba(20, 30, 48, 0.85);
+            --panel-border: rgba(255, 255, 255, 0.1);
+            --row-bg: rgba(0, 0, 0, 0.22);
+            --row-bg-hover: rgba(0, 0, 0, 0.30);
+            --dim-text: rgba(168, 216, 234, 0.95);
+            --value-text: #ffffff;
+            --input-bg: var(--row-bg);
+            --input-bg-hover: var(--row-bg-hover);
+            --input-border-focus: #00c9ff;
+            --input-error: #ff6b6b;
+            --btn-primary-bg: linear-gradient(90deg, #00c9ff, #92fe9d);
+            --btn-primary-text: #1a2a6c;
+            --btn-secondary-bg: rgba(255, 255, 255, 0.1);
+            --btn-secondary-text: white;
+            --status-card-bg: rgba(0, 0, 0, 0.3);
+            --output-label: #a8d8ea;
+            --output-value: linear-gradient(90deg, #00c9ff, #92fe9d);
+            --progress-bg: rgba(255, 255, 255, 0.1);
+            --progress-bar: linear-gradient(90deg, #00c9ff, #92fe9d);
+            --perf-bg: rgba(0, 0, 0, 0.3);
+            --model-info-bg: rgba(0, 0, 0, 0.3);
+            --footer-border: rgba(255, 255, 255, 0.1);
+            --chart-grid: rgba(255, 255, 255, 0.1);
+            --success-color: #92fe9d;
+            --highlight-color: #92fe9d;
+            --perf-value-color: #92fe9d;
         }
+
         [data-theme="light"] {
-            --bg-gradient-start: #f5f7fa; --bg-gradient-end: #c3cfe2; --text-color: #2c3e50;
-            --panel-bg: rgba(255,255,255,0.9); --panel-border: rgba(0,0,0,0.1);
-            --row-bg: rgba(0,0,0,0.05); --row-bg-hover: rgba(0,0,0,0.08);
-            --dim-text: rgba(44,62,80,0.72); --value-text: #1f2a3a;
-            --input-bg: var(--row-bg); --input-bg-hover: var(--row-bg-hover);
+            --bg-gradient-start: #f5f7fa;
+            --bg-gradient-end: #c3cfe2;
+            --text-color: #2c3e50;
+            --panel-bg: rgba(255, 255, 255, 0.9);
+            --panel-border: rgba(0, 0, 0, 0.1);
+            --row-bg: rgba(0, 0, 0, 0.05);
+            --row-bg-hover: rgba(0, 0, 0, 0.08);
+            --dim-text: rgba(44, 62, 80, 0.72);
+            --value-text: #1f2a3a;
+            --input-bg: var(--row-bg);
+            --input-bg-hover: var(--row-bg-hover);
             --input-border-focus: #4facfe;
-            --btn-primary-bg: linear-gradient(90deg, #4facfe, #00f2fe); --btn-primary-text: white;
-            --btn-secondary-bg: rgba(0,0,0,0.05); --btn-secondary-text: #2c3e50;
-            --status-card-bg: rgba(0,0,0,0.05); --output-label: #5a6b82;
-            --progress-bg: rgba(0,0,0,0.1); --progress-bar: linear-gradient(90deg, #4facfe, #00f2fe);
-            --perf-bg: rgba(0,0,0,0.05); --model-info-bg: rgba(0,0,0,0.05);
-            --footer-border: rgba(0,0,0,0.1); --chart-grid: rgba(0,0,0,0.1);
-            --success-color: #2c3e50; --highlight-color: #2c3e50; --perf-value-color: #4facfe;
+            --btn-primary-bg: linear-gradient(90deg, #4facfe, #00f2fe);
+            --btn-primary-text: white;
+            --btn-secondary-bg: rgba(0, 0, 0, 0.05);
+            --btn-secondary-text: #2c3e50;
+            --status-card-bg: rgba(0, 0, 0, 0.05);
+            --output-label: #5a6b82;
+            --output-value: linear-gradient(90deg, #4facfe, #00f2fe);
+            --progress-bg: rgba(0, 0, 0, 0.1);
+            --progress-bar: linear-gradient(90deg, #4facfe, #00f2fe);
+            --perf-bg: rgba(0, 0, 0, 0.05);
+            --model-info-bg: rgba(0, 0, 0, 0.05);
+            --footer-border: rgba(0, 0, 0, 0.1);
+            --chart-grid: rgba(0, 0, 0, 0.1);
+            --success-color: #2c3e50;
+            --highlight-color: #2c3e50;
+            --perf-value-color: #4facfe;
         }
-        body { background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); color: var(--text-color); min-height: 100vh; padding: 20px; transition: background 0.5s ease, color 0.5s ease; font-size: 22px; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        header { text-align: center; margin-bottom: 30px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px; backdrop-filter: blur(10px); border: 1px solid var(--panel-border); }
-        .header-content { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .theme-switch-container { display: flex; justify-content: flex-end; width: 100%; margin-bottom: 10px; }
-        .theme-switch { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 12px 18px; border-radius: 20px; cursor: pointer; }
-        h1 { font-size: 2.5rem; margin-bottom: 10px; background: linear-gradient(90deg, #00c9ff, #92fe9d); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
-        .subtitle { font-size: 1.6rem; color: var(--output-label); }
-        .content { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        @media (max-width: 900px) { .content { grid-template-columns: 1fr; } }
-        .panel { background: var(--panel-bg); border-radius: 15px; padding: 25px; backdrop-filter: blur(10px); border: 1px solid var(--panel-border); }
-        .panel-title { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--panel-border); color: #00c9ff; }
-        .input-row { display: flex; align-items: center; margin-bottom: 15px; padding: 14px 16px; background: var(--row-bg); border-radius: 10px; gap: 12px; }
-        .input-row label { width: 190px; color: var(--dim-text); font-size: 1.45rem; }
-        .input-box { flex: 1; position: relative; }
-        .input-box input { width: 100%; padding: 16px 18px; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: var(--value-text); font-size: 1.55rem; font-weight: 700; padding-right: 230px; }
-        .input-box .unit { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--dim-text); font-size: 1.08rem; background: transparent; border-left: 1px solid rgba(255,255,255,0.1); padding: 7px 10px; }
-        .error-message { position: absolute; right: 15px; bottom: -24px; font-size: 1.15rem; color: var(--input-error); }
-        .btn-container { display: flex; gap: 15px; margin-top: 25px; }
-        button { flex: 1; padding: 20px 16px; border: none; border-radius: 10px; font-size: 1.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.5s ease, color 0.5s ease;
+            font-size: 22px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--panel-border);
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-switch-container {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .theme-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            line-height: 1.2;
+        }
+
+        .theme-switch:hover {
+            background: rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .theme-switch i { font-size: 1.4rem; }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00c9ff, #92fe9d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.15;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.6rem;
+            color: var(--output-label);
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 900px) {
+            .content { grid-template-columns: 1fr; }
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--panel-border);
+            transition: background 0.5s ease, border 0.5s ease;
+            min-width: 0;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--panel-border);
+            color: #00c9ff;
+        }
+
+        .panel-title i {
+            font-size: 1.9rem;
+            flex: 0 0 auto;
+        }
+
+        .panel-title h2 {
+            flex: 1 1 auto;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: visible;
+        }
+
+        h2 { font-size: 1.75rem; line-height: 1.2; font-weight: 400; }
+        h3 { font-size: 1.6rem; line-height: 1.25; font-weight: 400; }
+
+        .input-group { margin-bottom: 20px; }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 14px 16px;
+            background: var(--row-bg);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            gap: 12px;
+        }
+
+        .input-row:hover { background: var(--row-bg-hover); transform: translateY(-2px); }
+
+        .input-row label {
+            width: 190px;
+            color: var(--dim-text);
+            font-size: 1.45rem;
+            line-height: 1.2;
+            font-weight: 400;
+            flex: 0 0 auto;
+        }
+
+        .input-box {
+            flex: 1;
+            position: relative;
+            min-width: 0;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 16px 18px;
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            color: var(--value-text);
+            font-size: 1.55rem;
+            font-weight: 700;
+            line-height: 1.2;
+            padding-right: 230px;
+            min-width: 280px;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        [data-theme="light"] .input-box input {
+            border: 1px solid rgba(0, 0, 0, 0.10);
+        }
+
+        .input-row:hover .input-box input {
+            background: var(--input-bg-hover);
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] { -moz-appearance: textfield; }
+
+        .input-box input.error { box-shadow: 0 0 0 2px var(--input-error); }
+        .input-box input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--input-border-focus);
+            border-color: rgba(0, 201, 255, 0.45);
+        }
+
+        .input-box .unit {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dim-text);
+            font-size: 1.08rem;
+            font-weight: 400;
+            white-space: nowrap;
+            pointer-events: none;
+            text-align: right;
+            opacity: 0.72;
+            padding: 7px 10px;
+            border-radius: 8px;
+            background: transparent;
+            border-left: 1px solid rgba(255, 255, 255, 0.10);
+        }
+
+        [data-theme="light"] .input-box .unit {
+            border-left: 1px solid rgba(0, 0, 0, 0.10);
+        }
+
+        .unit-long input { padding-right: 260px; }
+        .unit-mid  input { padding-right: 230px; }
+        .unit-short input { padding-right: 120px; }
+
+        .error-message {
+            position: absolute;
+            right: 15px;
+            bottom: -24px;
+            font-size: 1.15rem;
+            color: var(--input-error);
+            line-height: 1.1;
+            font-weight: 400;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        button {
+            flex: 1;
+            padding: 20px 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.6rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            line-height: 1.1;
+            white-space: nowrap;
+        }
+
         #predict-btn { background: var(--btn-primary-bg); color: var(--btn-primary-text); }
         #reset-btn { background: var(--btn-secondary-bg); color: var(--btn-secondary-text); }
-        .status-card { background: var(--status-card-bg); border-radius: 10px; padding: 20px; margin-top: 20px; text-align: center; }
-        .progress-container { height: 12px; background: var(--progress-bg); border-radius: 4px; margin-top: 12px; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--progress-bar); width: 0%; transition: width 0.5s; }
-        .performance-info { display: flex; justify-content: space-between; margin-top: 25px; padding: 15px; background: var(--perf-bg); border-radius: 10px; }
-        .perf-value { font-size: 1.65rem; font-weight: 600; color: var(--perf-value-color); margin-top: 6px; }
-        .model-info { margin-top: 20px; padding: 15px; background: var(--model-info-bg); border-radius: 10px; }
-        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed var(--panel-border); }
+
+        button:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+        button:active { transform: translateY(0); }
+
+        .status-card {
+            background: var(--status-card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        #model-status { font-size: 1.5rem; font-weight: 400; line-height: 1.2; }
+        .loading { color: #00c9ff; }
+        .success { color: var(--success-color); }
+        .error { color: var(--input-error); }
+
+        .progress-container {
+            height: 12px;
+            background: var(--progress-bg);
+            border-radius: 4px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--progress-bar);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .performance-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            padding: 15px;
+            background: var(--perf-bg);
+            border-radius: 10px;
+            font-size: 1.35rem;
+            line-height: 1.2;
+            font-weight: 400;
+        }
+
+        .perf-item { text-align: center; }
+
+        .perf-value {
+            font-size: 1.65rem;
+            font-weight: 600;
+            color: var(--perf-value-color);
+            margin-top: 6px;
+            line-height: 1.1;
+        }
+
+        .model-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--model-info-bg);
+            border-radius: 10px;
+            font-size: 1.3rem;
+            line-height: 1.2;
+            font-weight: 400;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--panel-border);
+            gap: 12px;
+        }
+
+        .info-row:last-child { border-bottom: none; }
+
         .highlight { color: var(--highlight-color); font-weight: 600; }
-        .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--footer-border); color: var(--output-label); }
-        .chart-container { height: 320px; margin-top: 25px; background: var(--status-card-bg); border-radius: 10px; padding: 15px; }
-        #save-btn { background: var(--btn-primary-bg); color: var(--btn-primary-text); max-width: 520px; width: 100%; margin-top: 15px; }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--footer-border);
+            color: var(--output-label);
+            font-size: 1.25rem;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        .chart-container {
+            height: 320px;
+            margin-top: 25px;
+            background: var(--status-card-bg);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .theme-switch-container { justify-content: center; margin-bottom: 20px; }
+            h1 { font-size: 2rem; }
+            body { font-size: 20px; }
+            .subtitle { font-size: 1.35rem; }
+            .input-row label { font-size: 1.25rem; }
+            .input-box input { font-size: 1.3rem; min-width: 220px; }
+            .input-box .unit { font-size: 0.98rem; padding: 6px 8px; }
+            button { font-size: 1.35rem; padding: 18px 14px; }
+        }
+
+        .save-btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        #save-btn {
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            max-width: 520px;
+            width: 100%;
+        }
+
         #save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        #save-btn:disabled:hover { transform: none; box-shadow: none; }
     </style>
 </head>
 <body>
-<div class="container">
-    <header>
-        <div class="header-content">
-            <div class="theme-switch-container"><div class="theme-switch" id="theme-switch"><i class="fas fa-moon"></i><span>深色模式</span></div></div>
-            <h1><i class="fas fa-network-wired"></i> Pipeline defect failure estimation system | 管道缺陷失效概率预测系统</h1>
-            <p class="subtitle">Recursive prediction of 0-9 year failure probability | 递归预测0-9年失效概率</p>
-        </div>
-    </header>
-    <div class="content">
-        <div class="panel">
-            <div class="panel-title"><i class="fas fa-sliders-h"></i><h2>Pipeline parameters input | 管道参数输入</h2></div>
-            <div class="input-group">
-                <div class="input-row"><label>SMYS</label><div class="input-box unit-mid"><input type="number" id="smys" value="483" step="1" min="290" max="690"><span class="unit">290-690 MPa</span></div><span class="error-message" id="smys-error"></span></div>
-                <div class="input-row"><label>SMTS</label><div class="input-box unit-mid"><input type="number" id="smts" value="565" step="1" min="414" max="758"><span class="unit">414-758 MPa</span></div><span class="error-message" id="smts-error"></span></div>
-                <div class="input-row"><label>Diameter</label><div class="input-box unit-long"><input type="number" id="dia" value="203.2" step="0.2" min="168.2" max="1422"><span class="unit">168.2-1422 mm</span></div><span class="error-message" id="dia-error"></span></div>
-                <div class="input-row"><label>Depth</label><div class="input-box unit-short"><input type="number" id="depth" value="29" step="0.1" min="0" max="80"><span class="unit">0-80 %</span></div><span class="error-message" id="depth-error"></span></div>
-                <div class="input-row"><label>d_grow</label><div class="input-box unit-mid"><input type="number" id="d_grow" value="0.2" step="0.000001" min="0.0" max="0.8"><span class="unit">0.0-0.8 mm</span></div><span class="error-message" id="d_grow-error"></span></div>
-                <div class="input-row"><label>Length</label><div class="input-box unit-mid"><input type="number" id="length" value="170" step="0.1" min="10" max="400"><span class="unit">10-400 mm</span></div><span class="error-message" id="length-error"></span></div>
-                <div class="input-row"><label>Prestress</label><div class="input-box unit-mid"><input type="number" id="prestress" value="6.895" step="0.001" min="4.137" max="9.928"><span class="unit">4.137-9.928 MPa</span></div><span class="error-message" id="prestress-error"></span></div>
-                <div class="input-row"><label>Thickness</label><div class="input-box unit-short"><input type="number" id="thickness" value="2" step="0.1"><span class="unit">mm</span></div></div>
-            </div>
-            <div class="btn-container"><button id="predict-btn"><i class="fas fa-calculator"></i> Calculate|计算结果</button><button id="reset-btn"><i class="fas fa-redo"></i> Reset|重置参数</button></div>
-            <div class="status-card">
-                <div id="model-status" class="loading"><i class="fas fa-spinner fa-spin"></i> Loading models...</div>
-                <div class="progress-container"><div id="model-progress" class="progress-bar"></div></div>
-                <button id="save-btn" disabled><i class="fas fa-download"></i> Save results as CSV</button>
-            </div>
-        </div>
-        <div class="panel">
-            <div class="panel-title"><i class="fas fa-chart-bar"></i><h2>Prediction results (years 1‑10) | 预测结果 (1-10年)</h2></div>
-            <div id="result-placeholder" style="text-align:center; padding:40px 20px;"><i class="fas fa-project-diagram" style="font-size:3rem;"></i><h3>Waiting for calculation</h3><p>Enter parameters and click "Calculate"</p></div>
-            <div id="output-container" style="display:none;">
-                <div class="chart-container"><canvas id="prediction-chart-burst"></canvas></div>
-                <div class="chart-container"><canvas id="prediction-chart-leak"></canvas></div>
-                <div class="performance-info">
-                    <div class="perf-item"><div>Calculation time|计算时间</div><div id="inference-time" class="perf-value">0 ms</div></div>
-                    <div class="perf-item"><div>Burst recursion steps|递归次数</div><div id="recursion-count" class="perf-value">0</div></div>
-                    <div class="perf-item"><div>Model status|模型状态</div><div id="model-ready" class="perf-value">Loading</div></div>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="theme-switch-container">
+                    <div class="theme-switch" id="theme-switch">
+                        <i class="fas fa-moon"></i>
+                        <span>深色模式</span>
+                    </div>
                 </div>
-                <div class="model-info">
-                    <div class="info-row"><span>Burst model</span><span class="highlight">Recursive (9‑feature norm)</span></div>
-                    <div class="info-row"><span>Leakage model</span><span class="highlight">One‑step (8‑feature norm, prob raw)</span></div>
-                    <div class="info-row"><span>Post‑processing (leakage only)</span><span class="highlight">Clip → SavGol (win=9, order=2) → Isotonic → Zero‑threshold (4e-5)</span></div>
+                <h1><i class="fas fa-network-wired"></i> Pipeline defect failure estimation system | 管道缺陷失效概率预测系统</h1>
+                <p class="subtitle">Recursive prediction of 0-9 year failure probability | 递归预测0-9年失效概率</p>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fas fa-sliders-h"></i>
+                    <h2>Pipeline parameters input | 管道参数输入</h2>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-row">
+                        <label for="smys">SMYS</label>
+                        <div class="input-box unit-mid">
+                            <input type="number" id="smys" value="483" step="1" min="290" max="690">
+                            <span class="unit">290-690 MPa</span>
+                        </div>
+                        <span class="error-message" id="smys-error"></span>
+                    </div>
+
+                    <div class="input-row">
+                        <label for="smts">SMTS</label>
+                        <div class="input-box unit-mid">
+                            <input type="number" id="smts" value="565" step="1" min="414" max="758">
+                            <span class="unit">414-758 MPa</span>
+                        </div>
+                        <span class="error-message" id="smts-error"></span>
+                    </div>
+
+                    <div class="input-row">
+                        <label for="dia">Diameter</label>
+                        <div class="input-box unit-long">
+                            <input type="number" id="dia" value="203.2" step="0.2" min="168.2" max="1422">
+                            <span class="unit">168.2-1422 mm</span>
+                        </div>
+                        <span class="error-message" id="dia-error"></span>
+                    </div>
+
+                    <div class="input-row">
+                        <label for="depth">Depth</label>
+                        <div class="input-box unit-short">
+                            <input type="number" id="depth" value="29" step="0.1" min="0" max="80">
+                            <span class="unit">0-80 %</span>
+                        </div>
+                        <span class="error-message" id="depth-error"></span>
+                    </div>
+
+                    <div class="input-row">
+                        <label for="d_grow">d_grow</label>
+                        <div class="input-box unit-mid">
+                            <input type="number" id="d_grow" value="0.2" step="0.000001" min="0.0" max="0.8">
+                            <span class="unit">0.0-0.8 mm</span>
+                        </div>
+                        <span class="error-message" id="d_grow-error"></span>
+                    </div>
+
+                    <div class="input-row">
+                        <label for="length">Length</label>
+                        <div class="input-box unit-mid">
+                            <input type="number" id="length" value="170" step="0.1" min="10" max="400">
+                            <span class="unit">10-400 mm</span>
+                        </div>
+                        <span class="error-message" id="length-error"></span>
+                    </div>
+
+                    <div class="input-row">
+                        <label for="prestress">Prestress</label>
+                        <div class="input-box unit-mid">
+                            <input type="number" id="prestress" value="6.895" step="0.001" min="4.137" max="9.928">
+                            <span class="unit">4.137-9.928 MPa</span>
+                        </div>
+                        <span class="error-message" id="prestress-error"></span>
+                    </div>
+
+                    <div class="input-row">
+                        <label for="thickness">Thickness</label>
+                        <div class="input-box unit-short">
+                            <input type="number" id="thickness" value="2" step="0.1">
+                            <span class="unit">mm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-container">
+                    <button id="predict-btn">
+                        <i class="fas fa-calculator"></i> Calculate|计算结果
+                    </button>
+                    <button id="reset-btn">
+                        <i class="fas fa-redo"></i> Reset|重置参数
+                    </button>
+                </div>
+
+                <div class="status-card">
+                    <div id="model-status" class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Loading NN|正在加载神经网络模型...
+                    </div>
+                    <div class="progress-container">
+                        <div id="model-progress" class="progress-bar"></div>
+                    </div>
+
+                    <div class="save-btn-container">
+                        <button id="save-btn" disabled>
+                            <i class="fas fa-download"></i> Save results as .csv|保存到csv
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fas fa-chart-bar"></i>
+                    <h2>Prediction results|预测结果 (0-9 year)</h2>
+                </div>
+
+                <div id="result-placeholder" style="text-align: center; padding: 40px 20px; color: var(--output-label);">
+                    <i class="fas fa-project-diagram" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                    <h3>Waiting for results|等待计算结果</h3>
+                    <p>Enter pipeline parameters and click "Calculate" button|输入参数后点击"计算结果"按钮</p>
+                </div>
+
+                <div id="output-container" style="display: none;">
+                    <div class="chart-container">
+                        <canvas id="prediction-chart-burst"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="prediction-chart"></canvas>
+                    </div>
+
+                    <div class="performance-info">
+                        <div class="perf-item">
+                            <div>Calculation time|计算时间</div>
+                            <div id="inference-time" class="perf-value">0 ms</div>
+                        </div>
+                        <div class="perf-item">
+                            <div>Recursion steps|递归次数</div>
+                            <div id="recursion-count" class="perf-value">0 次</div>
+                        </div>
+                        <div class="perf-item">
+                            <div>Model status|模型状态</div>
+                            <div id="model-ready" class="perf-value">Loading|加载中</div>
+                        </div>
+                    </div>
+
+                    <div class="model-info">
+                        <div class="info-row">
+                            <span>NN type|模型类型:</span>
+                            <span class="highlight">Transformer</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Input shape|输入形状:</span>
+                            <span class="highlight">[1, 31, 9]</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Prediction years|预测年份:</span>
+                            <span class="highlight">0-9 year</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Calculation mode|计算方式:</span>
+                            <span class="highlight">Burst: recursive | Leakage: one‑step</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Post-processing|后处理:</span>
+                            <span class="highlight">Leakage only (Smoothing + Isotonic + Zero threshold)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>All calculations are done on your device and no data is sent to any servers|所有计算均在您的设备上完成，数据不会发送到任何服务器</p>
+            <p>Model path|模型位置: <span class="highlight">tfjs_model/model.json</span> | Backend: <span id="backend-name" class="highlight">Detecting...</span></p>
         </div>
     </div>
-    <div class="footer"><p>All calculations on device | 所有计算均在本地进行</p><p>Backend: <span id="backend-name" class="highlight">Detecting...</span></p></div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    // ===================== 标准化参数（来自 stats.npy 和 stats_L.npy） =====================
-    const BURST_MEAN = [462.3409118652344, 551.0681762695312, 750.4363403320312, 35.0, 0.45000001788139343, 205.0, 6.894999980926514, 9.833333015441895, -3.594372034072876];
-    const BURST_STD  = [120.81465148925781, 104.23931884765625, 368.1853942871094, 20.4939022064209, 0.22912879288196564, 115.43396759033203, 1.7802813053131104, 4.737290382385254, 1.7032579183578491];
-    const burstNorm = (v, i) => (v - BURST_MEAN[i]) / BURST_STD[i];
-    const burstDenorm = (v, i) => v * BURST_STD[i] + BURST_MEAN[i];
 
-    const LEAK_MEAN = [462.5, 551.1737670898438, 758.5169677734375, 35.49304962158203, 0.45375001430511475, 205.00213623046875, 6.89500093460083, 9.90898323059082];
-    const LEAK_STD  = [120.62177276611328, 104.03054809570312, 369.7414245605469, 20.449750900268555, 0.2276550978422165, 115.43975830078125, 1.7802821397781372, 4.7601752281188965];
-    const leakNorm = (v, i) => (v - LEAK_MEAN[i]) / LEAK_STD[i];
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    // ===================== 后处理函数（完全匹配 Python 测试代码） =====================
-    function clipProb(p) {
-        let clipped = p.slice();
-        for (let i = 0; i < clipped.length; i++) {
-            if (clipped[i] < 2e-5) clipped[i] = 1e-6;
-            if (clipped[i] > 1 - 1e-6) clipped[i] = 1 - 1e-6;
+    <script>
+        // ===================== 标准化参数（来自 stats.npy 和 stats_L.npy） =====================
+        // 爆裂模型: 9个特征 (8固定 + 概率log) - stats.npy
+        const BURST_MEAN = [462.3409118652344, 551.0681762695312, 750.4363403320312, 35.0, 0.45000001788139343, 205.0, 6.894999980926514, 9.833333015441895, -3.594372034072876];
+        const BURST_STD  = [120.81465148925781, 104.23931884765625, 368.1853942871094, 20.4939022064209, 0.22912879288196564, 115.43396759033203, 1.7802813053131104, 4.737290382385254, 1.7032579183578491];
+        const burstNorm = (v, i) => (v - BURST_MEAN[i]) / BURST_STD[i];
+        const burstDenorm = (v, i) => v * BURST_STD[i] + BURST_MEAN[i];
+
+        // 泄漏模型: 8个固定特征 (概率log不标准化) - stats_L.npy
+        const LEAK_MEAN = [462.5, 551.1737670898438, 758.5169677734375, 35.49304962158203, 0.45375001430511475, 205.00213623046875, 6.89500093460083, 9.90898323059082];
+        const LEAK_STD  = [120.62177276611328, 104.03054809570312, 369.7414245605469, 20.449750900268555, 0.2276550978422165, 115.43975830078125, 1.7802821397781372, 4.7601752281188965];
+        const leakNorm = (v, i) => (v - LEAK_MEAN[i]) / LEAK_STD[i];
+
+        // ===================== 后处理函数（完全匹配 Python 测试代码） =====================
+        function clipProb(p) {
+            let clipped = p.slice();
+            for (let i = 0; i < clipped.length; i++) {
+                if (clipped[i] < 2e-5) clipped[i] = 1e-6;
+                if (clipped[i] > 1 - 1e-6) clipped[i] = 1 - 1e-6;
+            }
+            return clipped;
         }
-        return clipped;
-    }
 
-    // 保序回归 (PAV)
-    function isotonicCdfProb(seq) {
-        const n = seq.length;
-        if (n <= 1) return seq.slice();
-        let blocks = [];
-        for (let i = 0; i < n; i++) blocks.push({ sum: seq[i], weight: 1, values: [seq[i]] });
-        let changed;
-        do {
-            changed = false;
-            let newBlocks = [];
-            for (let i = 0; i < blocks.length; i++) {
-                if (newBlocks.length === 0) {
-                    newBlocks.push({ sum: blocks[i].sum, weight: blocks[i].weight, values: [...blocks[i].values] });
-                } else {
-                    let last = newBlocks[newBlocks.length - 1];
-                    let curMean = last.sum / last.weight;
-                    let nextMean = blocks[i].sum / blocks[i].weight;
-                    if (curMean > nextMean) {
-                        last.sum += blocks[i].sum;
-                        last.weight += blocks[i].weight;
-                        last.values.push(...blocks[i].values);
-                        changed = true;
-                    } else {
+        // 保序回归（PAV 算法）
+        function isotonicCdfProb(seq) {
+            const n = seq.length;
+            if (n <= 1) return seq.slice();
+            let blocks = [];
+            for (let i = 0; i < n; i++) blocks.push({ sum: seq[i], weight: 1, values: [seq[i]] });
+            let changed;
+            do {
+                changed = false;
+                let newBlocks = [];
+                for (let i = 0; i < blocks.length; i++) {
+                    if (newBlocks.length === 0) {
                         newBlocks.push({ sum: blocks[i].sum, weight: blocks[i].weight, values: [...blocks[i].values] });
+                    } else {
+                        let last = newBlocks[newBlocks.length - 1];
+                        let curMean = last.sum / last.weight;
+                        let nextMean = blocks[i].sum / blocks[i].weight;
+                        if (curMean > nextMean) {
+                            last.sum += blocks[i].sum;
+                            last.weight += blocks[i].weight;
+                            last.values.push(...blocks[i].values);
+                            changed = true;
+                        } else {
+                            newBlocks.push({ sum: blocks[i].sum, weight: blocks[i].weight, values: [...blocks[i].values] });
+                        }
                     }
                 }
+                blocks = newBlocks;
+            } while (changed);
+            let result = [];
+            for (let b of blocks) {
+                let val = b.sum / b.weight;
+                for (let v of b.values) result.push(val);
             }
-            blocks = newBlocks;
-        } while (changed);
-        let result = [];
-        for (let b of blocks) {
-            let val = b.sum / b.weight;
-            for (let v of b.values) result.push(val);
+            return result;
         }
-        return result;
-    }
 
-    // Savitzky-Golay 平滑 (窗口9, 阶数2) 预计算系数
-    // 使用 scipy.signal.savgol_coeffs(9, 2) 得到的系数
-    const SAVGOL_COEFFS_ORDER2 = [
-        -0.09090909, 0.06060606, 0.16883117, 0.23376623, 0.25541126,
-        0.23376623, 0.16883117, 0.06060606, -0.09090909
-    ];
-    // 注意：阶数2和阶数3的系数在中间几个值上略有差异，但这里使用的是正确的阶数2系数
-    // 经验证，上述系数即为 window=9, polyorder=2 的 Savitzky-Golay 系数（居中点 pos=4）
-    function savgolFilter9(seq) {
-        const n = seq.length;
-        if (n < 9) return seq.slice();
-        let smoothed = new Array(n);
-        const half = 4;
-        for (let i = 0; i < n; i++) {
-            let sum = 0, wsum = 0;
-            for (let j = -half; j <= half; j++) {
-                let idx = i + j;
-                if (idx >= 0 && idx < n) {
-                    let coeff = SAVGOL_COEFFS_ORDER2[j + half];
-                    sum += coeff * seq[idx];
-                    wsum += coeff;
+        // Savitzky-Golay 平滑 (窗口9, 阶数2) 预计算系数（与 scipy.signal.savgol_coeffs(9,2) 一致）
+        const SAVGOL_COEFFS_ORDER2 = [
+            -0.09090909, 0.06060606, 0.16883117, 0.23376623, 0.25541126,
+            0.23376623, 0.16883117, 0.06060606, -0.09090909
+        ];
+        function savgolFilter9(seq) {
+            const n = seq.length;
+            if (n < 9) return seq.slice();
+            let smoothed = new Array(n);
+            const half = 4;
+            for (let i = 0; i < n; i++) {
+                let sum = 0, wsum = 0;
+                for (let j = -half; j <= half; j++) {
+                    let idx = i + j;
+                    if (idx >= 0 && idx < n) {
+                        let coeff = SAVGOL_COEFFS_ORDER2[j + half];
+                        sum += coeff * seq[idx];
+                        wsum += coeff;
+                    }
+                }
+                smoothed[i] = sum / wsum;
+            }
+            return smoothed;
+        }
+
+        function smoothCdfSequence(seq, method = 'savgol', options = {}) {
+            const { threshold_low = 0.1 } = options;
+            const n = seq.length;
+            if (n < 3) return seq.slice();
+            let smoothed;
+            if (method === 'savgol') {
+                smoothed = savgolFilter9(seq);
+            } else if (method === 'exponential') {
+                smoothed = new Array(n);
+                smoothed[0] = seq[0];
+                for (let i = 1; i < n; i++) smoothed[i] = 0.15 * seq[i] + 0.85 * smoothed[i-1];
+            } else {
+                // 移动平均窗口3
+                smoothed = new Array(n);
+                for (let i = 0; i < n; i++) {
+                    let start = Math.max(0, i-1);
+                    let end = Math.min(n-1, i+1);
+                    let sum = 0;
+                    for (let j = start; j <= end; j++) sum += seq[j];
+                    smoothed[i] = sum / (end - start + 1);
                 }
             }
-            smoothed[i] = sum / wsum;
-        }
-        return smoothed;
-    }
-
-    function smoothCdfSequence(seq, method = 'savgol', options = {}) {
-        const { threshold_low = 0.1 } = options;
-        const n = seq.length;
-        if (n < 3) return seq.slice();
-        let smoothed;
-        if (method === 'savgol') {
-            smoothed = savgolFilter9(seq);
-        } else if (method === 'exponential') {
-            smoothed = new Array(n);
-            smoothed[0] = seq[0];
-            for (let i = 1; i < n; i++) smoothed[i] = 0.15 * seq[i] + 0.85 * smoothed[i-1];
-        } else {
-            // 移动平均窗口3
-            smoothed = new Array(n);
+            // 小概率保护：原始概率 ≤ threshold_low 的点保留原值
             for (let i = 0; i < n; i++) {
-                let start = Math.max(0, i-1);
-                let end = Math.min(n-1, i+1);
-                let sum = 0;
-                for (let j = start; j <= end; j++) sum += seq[j];
-                smoothed[i] = sum / (end - start + 1);
+                if (seq[i] <= threshold_low) smoothed[i] = seq[i];
             }
+            // 裁剪到 [0,1]
+            for (let i = 0; i < n; i++) {
+                smoothed[i] = Math.min(1.0, Math.max(0.0, smoothed[i]));
+            }
+            // 保序回归
+            return isotonicCdfProb(smoothed);
         }
-        // 小概率保护：原始概率 ≤ threshold_low 的点保留原值
-        for (let i = 0; i < n; i++) {
-            if (seq[i] <= threshold_low) smoothed[i] = seq[i];
+
+        // 阈值置零（与 Python 的 apply_zero_threshold 一致）
+        function applyZeroThreshold(prob, threshold = 4e-5) {
+            let result = prob.slice();
+            for (let i = 0; i < result.length; i++) {
+                if (result[i] < threshold) result[i] = 0.0;
+            }
+            return result;
         }
-        // 裁剪到 [0,1]
-        for (let i = 0; i < n; i++) {
-            smoothed[i] = Math.min(1.0, Math.max(0.0, smoothed[i]));
-        }
-        // 保序回归
-        return isotonicCdfProb(smoothed);
-    }
 
-    // 阈值置零（与 Python 的 apply_zero_threshold 一致）
-    function applyZeroThreshold(prob, threshold = 4e-5) {
-        let result = prob.slice();
-        for (let i = 0; i < result.length; i++) {
-            if (result[i] < threshold) result[i] = 0.0;
-        }
-        return result;
-    }
+        // ===================== 全局变量 =====================
+        let modelBurst = null, modelLeak = null;
+        let predictionChartBurst = null, predictionChartLeak = null;
+        let lastBurstPredictions = [], lastLeakPredictions = [];
 
-    // ===================== 全局变量 =====================
-    let modelBurst = null, modelLeak = null;
-    let predictionChartBurst = null, predictionChartLeak = null;
-    let lastBurstPredictions = [], lastLeakPredictions = [];
+        const GITHUB_USER = 'LAILI-civil';
+        const GITHUB_REPO = 'pipeline_BL';
+        const BURST_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/Burst_92/model.json`;
+        const LEAK_URL  = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/tfjs_model/model.json`;
 
-    const GITHUB_USER = 'LAILI-civil';
-    const GITHUB_REPO = 'pipeline_BL';
-    const BURST_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/Burst_92/model.json`;
-    const LEAK_URL  = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/tfjs_model/model.json`;
+        const modelStatus = document.getElementById('model-status');
+        const progressBar = document.getElementById('model-progress');
+        const predictBtn = document.getElementById('predict-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const outputContainer = document.getElementById('output-container');
+        const resultPlaceholder = document.getElementById('result-placeholder');
+        const inferenceTimeSpan = document.getElementById('inference-time');
+        const recursionCountSpan = document.getElementById('recursion-count');
+        const modelReadySpan = document.getElementById('model-ready');
+        const backendSpan = document.getElementById('backend-name');
+        const themeSwitch = document.getElementById('theme-switch');
 
-    const modelStatus = document.getElementById('model-status');
-    const progressBar = document.getElementById('model-progress');
-    const predictBtn = document.getElementById('predict-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const saveBtn = document.getElementById('save-btn');
-    const outputContainer = document.getElementById('output-container');
-    const resultPlaceholder = document.getElementById('result-placeholder');
-    const inferenceTimeSpan = document.getElementById('inference-time');
-    const recursionCountSpan = document.getElementById('recursion-count');
-    const modelReadySpan = document.getElementById('model-ready');
-    const backendSpan = document.getElementById('backend-name');
-    const themeSwitch = document.getElementById('theme-switch');
+        const inputValidations = {
+            smys: { min: 290, max: 690, errorId: 'smys-error' },
+            smts: { min: 414, max: 758, errorId: 'smts-error' },
+            dia: { min: 168.2, max: 1422, errorId: 'dia-error' },
+            depth: { min: 0, max: 80, errorId: 'depth-error' },
+            d_grow: { min: 0.0, max: 0.8, errorId: 'd_grow-error' },
+            length: { min: 10, max: 400, errorId: 'length-error' },
+            prestress: { min: 4.137, max: 9.928, errorId: 'prestress-error' }
+        };
 
-    const inputValidations = {
-        smys: { min: 290, max: 690, errorId: 'smys-error' },
-        smts: { min: 414, max: 758, errorId: 'smts-error' },
-        dia: { min: 168.2, max: 1422, errorId: 'dia-error' },
-        depth: { min: 0, max: 80, errorId: 'depth-error' },
-        d_grow: { min: 0.0, max: 0.8, errorId: 'd_grow-error' },
-        length: { min: 10, max: 400, errorId: 'length-error' },
-        prestress: { min: 4.137, max: 9.928, errorId: 'prestress-error' }
-    };
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!tf?.backend) {
+                document.body.innerHTML = `
+                    <div class="container" style="text-align: center; padding: 50px 20px;">
+                        <h1 style="color: #ff6b6b; margin-bottom: 30px;">
+                            <i class="fas fa-exclamation-triangle"></i> 浏览器不兼容
+                        </h1>
+                        <p style="font-size: 1.2rem; margin-bottom: 20px;">
+                            您的浏览器不支持TensorFlow.js计算功能
+                        </p>
+                        <p style="margin-bottom: 30px;">
+                            请使用最新版本的Chrome、Firefox、Edge或Safari浏览器
+                        </p>
+                        <a href="https://www.google.com/chrome/" target="_blank" style="text-decoration: none;">
+                            <button style="background: linear-gradient(90deg, #00c9ff, #92fe9d);
+                                        color: #1a2a6c; padding: 15px 30px; font-size: 1.2rem;
+                                        border-radius: 10px; border: none; cursor: pointer;">
+                                <i class="fas fa-download"></i> 下载Chrome浏览器
+                            </button>
+                        </a>
+                    </div>
+                `;
+                return;
+            }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        if (!tf?.backend) {
-            document.body.innerHTML = `<div style="text-align:center;padding:50px"><h1>Browser not supported</h1><p>Please use latest Chrome/Firefox/Edge</p></div>`;
-            return;
-        }
-        backendSpan.textContent = tf.getBackend();
-        predictBtn.addEventListener('click', runInference);
-        resetBtn.addEventListener('click', resetInputs);
-        saveBtn.addEventListener('click', saveToCSV);
-        themeSwitch.addEventListener('click', toggleTheme);
-        setupValidation();
-        initTheme();
-        await loadModels();
-    });
+            backendSpan.textContent = tf.getBackend();
+            predictBtn.addEventListener('click', runInference);
+            resetBtn.addEventListener('click', resetInputs);
+            saveBtn.addEventListener('click', saveToCSV);
+            themeSwitch.addEventListener('click', toggleTheme);
+            setupValidation();
+            initTheme();
+            await loadModels();
+        });
 
-    function initTheme() { const saved = localStorage.getItem('theme') || 'dark'; setTheme(saved); }
-    function toggleTheme() { const cur = document.documentElement.getAttribute('data-theme') || 'dark'; setTheme(cur === 'dark' ? 'light' : 'dark'); localStorage.setItem('theme', cur === 'dark' ? 'light' : 'dark'); }
-    function setTheme(theme) {
-        if (theme === 'light') { document.documentElement.setAttribute('data-theme','light'); themeSwitch.innerHTML='<i class="fas fa-sun"></i><span>浅色模式</span>'; }
-        else { document.documentElement.removeAttribute('data-theme'); themeSwitch.innerHTML='<i class="fas fa-moon"></i><span>深色模式</span>'; }
-        if (predictionChartBurst) { predictionChartBurst.destroy(); predictionChartBurst = null; }
-        if (predictionChartLeak) { predictionChartLeak.destroy(); predictionChartLeak = null; }
-    }
-    function setupValidation() {
-        for (const id in inputValidations) {
-            const input = document.getElementById(id);
-            input.addEventListener('blur', validateInput);
-            input.addEventListener('input', (e) => { const err = document.getElementById(inputValidations[e.target.id].errorId); if(err) err.textContent=''; e.target.classList.remove('error'); });
-        }
-    }
-    function validateInput(e) {
-        const id = e.target.id, val = parseFloat(e.target.value);
-        if (!inputValidations[id]) return;
-        const { min, max, errorId } = inputValidations[id];
-        const errSpan = document.getElementById(errorId);
-        if (isNaN(val)) { errSpan.textContent = '请输入有效数字'; e.target.classList.add('error'); return false; }
-        if (val < min || val > max) { errSpan.textContent = `范围 ${min}‑${max}`; e.target.classList.add('error'); return false; }
-        errSpan.textContent = ''; e.target.classList.remove('error'); return true;
-    }
-    function validateAll() {
-        let ok = true;
-        for (const id in inputValidations) {
-            const input = document.getElementById(id);
-            const val = parseFloat(input.value);
-            const { min, max, errorId } = inputValidations[id];
-            const err = document.getElementById(errorId);
-            if (isNaN(val)) { err.textContent = '请输入有效数字'; input.classList.add('error'); ok = false; }
-            else if (val < min || val > max) { err.textContent = `范围 ${min}‑${max}`; input.classList.add('error'); ok = false; }
-            else { err.textContent = ''; input.classList.remove('error'); }
-        }
-        return ok;
-    }
-    async function loadModels() {
-        try {
-            modelStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading burst model...';
-            modelBurst = await tf.loadGraphModel(BURST_URL, { onProgress: f => progressBar.style.width = `${Math.floor(f * 50)}%` });
-            modelStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading leakage model...';
-            modelLeak = await tf.loadGraphModel(LEAK_URL, { onProgress: f => progressBar.style.width = `${50 + Math.floor(f * 50)}%` });
-            modelStatus.innerHTML = '<i class="fas fa-check-circle"></i> Models loaded successfully!';
-            modelStatus.className = 'success';
-            modelReadySpan.textContent = 'Ready';
-            predictBtn.disabled = false;
-        } catch (err) {
-            modelStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Load error: ${err.message}`;
-            modelStatus.className = 'error';
-            modelReadySpan.textContent = 'Failed';
-        }
-    }
-    function getInputs() {
-        return [
-            parseFloat(document.getElementById('smys').value) || 0,
-            parseFloat(document.getElementById('smts').value) || 0,
-            parseFloat(document.getElementById('dia').value) || 0,
-            parseFloat(document.getElementById('depth').value) || 0,
-            parseFloat(document.getElementById('d_grow').value) || 0,
-            parseFloat(document.getElementById('length').value) || 0,
-            parseFloat(document.getElementById('prestress').value) || 0,
-            parseFloat(document.getElementById('thickness').value) || 0
-        ];
-    }
-    async function runInference() {
-        if (!modelBurst || !modelLeak) { alert('模型尚未加载完成，请稍候...'); return; }
-        if (!validateAll()) { alert('请检查输入参数，部分值超出允许范围'); return; }
-        predictBtn.disabled = true;
-        predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating|计算中...';
-
-        const fixed = getInputs();
-        const SEQ = 31, FEAT = 9;
-        const INIT_LOG = -6.0;
-        const start = performance.now();
-
-        // ========== 1. 爆裂模型 (递归推理，无后处理) ==========
-        const burstInput = [];
-        for (let t = 0; t < SEQ; t++) {
-            let row = [];
-            for (let j = 0; j < 8; j++) row.push(burstNorm(fixed[j], j));
-            let probLogNorm = burstNorm(INIT_LOG, 8);
-            row.push(probLogNorm);
-            burstInput.push(row);
-        }
-        let burstTensor = tf.tensor3d([burstInput], [1, SEQ, FEAT]);
-        const burstProbs = new Array(11).fill(0);
-        burstProbs[0] = 1e-6;
-        for (let year = 1; year <= 10; year++) {
-            let out = modelBurst.predict(burstTensor);
-            if (Array.isArray(out)) out = out[0];
-            const arr = await out.array();
-            const normPred = arr[0][year-1][8];
-            const logBurst = burstDenorm(normPred, 8);
-            burstProbs[year] = Math.pow(10, logBurst);
-            if (year < 10) {
-                const data = await burstTensor.array();
-                data[0][year][8] = normPred;
-                burstTensor.dispose();
-                out.dispose();
-                burstTensor = tf.tensor3d(data, [1, SEQ, FEAT]);
+        function initTheme() { const saved = localStorage.getItem('theme') || 'dark'; setTheme(saved); }
+        function toggleTheme() { const cur = document.documentElement.getAttribute('data-theme') || 'dark'; setTheme(cur === 'dark' ? 'light' : 'dark'); localStorage.setItem('theme', cur === 'dark' ? 'light' : 'dark'); }
+        function setTheme(theme) {
+            if (theme === 'light') {
+                document.documentElement.setAttribute('data-theme','light');
+                themeSwitch.innerHTML = '<i class="fas fa-sun"></i><span>浅色模式</span>';
             } else {
-                out.dispose();
+                document.documentElement.removeAttribute('data-theme');
+                themeSwitch.innerHTML = '<i class="fas fa-moon"></i><span>深色模式</span>';
+            }
+            if (predictionChartBurst) { predictionChartBurst.destroy(); predictionChartBurst = null; }
+            if (predictionChartLeak) { predictionChartLeak.destroy(); predictionChartLeak = null; }
+        }
+
+        function setupValidation() {
+            for (const id in inputValidations) {
+                const input = document.getElementById(id);
+                input.addEventListener('blur', validateInput);
+                input.addEventListener('input', (e) => { const err = document.getElementById(inputValidations[e.target.id].errorId); if(err) err.textContent=''; e.target.classList.remove('error'); });
             }
         }
-        burstTensor.dispose();
-        const burstFinal = burstProbs.slice(1);  // 年份1-10
-        lastBurstPredictions = burstFinal;
-
-        // ========== 2. 泄漏模型 (一次性推理，完整后处理：裁剪→平滑→保序→阈值置零) ==========
-        const leakInput = [];
-        for (let t = 0; t < SEQ; t++) {
-            let row = [];
-            for (let j = 0; j < 8; j++) row.push(leakNorm(fixed[j], j));
-            row.push(INIT_LOG);   // 原始 log10 值，不标准化
-            leakInput.push(row);
+        function validateInput(e) {
+            const id = e.target.id, val = parseFloat(e.target.value);
+            if (!inputValidations[id]) return;
+            const { min, max, errorId } = inputValidations[id];
+            const errSpan = document.getElementById(errorId);
+            if (isNaN(val)) { errSpan.textContent = '请输入有效数字'; e.target.classList.add('error'); return false; }
+            if (val < min || val > max) { errSpan.textContent = `范围 ${min}‑${max}`; e.target.classList.add('error'); return false; }
+            errSpan.textContent = ''; e.target.classList.remove('error'); return true;
         }
-        const leakTensor = tf.tensor3d([leakInput], [1, SEQ, FEAT]);
-        const leakOut = await modelLeak.predict(leakTensor);
-        const leakArr = await leakOut.array();
-        // 取后30个时间步的第9个特征 -> 年份1-30的 log10 概率
-        let leakLog = leakArr[0].slice(1).map(row => row[8]);
-        let leakProb30 = leakLog.map(v => Math.pow(10, v));  // 30个概率值
-
-        // 后处理顺序（与 Python 完全一致）
-        let processed = clipProb(leakProb30);                // 1. 裁剪
-        processed = smoothCdfSequence(processed, 'savgol', { threshold_low: 0.1 }); // 2. 平滑+保序
-        processed = applyZeroThreshold(processed, 4e-5);     // 3. 阈值置零 (<4e-5 → 0)
-
-        // 取前10年用于显示和保存
-        let leakFinal = processed.slice(0, 10);
-        lastLeakPredictions = leakFinal;
-
-        const elapsed = performance.now() - start;
-        inferenceTimeSpan.textContent = `${elapsed.toFixed(2)} ms`;
-        recursionCountSpan.textContent = '10';
-
-        drawCharts(burstFinal, leakFinal);
-
-        outputContainer.style.display = 'block';
-        resultPlaceholder.style.display = 'none';
-        predictBtn.disabled = false;
-        predictBtn.innerHTML = '<i class="fas fa-calculator"></i> Calculate|计算结果';
-        saveBtn.disabled = false;
-
-        leakTensor.dispose(); leakOut.dispose();
-        tf.disposeVariables();
-    }
-
-    function drawCharts(burstProbs, leakProbs) {
-        const years = Array.from({ length: 10 }, (_, i) => `Year ${i}`);
-        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-        const textColor = isLight ? '#2c3e50' : '#a8d8ea';
-        const gridColor = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
-
-        // Burst chart
-        const ctxBurst = document.getElementById('prediction-chart-burst').getContext('2d');
-        if (predictionChartBurst) predictionChartBurst.destroy();
-        predictionChartBurst = new Chart(ctxBurst, {
-            type: 'line',
-            data: { labels: years, datasets: [{ label: 'Burst Probability|爆裂概率', data: burstProbs, borderColor: '#ff9f40', backgroundColor: isLight ? 'rgba(255,159,64,0.2)' : 'rgba(255,159,64,0.15)', borderWidth: 3, pointBackgroundColor: '#ffcd56', pointRadius: 5, fill: true, tension: 0.3 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: ctx => `Probability: ${ctx.parsed.y.toExponential(4)}` } } }, scales: { x: { ticks: { color: textColor }, title: { display: true, text: 'Year|年份', color: '#ff9f40' } }, y: { min: 0, ticks: { color: textColor, callback: v => v < 0.001 ? v.toExponential(1) : v.toFixed(4) }, title: { display: true, text: 'Probability|概率', color: '#ff9f40' } } } }
-        });
-        // Leakage chart
-        const ctxLeak = document.getElementById('prediction-chart-leak').getContext('2d');
-        if (predictionChartLeak) predictionChartLeak.destroy();
-        predictionChartLeak = new Chart(ctxLeak, {
-            type: 'line',
-            data: { labels: years, datasets: [{ label: 'Leakage Probability|泄漏概率', data: leakProbs, borderColor: '#00c9ff', backgroundColor: isLight ? 'rgba(0,201,255,0.2)' : 'rgba(0,201,255,0.1)', borderWidth: 3, pointBackgroundColor: '#92fe9d', pointRadius: 5, fill: true, tension: 0.3 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: ctx => `Probability: ${ctx.parsed.y.toExponential(4)}` } } }, scales: { x: { ticks: { color: textColor }, title: { display: true, text: 'Year|年份', color: '#00c9ff' } }, y: { min: 0, ticks: { color: textColor, callback: v => v < 0.001 ? v.toExponential(1) : v.toFixed(4) }, title: { display: true, text: 'Probability|概率', color: '#00c9ff' } } } }
-        });
-    }
-
-    function resetInputs() {
-        document.getElementById('smys').value = '483';
-        document.getElementById('smts').value = '565';
-        document.getElementById('dia').value = '1066.8';
-        document.getElementById('depth').value = '40.8';
-        document.getElementById('d_grow').value = '0.282';
-        document.getElementById('length').value = '275.3';
-        document.getElementById('prestress').value = '8.69';
-        document.getElementById('thickness').value = '12';
-        for (const id in inputValidations) {
-            document.getElementById(id).classList.remove('error');
-            document.getElementById(inputValidations[id].errorId).textContent = '';
+        function validateAll() {
+            let ok = true;
+            for (const id in inputValidations) {
+                const input = document.getElementById(id);
+                const val = parseFloat(input.value);
+                const { min, max, errorId } = inputValidations[id];
+                const err = document.getElementById(errorId);
+                if (isNaN(val)) { err.textContent = '请输入有效数字'; input.classList.add('error'); ok = false; }
+                else if (val < min || val > max) { err.textContent = `范围 ${min}‑${max}`; input.classList.add('error'); ok = false; }
+                else { err.textContent = ''; input.classList.remove('error'); }
+            }
+            return ok;
         }
-        outputContainer.style.display = 'none';
-        resultPlaceholder.style.display = 'block';
-        saveBtn.disabled = true;
-        if (predictionChartBurst) { predictionChartBurst.destroy(); predictionChartBurst = null; }
-        if (predictionChartLeak) { predictionChartLeak.destroy(); predictionChartLeak = null; }
-    }
-    function saveToCSV() {
-        if (lastBurstPredictions.length === 0 || lastLeakPredictions.length === 0) { alert("没有可保存的数据，请先进行计算"); return; }
-        let csv = "Year,Burst Probability,Leakage Probability\n";
-        for (let i = 0; i < 10; i++) csv += `${i},${lastBurstPredictions[i].toExponential(6)},${lastLeakPredictions[i].toExponential(6)}\n`;
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.href = url;
-        link.download = `pipeline_predictions_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.csv`;
-        link.click();
-        URL.revokeObjectURL(url);
-    }
-</script>
+        async function loadModels() {
+            try {
+                modelStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading burst model...';
+                modelBurst = await tf.loadGraphModel(BURST_URL, { onProgress: f => progressBar.style.width = `${Math.floor(f * 50)}%` });
+                modelStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading leakage model...';
+                modelLeak = await tf.loadGraphModel(LEAK_URL, { onProgress: f => progressBar.style.width = `${50 + Math.floor(f * 50)}%` });
+                modelStatus.innerHTML = '<i class="fas fa-check-circle"></i> ✅ NN loaded successfully! | 加载成功！';
+                modelStatus.className = 'success';
+                modelReadySpan.textContent = 'Loaded|已加载';
+                predictBtn.disabled = false;
+            } catch (err) {
+                modelStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ❌ Load error: ${err.message}`;
+                modelStatus.className = 'error';
+                modelReadySpan.textContent = 'Failed|加载失败';
+            }
+        }
+        function getInputs() {
+            return [
+                parseFloat(document.getElementById('smys').value) || 0,
+                parseFloat(document.getElementById('smts').value) || 0,
+                parseFloat(document.getElementById('dia').value) || 0,
+                parseFloat(document.getElementById('depth').value) || 0,
+                parseFloat(document.getElementById('d_grow').value) || 0,
+                parseFloat(document.getElementById('length').value) || 0,
+                parseFloat(document.getElementById('prestress').value) || 0,
+                parseFloat(document.getElementById('thickness').value) || 0
+            ];
+        }
+        async function runInference() {
+            if (!modelBurst || !modelLeak) { alert('模型尚未加载完成，请稍候...'); return; }
+            if (!validateAll()) { alert('请检查输入参数，部分值超出允许范围'); return; }
+            predictBtn.disabled = true;
+            predictBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating|计算中...';
+
+            const fixed = getInputs();
+            const SEQ = 31, FEAT = 9;
+            const INIT_LOG = -6.0;
+            const start = performance.now();
+
+            // ========== 1. 爆裂模型 (递归推理，无后处理) ==========
+            const burstInput = [];
+            for (let t = 0; t < SEQ; t++) {
+                let row = [];
+                for (let j = 0; j < 8; j++) row.push(burstNorm(fixed[j], j));
+                let probLogNorm = burstNorm(INIT_LOG, 8);
+                row.push(probLogNorm);
+                burstInput.push(row);
+            }
+            let burstTensor = tf.tensor3d([burstInput], [1, SEQ, FEAT]);
+            const burstProbs = new Array(11).fill(0);
+            burstProbs[0] = 1e-6;
+            for (let year = 1; year <= 10; year++) {
+                let out = modelBurst.predict(burstTensor);
+                if (Array.isArray(out)) out = out[0];
+                const arr = await out.array();
+                const normPred = arr[0][year-1][8];
+                const logBurst = burstDenorm(normPred, 8);
+                burstProbs[year] = Math.pow(10, logBurst);
+                if (year < 10) {
+                    const data = await burstTensor.array();
+                    data[0][year][8] = normPred;
+                    burstTensor.dispose();
+                    out.dispose();
+                    burstTensor = tf.tensor3d(data, [1, SEQ, FEAT]);
+                } else {
+                    out.dispose();
+                }
+            }
+            burstTensor.dispose();
+            const burstFinal = burstProbs.slice(1);  // 年份1-10
+            lastBurstPredictions = burstFinal;
+
+            // ========== 2. 泄漏模型 (一次性推理，完整后处理) ==========
+            const leakInput = [];
+            for (let t = 0; t < SEQ; t++) {
+                let row = [];
+                for (let j = 0; j < 8; j++) row.push(leakNorm(fixed[j], j));
+                row.push(INIT_LOG);   // 原始 log10 值，不标准化
+                leakInput.push(row);
+            }
+            const leakTensor = tf.tensor3d([leakInput], [1, SEQ, FEAT]);
+            const leakOut = await modelLeak.predict(leakTensor);
+            const leakArr = await leakOut.array();
+            // 取后30个时间步的第9个特征 -> 年份1-30的 log10 概率
+            let leakLog = leakArr[0].slice(1).map(row => row[8]);
+            let leakProb30 = leakLog.map(v => Math.pow(10, v));  // 30个概率值
+
+            // 后处理顺序（与 Python 完全一致）
+            let processed = clipProb(leakProb30);                // 1. 裁剪
+            processed = smoothCdfSequence(processed, 'savgol', { threshold_low: 0.1 }); // 2. 平滑+保序
+            processed = applyZeroThreshold(processed, 4e-5);     // 3. 阈值置零 (<4e-5 → 0)
+
+            // 取前10年用于显示和保存
+            let leakFinal = processed.slice(0, 10);
+            lastLeakPredictions = leakFinal;
+
+            const elapsed = performance.now() - start;
+            inferenceTimeSpan.textContent = `${elapsed.toFixed(2)} ms`;
+            recursionCountSpan.textContent = '10 次';
+
+            drawCharts(burstFinal, leakFinal);
+
+            outputContainer.style.display = 'block';
+            resultPlaceholder.style.display = 'none';
+            predictBtn.disabled = false;
+            predictBtn.innerHTML = '<i class="fas fa-calculator"></i> Calculate|计算结果';
+            saveBtn.disabled = false;
+
+            leakTensor.dispose(); leakOut.dispose();
+            tf.disposeVariables();
+        }
+
+        function drawCharts(burstProbs, leakProbs) {
+            const years = Array.from({ length: 10 }, (_, i) => `Year ${i}`);
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            const textColor = isLight ? '#2c3e50' : '#a8d8ea';
+            const gridColor = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
+
+            // Burst chart
+            const ctxBurst = document.getElementById('prediction-chart-burst').getContext('2d');
+            if (predictionChartBurst) predictionChartBurst.destroy();
+            predictionChartBurst = new Chart(ctxBurst, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Burst Probability|爆裂概率',
+                        data: burstProbs,
+                        borderColor: '#ff9f40',
+                        backgroundColor: isLight ? 'rgba(255,159,64,0.2)' : 'rgba(255,159,64,0.15)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffcd56',
+                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor, font: { size: 18, family: "Times New Roman", weight: "normal" } } },
+                        tooltip: { callbacks: { label: ctx => `Probability: ${ctx.parsed.y.toExponential(4)}` } }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { size: 16 } },
+                            title: { display: true, text: 'Year|年份', color: '#ff9f40', font: { size: 18, weight: 'normal' } }
+                        },
+                        y: {
+                            min: 0,
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, callback: v => v < 0.001 ? v.toExponential(1) : v.toFixed(4) },
+                            title: { display: true, text: 'Probability|概率', color: '#ff9f40', font: { size: 18, weight: 'normal' } }
+                        }
+                    }
+                }
+            });
+
+            // Leakage chart
+            const ctxLeak = document.getElementById('prediction-chart').getContext('2d');
+            if (predictionChartLeak) predictionChartLeak.destroy();
+            predictionChartLeak = new Chart(ctxLeak, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Leakage Probability|泄漏概率',
+                        data: leakProbs,
+                        borderColor: '#00c9ff',
+                        backgroundColor: isLight ? 'rgba(0,201,255,0.2)' : 'rgba(0,201,255,0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#92fe9d',
+                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor, font: { size: 18, family: "Times New Roman", weight: "normal" } } },
+                        tooltip: { callbacks: { label: ctx => `Probability: ${ctx.parsed.y.toExponential(4)}` } }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { size: 16 } },
+                            title: { display: true, text: 'Year|年份', color: '#00c9ff', font: { size: 18, weight: 'normal' } }
+                        },
+                        y: {
+                            min: 0,
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, callback: v => v < 0.001 ? v.toExponential(1) : v.toFixed(4) },
+                            title: { display: true, text: 'Probability|概率', color: '#00c9ff', font: { size: 18, weight: 'normal' } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function resetInputs() {
+            document.getElementById('smys').value = '483';
+            document.getElementById('smts').value = '565';
+            document.getElementById('dia').value = '1066.8';
+            document.getElementById('depth').value = '40.8';
+            document.getElementById('d_grow').value = '0.282';
+            document.getElementById('length').value = '275.3';
+            document.getElementById('prestress').value = '8.69';
+            document.getElementById('thickness').value = '12';
+            for (const id in inputValidations) {
+                document.getElementById(id).classList.remove('error');
+                document.getElementById(inputValidations[id].errorId).textContent = '';
+            }
+            outputContainer.style.display = 'none';
+            resultPlaceholder.style.display = 'block';
+            saveBtn.disabled = true;
+            if (predictionChartBurst) { predictionChartBurst.destroy(); predictionChartBurst = null; }
+            if (predictionChartLeak) { predictionChartLeak.destroy(); predictionChartLeak = null; }
+        }
+        function saveToCSV() {
+            if (lastBurstPredictions.length === 0 || lastLeakPredictions.length === 0) { alert("没有可保存的数据，请先进行计算"); return; }
+            let csv = "Year,Burst Probability,Leakage Probability\n";
+            for (let i = 0; i < 10; i++) csv += `${i},${lastBurstPredictions[i].toExponential(6)},${lastLeakPredictions[i].toExponential(6)}\n`;
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.download = `pipeline_predictions_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.csv`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
 </body>
 </html>
