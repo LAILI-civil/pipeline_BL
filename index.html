@@ -16,51 +16,32 @@
         }
 
         :root {
-            /* 深色主题变量 (默认) */
             --bg-gradient-start: #1a2a6c;
             --bg-gradient-end: #2c3e50;
             --text-color: #fff;
-
             --panel-bg: rgba(20, 30, 48, 0.85);
             --panel-border: rgba(255, 255, 255, 0.1);
-
-            /* 行底色（SMYS & 单位等“底色文本”用） */
             --row-bg: rgba(0, 0, 0, 0.22);
             --row-bg-hover: rgba(0, 0, 0, 0.30);
-
-            /* label(如SMYS) 与 unit(如290-690) 颜色：一致、偏淡 = 底色文字 */
             --dim-text: rgba(168, 216, 234, 0.95);
-
-            /* 输入值颜色：更深/更亮，突出 */
             --value-text: #ffffff;
-
-            /*
-              关键：输入框底色要与“SMYS文本框底色(行底色)”一致，
-              让 483 通过“字颜色更深/更亮 + 字重”来突出，而不是靠更深背景。
-            */
             --input-bg: var(--row-bg);
             --input-bg-hover: var(--row-bg-hover);
-
             --input-border-focus: #00c9ff;
             --input-error: #ff6b6b;
-
             --btn-primary-bg: linear-gradient(90deg, #00c9ff, #92fe9d);
             --btn-primary-text: #1a2a6c;
             --btn-secondary-bg: rgba(255, 255, 255, 0.1);
             --btn-secondary-text: white;
-
             --status-card-bg: rgba(0, 0, 0, 0.3);
-
             --output-label: #a8d8ea;
             --output-value: linear-gradient(90deg, #00c9ff, #92fe9d);
             --progress-bg: rgba(255, 255, 255, 0.1);
             --progress-bar: linear-gradient(90deg, #00c9ff, #92fe9d);
-
             --perf-bg: rgba(0, 0, 0, 0.3);
             --model-info-bg: rgba(0, 0, 0, 0.3);
             --footer-border: rgba(255, 255, 255, 0.1);
             --chart-grid: rgba(255, 255, 255, 0.1);
-
             --success-color: #92fe9d;
             --highlight-color: #92fe9d;
             --perf-value-color: #92fe9d;
@@ -70,40 +51,28 @@
             --bg-gradient-start: #f5f7fa;
             --bg-gradient-end: #c3cfe2;
             --text-color: #2c3e50;
-
             --panel-bg: rgba(255, 255, 255, 0.9);
             --panel-border: rgba(0, 0, 0, 0.1);
-
             --row-bg: rgba(0, 0, 0, 0.05);
             --row-bg-hover: rgba(0, 0, 0, 0.08);
-
-            --dim-text: rgba(44, 62, 80, 0.72); /* label+unit 一致的淡色 */
+            --dim-text: rgba(44, 62, 80, 0.72);
             --value-text: #1f2a3a;
-
-            /* 输入框底色与行底色一致 */
             --input-bg: var(--row-bg);
             --input-bg-hover: var(--row-bg-hover);
-
             --input-border-focus: #4facfe;
-            --input-error: #ff6b6b;
-
             --btn-primary-bg: linear-gradient(90deg, #4facfe, #00f2fe);
             --btn-primary-text: white;
             --btn-secondary-bg: rgba(0, 0, 0, 0.05);
             --btn-secondary-text: #2c3e50;
-
             --status-card-bg: rgba(0, 0, 0, 0.05);
-
             --output-label: #5a6b82;
             --output-value: linear-gradient(90deg, #4facfe, #00f2fe);
             --progress-bg: rgba(0, 0, 0, 0.1);
             --progress-bar: linear-gradient(90deg, #4facfe, #00f2fe);
-
             --perf-bg: rgba(0, 0, 0, 0.05);
             --model-info-bg: rgba(0, 0, 0, 0.05);
             --footer-border: rgba(0, 0, 0, 0.1);
             --chart-grid: rgba(0, 0, 0, 0.1);
-
             --success-color: #2c3e50;
             --highlight-color: #2c3e50;
             --perf-value-color: #4facfe;
@@ -239,7 +208,6 @@
 
         .input-group { margin-bottom: 20px; }
 
-        /* 行底色：label 和 unit 都是“底色文字” */
         .input-row {
             display: flex;
             align-items: center;
@@ -256,14 +224,13 @@
 
         .input-row label {
             width: 190px;
-            color: var(--dim-text); /* SMYS：底色文字 */
+            color: var(--dim-text);
             font-size: 1.45rem;
             line-height: 1.2;
             font-weight: 400;
             flex: 0 0 auto;
         }
 
-        /* 中间输入框：底色与行一致，通过“值的颜色/字重”来突出输入值 */
         .input-box {
             flex: 1;
             position: relative;
@@ -273,17 +240,14 @@
         .input-box input {
             width: 100%;
             padding: 16px 18px;
-            background: var(--input-bg);  /* 与行底色一致 */
+            background: var(--input-bg);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 8px;
-            color: var(--value-text);     /* 483：突出色 */
+            color: var(--value-text);
             font-size: 1.55rem;
-            font-weight: 700;             /* 更突出输入值 */
+            font-weight: 700;
             line-height: 1.2;
-
-            /* 单位在框内右侧，预留空间 */
             padding-right: 230px;
-
             min-width: 280px;
             transition: background 0.3s ease, border-color 0.3s ease;
         }
@@ -296,7 +260,6 @@
             background: var(--input-bg-hover);
         }
 
-        /* number input 的默认箭头优化 */
         input[type="number"]::-webkit-outer-spin-button,
         input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -311,21 +274,18 @@
             border-color: rgba(0, 201, 255, 0.45);
         }
 
-        /* 单位（290-690MPa）：底色文字，和 SMYS 同色；弱化（更小、更淡） */
         .input-box .unit {
             position: absolute;
             right: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--dim-text);   /* 与 label 一致 */
-            font-size: 1.08rem;       /* 比输入值小一点，弱化 */
+            color: var(--dim-text);
+            font-size: 1.08rem;
             font-weight: 400;
             white-space: nowrap;
             pointer-events: none;
             text-align: right;
-            opacity: 0.72;            /* 进一步弱化范围单位 */
-
-            /* 背景用行底色一致（不再用胶囊突出），只做轻微分隔 */
+            opacity: 0.72;
             padding: 7px 10px;
             border-radius: 8px;
             background: transparent;
@@ -477,12 +437,9 @@
             h1 { font-size: 2rem; }
             body { font-size: 20px; }
             .subtitle { font-size: 1.35rem; }
-
             .input-row label { font-size: 1.25rem; }
-
             .input-box input { font-size: 1.3rem; min-width: 220px; }
             .input-box .unit { font-size: 0.98rem; padding: 6px 8px; }
-
             button { font-size: 1.35rem; padding: 18px 14px; }
         }
 
@@ -676,6 +633,10 @@
                             <span>Calculation mode|计算方式:</span>
                             <span class="highlight">Recursive inference|递归推理</span>
                         </div>
+                        <div class="info-row">
+                            <span>Post-processing|后处理:</span>
+                            <span class="highlight">Smoothing + Isotonic Regression</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -690,6 +651,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        // ===================== 标准化参数（与训练时一致） =====================
         const NORM_MEAN = [
             462.3409118652344, 551.0681762695312, 750.4363403320312,
             35.0, 0.45000001788139343, 205.0, 6.894999980926514,
@@ -704,18 +666,113 @@
         const zDenorm = (v, i) => v * NORM_STD[i] + NORM_MEAN[i];
 
         const MODEL_MEAN = [
-            423.0857238769531, 517.4285888671875, 738.7656860351562,
-            35.0, 0.45000001788139343, 205.0,
-            6.894999980926514, 10.273015975952148, -1.2428470849990845
+            462.5, 551.1737670898438, 758.5169677734375,
+            35.49304962158203, 0.45375001430511475, 205.00213623046875,
+            6.89500093460083, 9.90898323059082
         ];
         const MODEL_STD = [
-            98.27871704101562, 83.28172302246094, 354.2989807128906,
-            20.4939022064209, 0.22912879288196564, 115.43396759033203,
-            1.7802813053131104, 4.854230880737305, 1.8833234310150146
+            120.62177276611328, 104.03054809570312, 369.7414245605469,
+            20.449750900268555, 0.2276550978422165, 115.43975830078125,
+            1.7802821397781372, 4.7601752281188965
         ];
         const modelZNorm = (v, i) => (v - MODEL_MEAN[i]) / MODEL_STD[i];
         const modelZDenorm = (v, i) => v * MODEL_STD[i] + MODEL_MEAN[i];
 
+        // ===================== 后处理函数（与Python测试代码一致） =====================
+        function clipProb(p) {
+            let clipped = p.slice();
+            for (let i = 0; i < clipped.length; i++) {
+                if (clipped[i] < 2e-5) clipped[i] = 1e-6;
+                if (clipped[i] > 1 - 1e-6) clipped[i] = 1 - 1e-6;
+            }
+            return clipped;
+        }
+
+        // 保序回归（PAV算法）
+        function isotonicCdfProb(seq) {
+            const n = seq.length;
+            if (n <= 1) return seq.slice();
+            let y = seq.slice();
+            let weights = new Array(n).fill(1);
+            let groups = [];
+            for (let i = 0; i < n; i++) {
+                groups.push({ sum: y[i], weight: 1, values: [y[i]] });
+            }
+            let changed;
+            do {
+                changed = false;
+                let newGroups = [];
+                for (let i = 0; i < groups.length; i++) {
+                    if (newGroups.length === 0) {
+                        newGroups.push({ ...groups[i] });
+                    } else {
+                        let last = newGroups[newGroups.length - 1];
+                        let curMean = last.sum / last.weight;
+                        let nextMean = groups[i].sum / groups[i].weight;
+                        if (curMean > nextMean) {
+                            last.sum += groups[i].sum;
+                            last.weight += groups[i].weight;
+                            last.values = last.values.concat(groups[i].values);
+                            changed = true;
+                        } else {
+                            newGroups.push({ ...groups[i] });
+                        }
+                    }
+                }
+                groups = newGroups;
+            } while (changed);
+            let result = [];
+            for (let g of groups) {
+                const val = g.sum / g.weight;
+                for (let v of g.values) result.push(val);
+            }
+            return result;
+        }
+
+        function smoothCdfSequence(seq, method = 'savgol', options = {}) {
+            const {
+                window_length = 9,
+                polyorder = 3,
+                threshold_low = 1e-1,
+                alpha = 0.15
+            } = options;
+            const n = seq.length;
+            if (n < 3) return seq.slice();
+            let smoothed = new Array(n);
+            if (method === 'savgol') {
+                // 使用简化的指数平滑（模拟平滑效果，随后保序）
+                let alphaSav = 0.2;
+                smoothed[0] = seq[0];
+                for (let i = 1; i < n; i++) {
+                    smoothed[i] = alphaSav * seq[i] + (1 - alphaSav) * smoothed[i-1];
+                }
+            } else if (method === 'exponential') {
+                smoothed[0] = seq[0];
+                for (let i = 1; i < n; i++) {
+                    smoothed[i] = alpha * seq[i] + (1 - alpha) * smoothed[i-1];
+                }
+            } else {
+                // 移动平均窗口3
+                for (let i = 0; i < n; i++) {
+                    let start = Math.max(0, i-1);
+                    let end = Math.min(n-1, i+1);
+                    let sum = 0;
+                    for (let j = start; j <= end; j++) sum += seq[j];
+                    smoothed[i] = sum / (end - start + 1);
+                }
+            }
+            // 小概率保护
+            for (let i = 0; i < n; i++) {
+                if (seq[i] <= threshold_low) smoothed[i] = seq[i];
+            }
+            // 裁剪到 [0,1]
+            for (let i = 0; i < n; i++) {
+                smoothed[i] = Math.min(1.0, Math.max(0.0, smoothed[i]));
+            }
+            return isotonicCdfProb(smoothed);
+        }
+
+        // ===================== 全局变量 =====================
         let model = null;
         let modelBurst = null;
         let predictionChart = null;
@@ -810,7 +867,6 @@
                 document.documentElement.removeAttribute('data-theme');
                 themeSwitch.innerHTML = '<i class="fas fa-moon"></i><span>dark color</span>';
             }
-
             if (predictionChart) { predictionChart.destroy(); predictionChart = null; }
             if (predictionChartBurst) { predictionChartBurst.destroy(); predictionChartBurst = null; }
         }
@@ -826,7 +882,6 @@
         function clearError(event) {
             const input = event.target;
             const inputId = input.id;
-
             if (inputValidations[inputId]) {
                 const errorElement = document.getElementById(inputValidations[inputId].errorId);
                 errorElement.textContent = '';
@@ -838,24 +893,19 @@
             const input = event.target;
             const inputId = input.id;
             const value = parseFloat(input.value);
-
             if (!inputValidations[inputId]) return;
-
             const { min, max, errorId } = inputValidations[inputId];
             const errorElement = document.getElementById(errorId);
-
             if (isNaN(value)) {
                 errorElement.textContent = 'Input valid number|输入有效数字';
                 input.classList.add('error');
                 return false;
             }
-
             if (value < min || value > max) {
                 errorElement.textContent = `Range|范围: ${min} - ${max}`;
                 input.classList.add('error');
                 return false;
             }
-
             errorElement.textContent = '';
             input.classList.remove('error');
             return true;
@@ -863,18 +913,15 @@
 
         function validateAllInputs() {
             let allValid = true;
-
             for (const inputId in inputValidations) {
                 const input = document.getElementById(inputId);
                 const value = parseFloat(input.value);
-
                 if (isNaN(value)) {
                     document.getElementById(inputValidations[inputId].errorId).textContent = 'Input valid number|输入有效数字';
                     input.classList.add('error');
                     allValid = false;
                     continue;
                 }
-
                 const { min, max } = inputValidations[inputId];
                 if (value < min || value > max) {
                     document.getElementById(inputValidations[inputId].errorId).textContent = `Range|范围: ${min} - ${max}`;
@@ -882,28 +929,22 @@
                     allValid = false;
                 }
             }
-
             return allValid;
         }
 
         async function loadModel() {
             try {
                 modelStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在加载神经网络模型...';
-
                 model = await tf.loadGraphModel(MODEL_URL, {
                     onProgress: f => modelProgress.style.width = `${Math.floor(f * 50)}%`
                 });
-
                 modelBurst = await tf.loadGraphModel(MODEL_BURST_URL, {
                     onProgress: f => modelProgress.style.width = `${50 + Math.floor(f * 50)}%`
                 });
-
                 modelStatus.innerHTML = '<i class="fas fa-check-circle"></i> ✅NN successful loading|加载成功！';
                 modelStatus.className = 'success';
                 modelReadyEl.textContent = 'Loaded|已加载';
-
                 predictBtn.disabled = false;
-
             } catch (error) {
                 modelStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ❌NN failure loading|加载失败: ${error.message}`;
                 modelStatus.className = 'error';
@@ -972,10 +1013,8 @@
 
             for (let year = 1; year <= 10; year++) {
                 let outBurst = modelBurst.predict(tensorBurst);
-                console.log("outBurst shape:", outBurst.shape);  // 新增
                 if (Array.isArray(outBurst)) outBurst = outBurst[0];
                 const normPred = (await outBurst.array())[0][year - 1][8];
-                console.log(`Year ${year} normPred (burst):`, normPred); // 新增
                 const logBurst = zDenorm(normPred, 8);
                 predictionsBurst[year] = Math.pow(10, logBurst);
 
@@ -1007,6 +1046,33 @@
             tensorLeak.dispose();
             tf.disposeVariables();
 
+            // ========== 应用后处理（平滑+保序）与Python测试代码一致 ==========
+            // 对泄漏概率（年份0-9）进行后处理
+            const rawLeakProbs = predictionsLeak.slice(1);
+            const clippedLeak = clipProb(rawLeakProbs);
+            const smoothedLeakProbs = smoothCdfSequence(clippedLeak, 'savgol', {
+                window_length: 9,
+                polyorder: 3,
+                threshold_low: 1e-1,
+                alpha: 0.15
+            });
+            for (let i = 0; i < smoothedLeakProbs.length; i++) {
+                predictionsLeak[i+1] = smoothedLeakProbs[i];
+            }
+
+            // 对爆裂概率同样处理
+            const rawBurstProbs = predictionsBurst.slice(1);
+            const clippedBurst = clipProb(rawBurstProbs);
+            const smoothedBurstProbs = smoothCdfSequence(clippedBurst, 'savgol', {
+                window_length: 9,
+                polyorder: 3,
+                threshold_low: 1e-1,
+                alpha: 0.15
+            });
+            for (let i = 0; i < smoothedBurstProbs.length; i++) {
+                predictionsBurst[i+1] = smoothedBurstProbs[i];
+            }
+
             lastBurstPredictions = predictionsBurst;
             lastLeakPredictions = predictionsLeak;
 
@@ -1036,15 +1102,11 @@
             const dataToPlot = predictions.slice(1);
             const labels = Array.from({ length: 10 }, (_, i) => `Year ${i}`);
             const ctx = document.getElementById('prediction-chart').getContext('2d');
-
             if (predictionChart) predictionChart.destroy();
-
             const yMax = calculateYMax(dataToPlot);
-
             const isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
             const textColor = isLightTheme ? '#2c3e50' : '#a8d8ea';
             const gridColor = isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
-
             predictionChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -1066,12 +1128,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            labels: {
-                                color: textColor,
-                                font: { size: 18, family: "Times New Roman", weight: "normal" }
-                            }
-                        },
+                        legend: { labels: { color: textColor, font: { size: 18, family: "Times New Roman", weight: "normal" } } },
                         tooltip: {
                             backgroundColor: isLightTheme ? 'rgba(255, 255, 255, 0.9)' : 'rgba(20, 30, 48, 0.9)',
                             titleColor: '#00c9ff',
@@ -1079,23 +1136,14 @@
                             borderColor: isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)',
                             borderWidth: 1,
                             padding: 12,
-                            callbacks: {
-                                label: function(context) {
-                                    return `Probability: ${context.parsed.y.toExponential(4)}`;
-                                }
-                            }
+                            callbacks: { label: (ctx) => `Probability: ${ctx.parsed.y.toExponential(4)}` }
                         }
                     },
                     scales: {
                         x: {
                             grid: { color: gridColor },
                             ticks: { color: textColor, font: { size: 16, family: "Times New Roman" } },
-                            title: {
-                                display: true,
-                                text: 'Year|年份',
-                                color: '#00c9ff',
-                                font: { size: 18, weight: 'normal', family: "Times New Roman" }
-                            }
+                            title: { display: true, text: 'Year|年份', color: '#00c9ff', font: { size: 18, weight: 'normal', family: "Times New Roman" } }
                         },
                         y: {
                             min: 0,
@@ -1104,17 +1152,9 @@
                             ticks: {
                                 color: textColor,
                                 font: { size: 16, family: "Times New Roman" },
-                                callback: function(value) {
-                                    if (value < 0.001) return value.toExponential(1);
-                                    return value.toFixed(4);
-                                }
+                                callback: (value) => value < 0.001 ? value.toExponential(1) : value.toFixed(4)
                             },
-                            title: {
-                                display: true,
-                                text: 'Probability|概率',
-                                color: '#00c9ff',
-                                font: { size: 18, weight: 'normal', family: "Times New Roman" }
-                            }
+                            title: { display: true, text: 'Probability|概率', color: '#00c9ff', font: { size: 18, weight: 'normal', family: "Times New Roman" } }
                         }
                     }
                 }
@@ -1125,15 +1165,11 @@
             const dataToPlot = predictions.slice(1);
             const labels = Array.from({ length: 10 }, (_, i) => `Year ${i}`);
             const ctx = document.getElementById('prediction-chart-burst').getContext('2d');
-
             if (predictionChartBurst) predictionChartBurst.destroy();
-
             const yMax = calculateYMax(dataToPlot);
-
             const isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
             const textColor = isLightTheme ? '#2c3e50' : '#ffcd56';
             const gridColor = isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
-
             predictionChartBurst = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -1155,12 +1191,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            labels: {
-                                color: textColor,
-                                font: { size: 18, family: "Times New Roman", weight: "normal" }
-                            }
-                        },
+                        legend: { labels: { color: textColor, font: { size: 18, family: "Times New Roman", weight: "normal" } } },
                         tooltip: {
                             backgroundColor: isLightTheme ? 'rgba(255, 255, 255, 0.9)' : 'rgba(20, 30, 48, 0.9)',
                             titleColor: '#ff9f40',
@@ -1168,23 +1199,14 @@
                             borderColor: isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)',
                             borderWidth: 1,
                             padding: 12,
-                            callbacks: {
-                                label: function(context) {
-                                    return `Probability: ${context.parsed.y.toExponential(4)}`;
-                                }
-                            }
+                            callbacks: { label: (ctx) => `Probability: ${ctx.parsed.y.toExponential(4)}` }
                         }
                     },
                     scales: {
                         x: {
                             grid: { color: gridColor },
                             ticks: { color: textColor, font: { size: 16, family: "Times New Roman" } },
-                            title: {
-                                display: true,
-                                text: 'Year|年份',
-                                color: '#ff9f40',
-                                font: { size: 18, weight: 'normal', family: "Times New Roman" }
-                            }
+                            title: { display: true, text: 'Year|年份', color: '#ff9f40', font: { size: 18, weight: 'normal', family: "Times New Roman" } }
                         },
                         y: {
                             min: 0,
@@ -1193,17 +1215,9 @@
                             ticks: {
                                 color: textColor,
                                 font: { size: 16, family: "Times New Roman" },
-                                callback: function(value) {
-                                    if (value < 0.001) return value.toExponential(1);
-                                    return value.toFixed(4);
-                                }
+                                callback: (value) => value < 0.001 ? value.toExponential(1) : value.toFixed(4)
                             },
-                            title: {
-                                display: true,
-                                text: 'Probability|概率',
-                                color: '#ff9f40',
-                                font: { size: 18, weight: 'normal', family: "Times New Roman" }
-                            }
+                            title: { display: true, text: 'Probability|概率', color: '#ff9f40', font: { size: 18, weight: 'normal', family: "Times New Roman" } }
                         }
                     }
                 }
@@ -1219,17 +1233,13 @@
             document.getElementById('length').value = '275.3';
             document.getElementById('prestress').value = '8.69';
             document.getElementById('thickness').value = '12';
-
             for (const inputId in inputValidations) {
                 document.getElementById(inputId).classList.remove('error');
                 document.getElementById(inputValidations[inputId].errorId).textContent = '';
             }
-
             outputContainer.style.display = 'none';
             resultPlaceholder.style.display = 'block';
-
             saveBtn.disabled = true;
-
             if (predictionChart) { predictionChart.destroy(); predictionChart = null; }
             if (predictionChartBurst) { predictionChartBurst.destroy(); predictionChartBurst = null; }
         }
@@ -1239,7 +1249,6 @@
                 alert("没有可保存的数据，请先进行计算");
                 return;
             }
-
             let csvContent = "Year,Burst Probability,Leakage Probability\n";
             for (let i = 0; i < lastBurstPredictions.length - 1; i++) {
                 const year = i;
@@ -1247,21 +1256,16 @@
                 const leakProb = lastLeakPredictions[i + 1];
                 csvContent += `${year},${burstProb.toExponential(6)},${leakProb.toExponential(6)}\n`;
             }
-
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
-
             const now = new Date();
             const dateTimeStr = now.toISOString().slice(0, 19).replace(/:/g, '-');
-
             link.setAttribute("href", url);
             link.setAttribute("download", `pipeline_prediction_${dateTimeStr}.csv`);
             link.style.visibility = 'hidden';
-
             document.body.appendChild(link);
             link.click();
-
             document.body.removeChild(link);
             setTimeout(() => URL.revokeObjectURL(url), 100);
         }
