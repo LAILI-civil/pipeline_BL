@@ -5,7 +5,7 @@ This project presents a novel approach to pipeline failure probability assessmen
 ---
 The model demonstrates exceptional performance on our test dataset of **768,000** samples:
 - Burst probability prediction: **94.5%** relative accuracy
-- Leakage detection: **90%** accuracy
+- Leakage probability prediction: **90%** accuracy
 
 ---
 Our work has been integrated into an interactive web interface at:  
