@@ -1215,11 +1215,35 @@
             if (predictionChartBurst) { predictionChartBurst.destroy(); predictionChartBurst = null; }
             if (predictionChartLeak) { predictionChartLeak.destroy(); predictionChartLeak = null; }
         }
+
+        // ===================== 保存CSV（包含输入参数） =====================
         function saveToCSV() {
-            if (lastBurstPredictions.length === 0 || lastLeakPredictions.length === 0) { alert("没有可保存的数据，请先进行计算"); return; }
-            let csv = "Year,Burst Probability,Leakage Probability\n";
-            for (let i = 0; i < 10; i++) csv += `${i},${lastBurstPredictions[i].toExponential(6)},${lastLeakPredictions[i].toExponential(6)}\n`;
-            const blob = new Blob([csv], { type: 'text/csv' });
+            if (lastBurstPredictions.length === 0 || lastLeakPredictions.length === 0) {
+                alert("没有可保存的数据，请先进行计算");
+                return;
+            }
+
+            // 获取当前输入的8个参数
+            const inputs = getInputs();
+            const paramLabels = ['SMYS', 'SMTS', 'Diameter', 'Depth', 'd_grow', 'Length', 'Prestress', 'Thickness'];
+            const paramUnits = ['MPa', 'MPa', 'mm', '%', 'mm', 'mm', 'MPa', 'mm'];
+
+            // 构建CSV内容（先写入参数信息，再写入预测结果表）
+            let csv = "# Input Parameters (输入参数)\n";
+            csv += "Parameter, Value, Unit\n";
+            for (let i = 0; i < paramLabels.length; i++) {
+                csv += `${paramLabels[i]}, ${inputs[i]}, ${paramUnits[i]}\n`;
+            }
+
+            // 空一行作为分隔
+            csv += "\n# Prediction Results 0-9 Year (预测结果)\n";
+            csv += "Year, Burst Probability, Leakage Probability\n";
+            for (let i = 0; i < 10; i++) {
+                csv += `${i}, ${lastBurstPredictions[i].toExponential(6)}, ${lastLeakPredictions[i].toExponential(6)}\n`;
+            }
+
+            // 创建下载（加BOM让Excel正确识别UTF-8）
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.href = url;
