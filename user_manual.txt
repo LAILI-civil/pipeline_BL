@@ -7,5 +7,4 @@ Length, defect agittal direction, Unit: mm
 Prestress, radial pressure of fluid, Unit: Mpa
 Thickness, pipeline wall thickness, Unit: mm
 Each input parameter has reasonable range, such as SMYS 290-690MPa. This value is given in web. 
-
 .csv file save the probabilities for burst and leakage in current inputting parameters.
